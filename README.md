@@ -26,7 +26,8 @@ Inizialmente non è prevista una GUI per l'operatività di Minotauro che potrebb
 ## L'archivio
 Attualmente l'archivio è salvato in un NAS su HD ridondati. Non è presente archiviazione dei contenuti che sono costituiti in prevalenza da immagini JPEG/RAW salvate all'interno di cartelle annidate secondo la seguente struttura:
 ANNO / ANNO MESE TITOLO
-es. <root archivio media>/2024/2024 12 Borgo Montello Natale/
+es. ```<root archivio media>/2024/2024 12 Borgo Montello Natale/```
+
 Insieme alle immagini originali, ci possono essere dei thumbnail, dei video (vario formato a seconda del dispositivo di acquisizione), dei file txt con alcuni dettagli, file di lavoro estranei come per esempio i modelli 3D derivati dalle immagini stesse o i certificati di calibrazione della fotocamera.
 Le foto possono inoltre essere incluse anche in sotto cartelle come "lightroom" o "raw" ad indicare lo stato di elaborazione, il formato e l'eventuale ricampionamento. 
 Immagini e video possono essere stati acquisiti con fotocamere diverse, es. Nikon D200, D50, D90... o Canon (foto di terzi), oppure con smartphone, o infine essere state scannerizzate da stampa.
