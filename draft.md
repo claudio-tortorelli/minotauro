@@ -40,9 +40,26 @@ Occorre eseguire una stima più precisa, ma i singoli file sono nell'ordine dell
 
 ## Descrizione alto livello
 Il software si compone di una serie di tool o procedure concatenate inserite all'interno di un flusso che si ipotizza essere il seguente:
-- definizione di un file di configurazione con a titolo di esempio: dimensione thumbnail
+- definizione di un file di configurazione. A titolo di esempio: dimensione thumbnail, path del DB, ecc.
+- avvio del processo di scansione dell'archivio indicato | creazione (se non già presente) e inserimento degli elementi nel DB locale
+- generazione delle thumbnail 
+- estrapolazione delle informazioni provenienti da attributi fisici del file o exif | archiviazione ed estrapolazione dei dati relativi ai nomi di cartella e/o file accessori
+- tentativo di attribuzione tag geografici per ogni immagine
+- attribuzione automatica di tag
+- generazione di una descrizione breve di X parole
+- estrazione dei tile dei volti associati ad ogni immagine
+- match automatico tra i volti associabili
+- richiesta informazioni per i volti non classificati o con rating di identificazione basso
 
-## Componenti
+Questo flusso può essere interrotto e ripreso in quanto si salva lo step e l'indice dell'immagine ultima processata.
+
+Inoltre dovrà essere sviluppata una semplice interfaccia di ricerca nel DB costituito. 
+
+### Linguaggi di sviluppo
+Si prevede di implementare i singoli step operativi tramite Python e OpenCV oppure Python e modelli caricati e interrogati localmente via Ollama.
+L'orchestratore generale e la gestione del DB invece è prevista con Java.
+
+## Componenti operative
 
 
 ## Modalità di sviluppo
