@@ -61,7 +61,7 @@ L'orchestratore generale e la gestione del DB invece è prevista con Java. Il DB
 
 ## Componenti operative
 Di seguito le componenti del tool, con le relative sotto parti o funzioni
-- [JAVA] main del programma, legge i parametri da command line e il file di configurazione per poi avviare di conseguenza il flusso
+- [JAVA][MAIN] main del programma, legge i parametri da command line e il file di configurazione per poi avviare di conseguenza il flusso
 - [JAVA][CONF] gestore del file di configurazione in lettura e scrittura. Il file di conf è un file di json
 - [JAVA][DB] gestore del file DB con SQLite
 
