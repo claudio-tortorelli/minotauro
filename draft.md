@@ -57,10 +57,13 @@ Inoltre dovrà essere sviluppata una semplice interfaccia di ricerca nel DB cost
 
 ### Linguaggi di sviluppo
 Si prevede di implementare i singoli step operativi tramite Python e OpenCV oppure Python e modelli caricati e interrogati localmente via Ollama.
-L'orchestratore generale e la gestione del DB invece è prevista con Java.
+L'orchestratore generale e la gestione del DB invece è prevista con Java. Il DB è un file SQLite
 
 ## Componenti operative
-
+Di seguito le componenti del tool, con le relative sotto parti o funzioni
+- [JAVA] main del programma, legge i parametri da command line e il file di configurazione per poi avviare di conseguenza il flusso
+- [JAVA][CONF] gestore del file di configurazione in lettura e scrittura. Il file di conf è un file di json
+- [JAVA][DB] gestore del file DB con SQLite
 
 ## Modalità di sviluppo
 Si vuole verificare la possibilità di eseguire la maggior parte dell'attività di sviluppo delle singole componenti tramite coding con modelli AI, ai quali fornire dei precisi requisiti basati su questo draft.
