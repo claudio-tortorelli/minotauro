@@ -6,6 +6,6 @@ A classification image tool set for personal dataset
 ---------
 
 - <a href="draft.md">Draft del progetto</a>
-- componenti
+- <a href="componenti.md">Componenti</a>
 
 
