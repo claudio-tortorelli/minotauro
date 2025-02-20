@@ -1,1 +1,13 @@
-in
+Create a Java 1.8 compatible main class.
+This class can be executable from command line.
+When it starts it must print the tool version on standard output.
+
+Then it do the command line argument parsing examinating the possibile switches: 
+if there is --c or --config then the next argument is the path of the custom configuration file.
+Any other switch is not accepted and the tool must exit with 1 printing the help on the standard error.
+If no argument is provided, then it will use a configuration file path that must be in the same folder of the tool.
+
+Then the tool begin to initialize the logger.
+
+When the tool ends without errors it return to the system the 0 value.
+
