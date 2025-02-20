@@ -1,5 +1,4 @@
 # Componenti
-----
 
 Indice delle pagine componenti
 
