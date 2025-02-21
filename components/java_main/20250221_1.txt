@@ -1,0 +1,14 @@
+Create a Java 1.8 compatible main class named Minotauro as a part of a maven POM project.
+This class is executable and take parameters from command line.
+When it starts it must print the tool version on standard output.
+Version informations come from project resources or by POM.
+
+Then it do the command line argument parsing examinating the possibile switches: 
+if there is --c or --config then the next argument is the path of the custom configuration file.
+Any other switch is not accepted and the tool must exit with 1 printing the help on the standard error.
+If no argument is provided, then it will use a configuration file path that must be in the same folder of the tool.
+This argument parsing must be done in a private function called inside main.
+
+Then the tool initialize the logger based on SLF4J and it put at log level read by configuration.
+
+When the tool ends without errors it return to the system the 0 value.
