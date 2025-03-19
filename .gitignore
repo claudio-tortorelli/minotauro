@@ -24,3 +24,5 @@ hs_err_pid*
 replay_pid*
 /src/minotauro/target/
 /src/Ollama/target/
+/src/Utils/target/
+/src/ImgDescriptor/target/

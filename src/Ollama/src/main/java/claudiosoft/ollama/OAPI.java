@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * Wrap Ollama4j api
  *
  * @author claudio.tortorelli
  */

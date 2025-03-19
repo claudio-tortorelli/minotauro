@@ -1,14 +1,23 @@
 package claudiosoft.minotauro;
 
+import java.io.File;
+import java.io.IOException;
+
 public class Minotauro {
 
+    private static String configFilePath;
+    private static Config config;
+
 //    private static final Logger logger = LoggerFactory.getLogger(Minotauro.class);
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // Print the tool version on standard output
         System.out.println("Minotauro v1.0");
 
         // Parse command line arguments and check for unknown switches
+        configFilePath = "../../config/config.ini";
         parseArgs(args);
+
+        config = new Config(new File(configFilePath));
 
         // Initialize SLF4J logger based on configuration
         // ...
@@ -28,7 +37,7 @@ public class Minotauro {
 
             if (arg.startsWith("--c") || arg.startsWith("--config")) {
                 // Set the custom configuration file path
-                String configFilePath = args[++i];
+                configFilePath = args[++i];
             } else {
                 System.err.println("Unknown switch: " + arg);
                 System.exit(1);
