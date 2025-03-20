@@ -26,3 +26,6 @@ replay_pid*
 /src/Ollama/target/
 /src/Utils/target/
 /src/ImgDescriptor/target/
+/src/Teseo/target/
+/src/Indexer/target/
+src/Teseo/nbactions.xml

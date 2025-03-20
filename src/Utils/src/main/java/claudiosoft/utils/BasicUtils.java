@@ -3,6 +3,8 @@
  */
 package claudiosoft.utils;
 
+import claudiosoft.commons.CTException;
+import claudiosoft.commons.Constants;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
@@ -26,6 +28,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +43,9 @@ import java.util.UUID;
  * Some usefull common utilities
  */
 public class BasicUtils {
+
+    public static DateTimeFormatter DT_FORMATTER = DateTimeFormatter.BASIC_ISO_DATE;
+    public static DateTimeFormatter T_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     private static RandomAccessFile lockFis = null;
     private static FileLock fileLock;
@@ -83,17 +92,46 @@ public class BasicUtils {
         return sdf.parse(date);
     }
 
+    public static LocalDate stringToLocalDate(String dateAAAAMMDD) throws DateTimeParseException {
+        LocalDate localDate = LocalDate.parse(dateAAAAMMDD, DT_FORMATTER);
+        return localDate;
+    }
+
+    public static String localDateToString(LocalDate dateAAAAMMDD) throws DateTimeParseException {
+        return dateAAAAMMDD.format(DT_FORMATTER);
+    }
+
+    public static String nowToString() {
+        return nowToString(DT_FORMATTER);
+    }
+
+    public static String nowToString(DateTimeFormatter formatter) {
+        return LocalDateTime.now().format(formatter);
+    }
+
+    public static LocalDate getShiftDateFromNow(int days) {
+        return getShiftDate(LocalDate.now(), days);
+    }
+
+    public static LocalDate getShiftDate(LocalDate date, int days) {
+        return date.plusDays(days);
+    }
+
+    public static String timeToString(LocalDateTime dateTime) {
+        return dateTime.format(T_FORMATTER); //TODO hour only
+    }
+
     public static String getJarFolder() throws URISyntaxException {
         return new File(BasicUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getAbsolutePath();
     }
 
-    public static void testLockFile(File testFile) throws MinException {
+    public static void testLockFile(File testFile) throws CTException {
 
         try (RandomAccessFile fis = new RandomAccessFile(testFile, "rw")) {
             FileLock lck = fis.getChannel().tryLock();
             lck.release();
         } catch (Exception ex) {
-            throw new MinException("Locked");
+            throw new CTException("Locked");
         }
         // try further with rename
         String parent = testFile.getParent();
@@ -102,7 +140,7 @@ public class BasicUtils {
         if (testFile.renameTo(newName)) {
             newName.renameTo(testFile);
         } else {
-            throw new MinException("Locked");
+            throw new CTException("Locked");
         }
     }
 
@@ -116,7 +154,7 @@ public class BasicUtils {
         lockFis.close();
     }
 
-    public static void deleteDirectory(File directoryToBeDeleted) throws MinException {
+    public static void deleteDirectory(File directoryToBeDeleted) throws CTException {
         if (!directoryToBeDeleted.exists()) {
             return;
         }
@@ -173,6 +211,23 @@ public class BasicUtils {
         } catch (IOException ioe) {
             // ignore
         }
+    }
+
+    public static byte[] getSHA1(String text) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-1");
+        byte[] hash = digest.digest(text.getBytes(StandardCharsets.UTF_8));
+        return hash;
+    }
+
+    public static byte[] getSHA1(InputStream inputStream) throws NoSuchAlgorithmException, IOException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-1");
+        byte[] dataBuffer = new byte[Constants.BUFFER_SIZE];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(dataBuffer)) >= 0) {
+            digest.update(dataBuffer, 0, bytesRead);
+        }
+        byte[] hash = digest.digest();
+        return hash;
     }
 
     public static byte[] getSHA256(String text) throws NoSuchAlgorithmException {
