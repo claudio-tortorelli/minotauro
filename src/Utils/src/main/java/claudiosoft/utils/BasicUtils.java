@@ -125,6 +125,16 @@ public class BasicUtils {
         return new File(BasicUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getAbsolutePath();
     }
 
+    public static String getExtension(String filePath) {
+        String extension = "";
+        int i = filePath.lastIndexOf('.');
+        int p = Math.max(filePath.lastIndexOf('/'), filePath.lastIndexOf('\\'));
+        if (i > p) {
+            extension = filePath.substring(i + 1);
+        }
+        return extension;
+    }
+
     public static void testLockFile(File testFile) throws CTException {
 
         try (RandomAccessFile fis = new RandomAccessFile(testFile, "rw")) {

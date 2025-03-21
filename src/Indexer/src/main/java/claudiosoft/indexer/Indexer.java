@@ -1,6 +1,7 @@
 package claudiosoft.indexer;
 
 import claudiosoft.commons.CTException;
+import claudiosoft.utils.BasicUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -8,6 +9,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.PathMatcher;
 import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,6 +25,7 @@ public class Indexer {
     private PathMatcher matcher;
     private List<String> indexData;
     private File visitIndex;
+    private HashMap<String, String> extensions;
 
     public Indexer(File root, File index) throws CTException {
         this(root, index, "*");
@@ -47,13 +50,14 @@ public class Indexer {
 
         matcher = FileSystems.getDefault().getPathMatcher("glob:" + globFilter);
         indexData = new LinkedList<>();
+        extensions = new HashMap<>();
     }
 
     public void buildIndex() throws IOException {
         buildIndex(true);
     }
 
-    public void buildIndex(boolean recursive) throws IOException {
+    public synchronized void buildIndex(boolean recursive) throws IOException {
         if (index.exists()) {
             return;
         }
@@ -70,13 +74,13 @@ public class Indexer {
     }
 
     private void addFolder(File folder, boolean recursive) throws IOException {
-
         File[] children = folder.listFiles();
         if (children != null) {
             for (File child : children) {
                 if (child.isFile() && !Files.isSymbolicLink(child.toPath()) && matcher.matches(child.toPath().getFileName())) {
-                    String line = String.format("%s\n", child.getCanonicalPath());
-                    Files.write(index.toPath(), line.getBytes(), StandardOpenOption.APPEND);
+                    String path = child.getCanonicalPath();
+                    extensions.put(BasicUtils.getExtension(path), "");
+                    Files.write(index.toPath(), String.format("%s\n", path).getBytes(), StandardOpenOption.APPEND);
                 } else if (child.isDirectory() && recursive) {
                     addFolder(child, recursive);
                 }
@@ -84,7 +88,22 @@ public class Indexer {
         }
     }
 
-    public synchronized File visitNext() throws CTException, IOException {
+    public List<String> getExtensions() {
+        List<String> exts = new LinkedList<>();
+        for (String ext : extensions.keySet()) {
+            exts.add(ext);
+        }
+        return exts;
+    }
+
+    public synchronized String getVisitIndex() throws IOException {
+        if (!visitIndex.exists()) {
+            return "";
+        }
+        return String.format("%d/%d", Integer.parseInt(Files.readString(visitIndex.toPath())) + 1, indexData.size());
+    }
+
+    public synchronized File startVisit() throws CTException, IOException {
         if (!index.exists()) {
             throw new CTException("index must be built");
         }
@@ -94,15 +113,31 @@ public class Indexer {
         if (indexData.isEmpty()) {
             indexData = Files.readAllLines(index.toPath(), StandardCharsets.UTF_8);
         }
-        int maxFile = indexData.size();
         int nextFile = 0;
         if (!visitIndex.exists()) {
             visitIndex.createNewFile();
+            Files.writeString(visitIndex.toPath(), String.format("%d", nextFile), StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING);
         } else {
+            // previous visit was stopped so continue 
             String visLine = Files.readString(visitIndex.toPath());
-            nextFile = Integer.parseInt(visLine) + 1;
+            nextFile = Integer.parseInt(visLine);
         }
-        if (nextFile == maxFile) {
+        return new File(indexData.get(nextFile));
+    }
+
+    public synchronized File visitNext() throws CTException, IOException {
+        if (!index.exists()) {
+            throw new CTException("index must be built");
+        }
+        if (!index.canRead()) {
+            throw new CTException("cannot read index");
+        }
+        if (indexData.isEmpty() || !visitIndex.exists()) {
+            throw new CTException("visit must be started");
+        }
+        String visLine = Files.readString(visitIndex.toPath());
+        int nextFile = Integer.parseInt(visLine) + 1;
+        if (nextFile == indexData.size()) {
             reset();
             return null;
         }
@@ -110,7 +145,7 @@ public class Indexer {
         return new File(indexData.get(nextFile));
     }
 
-    public void reset() throws CTException {
+    private void reset() throws CTException {
         if (!index.exists()) {
             throw new CTException("index must be built");
         }
