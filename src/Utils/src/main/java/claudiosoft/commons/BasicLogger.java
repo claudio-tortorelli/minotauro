@@ -1,5 +1,5 @@
 /**
- * JarBoxProject - https://github.com/claudio-tortorelli/JarBox/
+ *
  *
  * MIT License - 2021
  */

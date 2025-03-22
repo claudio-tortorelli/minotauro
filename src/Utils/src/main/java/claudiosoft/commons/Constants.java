@@ -6,7 +6,7 @@ package claudiosoft.commons;
 import java.util.TimeZone;
 
 /**
- * Jarbox project constants
+ * project constants
  */
 public class Constants {
 

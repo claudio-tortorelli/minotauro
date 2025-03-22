@@ -1,5 +1,6 @@
 package claudiosoft.indexer;
 
+import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTException;
 import claudiosoft.utils.BasicUtils;
 import java.io.File;
@@ -26,6 +27,7 @@ public class Indexer {
     private List<String> indexData;
     private File visitIndex;
     private HashMap<String, String> extensions;
+    private BasicLogger logger;
 
     public Indexer(File root, File index) throws CTException {
         this(root, index, "*");
@@ -51,6 +53,8 @@ public class Indexer {
         matcher = FileSystems.getDefault().getPathMatcher("glob:" + globFilter);
         indexData = new LinkedList<>();
         extensions = new HashMap<>();
+
+        logger = BasicLogger.get();
     }
 
     public void buildIndex() throws IOException {
@@ -66,7 +70,9 @@ public class Indexer {
         }
         try {
             index.createNewFile();
+            logger.info("start building index");
             addFolder(root, recursive);
+            logger.info("end building index");
             tempIndex.delete();
         } finally {
 
