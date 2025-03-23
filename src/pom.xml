@@ -13,9 +13,10 @@
     <modules>
         <module>Teseo</module>
         <module>Ollama</module>
-        <module>ImgDescriptor</module>
         <module>Utils</module>
         <module>Indexer</module>
+        <module>TransientImage</module>
+        <module>ImagePlugin</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -39,7 +40,7 @@
             </dependency>      
             <dependency>
                 <groupId>claudiosoft</groupId>
-                <artifactId>ImgDescriptor</artifactId>
+                <artifactId>TransientImage</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>                   
             <dependency>

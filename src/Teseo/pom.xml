@@ -21,7 +21,7 @@
         </dependency>      
         <dependency>
             <groupId>claudiosoft</groupId>
-            <artifactId>ImgDescriptor</artifactId>
+            <artifactId>TransientImage</artifactId>
         </dependency>                   
         <dependency>
             <groupId>claudiosoft</groupId>
