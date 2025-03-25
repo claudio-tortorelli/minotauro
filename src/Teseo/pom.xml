@@ -14,7 +14,7 @@
         <groupId>claudiosoft</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <dependencies>       
+    <dependencies>             
         <dependency>
             <groupId>claudiosoft</groupId>
             <artifactId>Ollama</artifactId>
@@ -26,7 +26,11 @@
         <dependency>
             <groupId>claudiosoft</groupId>
             <artifactId>Utils</artifactId>
-        </dependency>   
+        </dependency>  
+        <dependency>
+            <groupId>claudiosoft</groupId>
+            <artifactId>Indexer</artifactId>
+        </dependency>     
                
         <dependency>
             <groupId>org.ini4j</groupId>

@@ -1,7 +1,9 @@
 package claudiosoft.minotauro;
 
 import claudiosoft.commons.BasicLogger;
+import claudiosoft.commons.CTException;
 import claudiosoft.commons.Constants;
+import claudiosoft.indexer.Indexer;
 import java.io.File;
 import java.io.IOException;
 
@@ -12,24 +14,59 @@ public class Minotauro {
     private static BasicLogger logger;
 
 //    private static final Logger logger = LoggerFactory.getLogger(Minotauro.class);
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, CTException {
         // Print the tool version on standard output
         System.out.println("Minotauro v1.0");
-        logger = BasicLogger.get(BasicLogger.LogLevel.DEBUG, Constants.LOGGER_NAME);
-        File logFile = new File("./minotauro.log");
-        logger.addFileHandler(logFile);
-        logger.info("Minotauro v1.0");
-        logger.info("----------------------");
 
-        // Parse command line arguments and check for unknown switches
         configFilePath = "../../config/config.ini";
         parseArgs(args);
 
         config = new Config(new File(configFilePath));
 
-        // Initialize SLF4J logger based on configuration
-        // ...
-        // Do some work...
+        //////
+        logger = BasicLogger.get(BasicLogger.LogLevel.NONE, Constants.LOGGER_NAME);
+        if (config.get("logger", "enable").equalsIgnoreCase("true")) {
+            //  setup logger by config
+            BasicLogger.LogLevel logLevel = BasicLogger.LogLevel.NORMAL;
+            if (config.get("logger", "level").equalsIgnoreCase("debug")) {
+                logLevel = BasicLogger.LogLevel.DEBUG;
+            }
+            logger = BasicLogger.get(logLevel, Constants.LOGGER_NAME);
+
+            String logFile = config.get("logger", "filePath");
+            if (!logFile.isEmpty()) {
+                logger.addFileHandler(new File(logFile));
+            } else {
+                logger.addFileHandler(new File("./minotauro.log"));
+            }
+        }
+        logger.info("Minotauro v1.0");
+        logger.info("----------------------");
+
+        if (config.get("index", "build").equalsIgnoreCase("true")) {
+            logger.info("start building index");
+            String rootFolder = config.get("index", "rootPath");
+            String index = config.get("index", "indexPath");
+            if (rootFolder.isEmpty() || index.isEmpty()) {
+                throw new CTException("root folder and index path are required");
+            }
+            String filter = config.get("index", "filter");
+            Indexer indexer = new Indexer(new File(rootFolder), new File(index));
+            if (!index.isEmpty()) {
+                indexer = new Indexer(new File(rootFolder), new File(index), filter);
+            }
+            indexer.buildIndex();
+            logger.info("extensions:");
+            for (String ext : indexer.getExtensions()) {
+                logger.info(ext);
+            }
+            logger.info("end building index");
+        }
+
+        if (config.get("plugins", "").equalsIgnoreCase("true")) {
+
+        }
+
         // If the tool ends without errors, return 0 to the system
         System.exit(0);
     }

@@ -1,5 +1,6 @@
 package claudiosoft.minotauro;
 
+import claudiosoft.commons.CTException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -19,14 +20,14 @@ public class Config {
         ini.load(new FileReader(configFile));
     }
 
-    public String get(String sectionName, String property) throws Exception {
+    public String get(String sectionName, String property) throws CTException {
         return get(sectionName, property, "");
     }
 
-    public String get(String sectionName, String property, String defaultValue) throws Exception {
+    public String get(String sectionName, String property, String defaultValue) throws CTException {
         Ini.Section section = ini.get(sectionName);
         if (section == null) {
-            throw new Exception("section undefined");
+            throw new CTException("section undefined");
         }
         String prop = section.get(property);
         if (prop == null) {
