@@ -10,9 +10,9 @@ import java.io.File;
 public class TestLogger {
 
     public static void main(String[] args) throws Exception {
-        BasicLogger logger = BasicLogger.get(BasicLogger.LogLevel.DEBUG, Constants.LOGGER_NAME);
+
         File logFile = new File("./target/test.log");
-        logger.addFileHandler(logFile);
+        BasicLogger logger = BasicLogger.get(BasicLogger.LogLevel.DEBUG, Constants.LOGGER_NAME, logFile);
 
         logger.info("logger started");
         logger.debug("debug active");

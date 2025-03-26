@@ -24,27 +24,25 @@ public class Minotauro {
         config = new Config(new File(configFilePath));
 
         //////
-        logger = BasicLogger.get(BasicLogger.LogLevel.NONE, Constants.LOGGER_NAME);
+        logger = null;
         if (config.get("logger", "enable").equalsIgnoreCase("true")) {
             //  setup logger by config
             BasicLogger.LogLevel logLevel = BasicLogger.LogLevel.NORMAL;
             if (config.get("logger", "level").equalsIgnoreCase("debug")) {
                 logLevel = BasicLogger.LogLevel.DEBUG;
             }
-            logger = BasicLogger.get(logLevel, Constants.LOGGER_NAME);
-
             String logFile = config.get("logger", "filePath");
-            if (!logFile.isEmpty()) {
-                logger.addFileHandler(new File(logFile));
-            } else {
-                logger.addFileHandler(new File("./minotauro.log"));
+            if (logFile.isEmpty()) {
+                logFile = "./minotauro.log";
             }
+            logger = BasicLogger.get(logLevel, Constants.LOGGER_NAME, new File(logFile));
+        } else {
+            logger = BasicLogger.get(BasicLogger.LogLevel.NONE, Constants.LOGGER_NAME);
         }
         logger.info("Minotauro v1.0");
         logger.info("----------------------");
 
         if (config.get("index", "build").equalsIgnoreCase("true")) {
-            logger.info("start building index");
             String rootFolder = config.get("index", "rootPath");
             String index = config.get("index", "indexPath");
             if (rootFolder.isEmpty() || index.isEmpty()) {
@@ -60,7 +58,6 @@ public class Minotauro {
             for (String ext : indexer.getExtensions()) {
                 logger.info(ext);
             }
-            logger.info("end building index");
         }
 
         if (config.get("plugins", "").equalsIgnoreCase("true")) {

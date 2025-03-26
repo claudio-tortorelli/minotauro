@@ -38,22 +38,26 @@ public class BasicLogger {
 
     private static BasicLogger logger;
 
-    public static BasicLogger get() {
+    public static BasicLogger get() throws SecurityException, IOException {
         return get(LogLevel.NORMAL);
     }
 
-    public static BasicLogger get(LogLevel level) {
+    public static BasicLogger get(LogLevel level) throws SecurityException, IOException {
         return get(level, "Logger");
     }
 
-    public static BasicLogger get(LogLevel level, String logName) {
+    public static BasicLogger get(LogLevel level, String logName) throws SecurityException, IOException {
+        return get(level, "Logger", null);
+    }
+
+    public static BasicLogger get(LogLevel level, String logName, File logFile) throws SecurityException, IOException {
         if (logger == null) {
-            logger = new BasicLogger(level, logName);
+            logger = new BasicLogger(level, logName, logFile);
         }
         return logger;
     }
 
-    private BasicLogger(LogLevel level, String logName) {
+    private BasicLogger(LogLevel level, String logName, File logFile) throws SecurityException, IOException {
         internalLogger = Logger.getLogger(logName);
         Handler handlerObj = new ConsoleHandler();
 
@@ -72,29 +76,28 @@ public class BasicLogger {
                 break;
         }
         internalLogger.addHandler(handlerObj);
+        if (logFile != null) {
+            FileHandler fileHandler = new FileHandler(logFile.getAbsolutePath(), true);
+            fileHandler.setFormatter(new SimpleFormatter());
+            internalLogger.addHandler(fileHandler);
+        }
         internalLogger.setUseParentHandlers(false);
         this.level = level;
     }
 
-    public void addFileHandler(File logFile) throws SecurityException, IOException {
-        FileHandler fileHandler = new FileHandler(logFile.getAbsolutePath(), true);
-        fileHandler.setFormatter(new SimpleFormatter());
-        internalLogger.addHandler(fileHandler);
-    }
-
-    public void info(String message) {
+    public synchronized void info(String message) {
         internalLogger.log(Level.INFO, "[INFO] {0}", message);
     }
 
-    public void warn(String message) {
+    public synchronized void warn(String message) {
         internalLogger.log(Level.WARNING, "[WARN] {0}", message);
     }
 
-    public void error(String message) {
+    public synchronized void error(String message) {
         error(message, null);
     }
 
-    public void error(String message, Exception ex) {
+    public synchronized void error(String message, Exception ex) {
         if (ex != null) {
             internalLogger.log(Level.SEVERE, "[ERROR] " + message, ex);
         } else {
@@ -102,7 +105,7 @@ public class BasicLogger {
         }
     }
 
-    public void debug(String message) {
+    public synchronized void debug(String message) {
         if (level == LogLevel.DEBUG) {
             internalLogger.log(Level.INFO, "[DEBUG] {0}", message);
         }

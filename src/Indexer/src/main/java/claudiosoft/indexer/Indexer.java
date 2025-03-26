@@ -29,11 +29,11 @@ public class Indexer {
     private HashMap<String, String> extensions;
     private BasicLogger logger;
 
-    public Indexer(File root, File index) throws CTException {
+    public Indexer(File root, File index) throws CTException, SecurityException, IOException {
         this(root, index, "*");
     }
 
-    public Indexer(File root, File index, String globFilter) throws CTException {
+    public Indexer(File root, File index, String globFilter) throws CTException, SecurityException, IOException {
         this.root = root;
         this.index = index;
         if (!root.exists()) {
