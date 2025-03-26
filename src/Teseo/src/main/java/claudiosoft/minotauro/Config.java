@@ -27,7 +27,7 @@ public class Config {
     public String get(String sectionName, String property, String defaultValue) throws CTException {
         Ini.Section section = ini.get(sectionName);
         if (section == null) {
-            throw new CTException("section undefined");
+            throw new CTException("section undefined: " + sectionName);
         }
         String prop = section.get(property);
         if (prop == null) {

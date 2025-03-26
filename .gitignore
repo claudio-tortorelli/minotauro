@@ -31,3 +31,4 @@ replay_pid*
 src/Teseo/nbactions.xml
 /src/TransientImage/target/
 /src/ImagePlugin/target/
+src/Teseo/index.txt

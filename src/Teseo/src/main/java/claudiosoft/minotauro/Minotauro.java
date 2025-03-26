@@ -52,11 +52,11 @@ public class Minotauro {
             }
             String filter = config.get("index", "filter");
             Indexer indexer = new Indexer(new File(rootFolder), new File(index));
-            if (!index.isEmpty()) {
+            if (!filter.isEmpty()) {
                 indexer = new Indexer(new File(rootFolder), new File(index), filter);
             }
             indexer.buildIndex();
-            logger.info("extensions:");
+            logger.info("extensions found:");
             for (String ext : indexer.getExtensions()) {
                 logger.info(ext);
             }
@@ -72,11 +72,6 @@ public class Minotauro {
     }
 
     private static void parseArgs(String[] args) {
-        if (args.length == 0) {
-            System.err.println("No arguments provided");
-            System.exit(1);
-        }
-
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
 
