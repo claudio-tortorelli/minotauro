@@ -1,6 +1,6 @@
 package config;
 
-import claudiosoft.minotauro.Config;
+import claudiosoft.commons.Config;
 import java.io.File;
 
 /**

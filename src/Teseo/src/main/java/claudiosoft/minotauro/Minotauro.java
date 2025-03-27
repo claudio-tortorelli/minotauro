@@ -2,10 +2,17 @@ package claudiosoft.minotauro;
 
 import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTException;
+import claudiosoft.commons.Config;
 import claudiosoft.commons.Constants;
+import claudiosoft.imageplugin.plugins.BasePlugin;
 import claudiosoft.indexer.Indexer;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 
 public class Minotauro {
 
@@ -14,7 +21,7 @@ public class Minotauro {
     private static BasicLogger logger;
 
 //    private static final Logger logger = LoggerFactory.getLogger(Minotauro.class);
-    public static void main(String[] args) throws IOException, CTException {
+    public static void main(String[] args) throws IOException, CTException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         // Print the tool version on standard output
         System.out.println("Minotauro v1.0");
 
@@ -23,49 +30,94 @@ public class Minotauro {
 
         config = new Config(new File(configFilePath));
 
-        //////
-        logger = null;
-        if (config.get("logger", "enable").equalsIgnoreCase("true")) {
-            //  setup logger by config
-            BasicLogger.LogLevel logLevel = BasicLogger.LogLevel.NORMAL;
-            if (config.get("logger", "level").equalsIgnoreCase("debug")) {
-                logLevel = BasicLogger.LogLevel.DEBUG;
-            }
-            String logFile = config.get("logger", "filePath");
-            if (logFile.isEmpty()) {
-                logFile = "./minotauro.log";
-            }
+        BasicLogger.LogLevel logLevel = BasicLogger.LogLevel.NORMAL;
+        if (config.get("logger", "level").equalsIgnoreCase("debug")) {
+            logLevel = BasicLogger.LogLevel.DEBUG;
+        }
+        if (config.get("logger", "toFile", "true").equalsIgnoreCase("true")) {
+            String logFile = config.get("logger", "filePath", "./minotauro.log");
             logger = BasicLogger.get(logLevel, Constants.LOGGER_NAME, new File(logFile));
         } else {
-            logger = BasicLogger.get(BasicLogger.LogLevel.NONE, Constants.LOGGER_NAME);
+            // console logger
+            logger = BasicLogger.get(logLevel, Constants.LOGGER_NAME);
         }
+        logger.info("----------------------");
         logger.info("Minotauro v1.0");
         logger.info("----------------------");
 
-        if (config.get("index", "build").equalsIgnoreCase("true")) {
-            String rootFolder = config.get("index", "rootPath");
-            String index = config.get("index", "indexPath");
-            if (rootFolder.isEmpty() || index.isEmpty()) {
-                throw new CTException("root folder and index path are required");
+        String rootFolder = config.get("index", "rootPath");
+        String index = config.get("index", "indexPath");
+        if (rootFolder.isEmpty() || index.isEmpty()) {
+            throw new CTException("root folder and index path are required");
+        }
+        String filter = config.get("index", "filter");
+        Indexer indexer = new Indexer(new File(rootFolder), new File(index));
+        if (!filter.isEmpty()) {
+            indexer = new Indexer(new File(rootFolder), new File(index), filter);
+        }
+        indexer.buildIndex();
+
+        LinkedList<BasePlugin> pluginList = new LinkedList<>();
+        String nPlug = config.get("plugins", "plugins_num", "0");
+        int nPlugin = Integer.parseInt(nPlug);
+        final Class<?>[] defaultConstructor = {int.class};
+        for (int iPlug = 0; iPlug < nPlugin; iPlug++) {
+            // instance classes by names
+            String pluginId = String.format("plugin_%02d", iPlug + 1);
+            String pluginName = config.get("plugins", pluginId);
+            String pluginClassName = String.format("claudiosoft.imageplugin.plugins.%s", pluginName);
+
+            int step = Integer.parseInt(config.get(pluginName, "step", "0"));
+            boolean enabled = Boolean.parseBoolean(config.get(pluginName, "enabled", "false"));
+            if (!enabled) {
+                logger.warn(String.format("plugin %s is not enabled", pluginName));
+                continue;
             }
-            String filter = config.get("index", "filter");
-            Indexer indexer = new Indexer(new File(rootFolder), new File(index));
-            if (!filter.isEmpty()) {
-                indexer = new Indexer(new File(rootFolder), new File(index), filter);
-            }
-            indexer.buildIndex();
-            logger.info("extensions found:");
-            for (String ext : indexer.getExtensions()) {
-                logger.info(ext);
-            }
+
+            Class<?> clazz = Class.forName(pluginClassName);
+            Constructor<?> constructor = clazz.getConstructor(defaultConstructor);
+            pluginList.add((BasePlugin) constructor.newInstance(step));
         }
 
-        if (config.get("plugins", "").equalsIgnoreCase("true")) {
-
+        // if no enabled plugin are present, terminate
+        if (pluginList.isEmpty()) {
+            logger.info("no enabled plugin found");
+            System.exit(0);
         }
 
-        // If the tool ends without errors, return 0 to the system
-        System.exit(0);
+        logger.info(String.format("%d plugins loaded", pluginList.size()));
+
+        // sort plugin by ascending by step
+        Collections.sort(pluginList, new Comparator<BasePlugin>() {
+            @Override
+            public int compare(BasePlugin a, BasePlugin b) {
+                if (a.getStep() < b.getStep()) {
+                    return -1;
+                } else if (a.getStep() == b.getStep()) {
+                    return 0;
+                }
+                return 1;
+            }
+        });
+
+        // for each image in the index execute enabled plugin using multithread
+        int nPluginThread = Integer.parseInt(config.get("threads", "plugin_threads", "1"));
+
+        logger.info("start plugin process");
+        File curImage = indexer.startVisit();
+        while (curImage != null) {
+            logger.debug(String.format("processing image %s", curImage.getCanonicalPath()));
+
+            // apply plugins
+            for (BasePlugin plugin : pluginList) {
+                plugin.init(config);
+                plugin.apply();
+            }
+            curImage = indexer.visitNext();
+        }
+
+        logger.info("end process");
+        System.exit(0); // If the tool ends without errors, return 0 to the system
     }
 
     private static void parseArgs(String[] args) {

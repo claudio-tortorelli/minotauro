@@ -63,6 +63,7 @@ public class Indexer {
 
     public synchronized void buildIndex(boolean recursive) throws IOException {
         if (index.exists()) {
+            logger.info(String.format("index already present in %s", index.getCanonicalPath()));
             return;
         }
         if (!tempIndex.exists()) {
@@ -70,10 +71,14 @@ public class Indexer {
         }
         try {
             index.createNewFile();
-            logger.info("start building index");
+            logger.info("building index");
             addFolder(root, recursive);
-            logger.info("end building index");
             tempIndex.delete();
+
+            logger.info("index extensions found:");
+            for (String ext : getExtensions()) {
+                logger.info(" - " + ext);
+            }
         } finally {
 
         }

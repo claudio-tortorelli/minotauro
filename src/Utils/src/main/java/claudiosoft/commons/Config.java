@@ -1,6 +1,5 @@
-package claudiosoft.minotauro;
+package claudiosoft.commons;
 
-import claudiosoft.commons.CTException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;

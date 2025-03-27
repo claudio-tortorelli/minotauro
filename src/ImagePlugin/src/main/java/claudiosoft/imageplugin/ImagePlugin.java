@@ -1,6 +1,7 @@
 package claudiosoft.imageplugin;
 
 import claudiosoft.commons.CTException;
+import claudiosoft.commons.Config;
 
 /**
  *
@@ -8,9 +9,8 @@ import claudiosoft.commons.CTException;
  */
 public interface ImagePlugin {
 
-    public void init() throws CTException;
+    public void init(Config config) throws CTException;
 
-    public void doIt() throws CTException;
+    public void apply() throws CTException;
 
-    public void publish() throws CTException;
 }

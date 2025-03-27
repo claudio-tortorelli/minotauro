@@ -30,12 +30,12 @@
         <dependency>
             <groupId>claudiosoft</groupId>
             <artifactId>Indexer</artifactId>
-        </dependency>     
-               
+        </dependency>                   
         <dependency>
-            <groupId>org.ini4j</groupId>
-            <artifactId>ini4j</artifactId>
-        </dependency>     
+            <groupId>claudiosoft</groupId>
+            <artifactId>ImagePlugin</artifactId>
+        </dependency>                   
+        
     </dependencies>
    
     <build>        
