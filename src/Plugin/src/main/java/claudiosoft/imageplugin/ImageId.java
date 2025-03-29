@@ -1,5 +1,6 @@
-package claudiosoft.imageplugin.plugins;
+package claudiosoft.imageplugin;
 
+import claudiosoft.imageplugin.BaseImagePlugin;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 
@@ -7,7 +8,7 @@ import claudiosoft.commons.Config;
  *
  * @author claudio.tortorelli
  */
-public class ImageId extends BasePlugin {
+public class ImageId extends BaseImagePlugin {
 
     public ImageId(int step) {
         super(step);

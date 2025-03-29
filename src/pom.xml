@@ -11,12 +11,12 @@
         <tag>HEAD</tag>
     </scm>
     <modules>
-        <module>Teseo</module>
+        <module>Mino</module>
         <module>Ollama</module>
         <module>Utils</module>
         <module>Indexer</module>
         <module>TransientImage</module>
-        <module>ImagePlugin</module>
+        <module>Plugin</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -55,7 +55,7 @@
             </dependency>   
             <dependency>
                 <groupId>claudiosoft</groupId>
-                <artifactId>ImagePlugin</artifactId>
+                <artifactId>Plugin</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>   
                

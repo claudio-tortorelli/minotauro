@@ -1,21 +1,21 @@
-package claudiosoft.imageplugin.plugins;
+package claudiosoft.imageplugin;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
-import claudiosoft.imageplugin.ImagePlugin;
+import claudiosoft.plugin.ImagePlugin;
 import java.io.File;
 
 /**
  *
  * @author claudio.tortorelli
  */
-public abstract class BasePlugin implements ImagePlugin {
+public abstract class BaseImagePlugin implements ImagePlugin {
 
     protected int step;
     protected File imageFile;
     protected Config config;
 
-    public BasePlugin(int step) {
+    public BaseImagePlugin(int step) {
         this.step = step;
     }
 

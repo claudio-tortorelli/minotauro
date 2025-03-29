@@ -4,7 +4,7 @@ import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.commons.Constants;
-import claudiosoft.imageplugin.plugins.BasePlugin;
+import claudiosoft.imageplugin.BaseImagePlugin;
 import claudiosoft.indexer.Indexer;
 import java.io.File;
 import java.io.IOException;
@@ -57,7 +57,7 @@ public class Minotauro {
         }
         indexer.buildIndex();
 
-        LinkedList<BasePlugin> pluginList = new LinkedList<>();
+        LinkedList<BaseImagePlugin> pluginList = new LinkedList<>();
         String nPlug = config.get("plugins", "plugins_num", "0");
         int nPlugin = Integer.parseInt(nPlug);
         final Class<?>[] defaultConstructor = {int.class};
@@ -65,7 +65,7 @@ public class Minotauro {
             // instance classes by names
             String pluginId = String.format("plugin_%02d", iPlug + 1);
             String pluginName = config.get("plugins", pluginId);
-            String pluginClassName = String.format("claudiosoft.imageplugin.plugins.%s", pluginName);
+            String pluginClassName = String.format("claudiosoft.plugin.plugins.%s", pluginName);
 
             int step = Integer.parseInt(config.get(pluginName, "step", "0"));
             boolean enabled = Boolean.parseBoolean(config.get(pluginName, "enabled", "false"));
@@ -76,7 +76,7 @@ public class Minotauro {
 
             Class<?> clazz = Class.forName(pluginClassName);
             Constructor<?> constructor = clazz.getConstructor(defaultConstructor);
-            pluginList.add((BasePlugin) constructor.newInstance(step));
+            pluginList.add((BaseImagePlugin) constructor.newInstance(step));
         }
 
         // if no enabled plugin are present, terminate
@@ -88,9 +88,9 @@ public class Minotauro {
         logger.info(String.format("%d plugins loaded", pluginList.size()));
 
         // sort plugin by ascending by step
-        Collections.sort(pluginList, new Comparator<BasePlugin>() {
+        Collections.sort(pluginList, new Comparator<BaseImagePlugin>() {
             @Override
-            public int compare(BasePlugin a, BasePlugin b) {
+            public int compare(BaseImagePlugin a, BaseImagePlugin b) {
                 if (a.getStep() < b.getStep()) {
                     return -1;
                 } else if (a.getStep() == b.getStep()) {
@@ -109,7 +109,7 @@ public class Minotauro {
             logger.debug(String.format("processing image %s", curImage.getCanonicalPath()));
 
             // apply plugins
-            for (BasePlugin plugin : pluginList) {
+            for (BaseImagePlugin plugin : pluginList) {
                 plugin.init(config);
                 plugin.apply();
             }
