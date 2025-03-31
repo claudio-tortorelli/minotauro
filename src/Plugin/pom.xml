@@ -17,5 +17,9 @@
             <groupId>claudiosoft</groupId>
             <artifactId>Utils</artifactId>
         </dependency>   
+        <dependency>
+            <groupId>claudiosoft</groupId>
+            <artifactId>TransientImage</artifactId>
+        </dependency>   
     </dependencies>
 </project>

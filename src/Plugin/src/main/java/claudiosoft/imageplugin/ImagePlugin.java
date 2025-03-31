@@ -1,7 +1,9 @@
-package claudiosoft.plugin;
+package claudiosoft.imageplugin;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
+import claudiosoft.transientimage.TransientImageProvider;
+import java.io.File;
 
 /**
  *
@@ -9,8 +11,8 @@ import claudiosoft.commons.Config;
  */
 public interface ImagePlugin {
 
-    public void init(Config config) throws CTException;
+    public void init(Config config, TransientImageProvider transientImageProvider) throws CTException;
 
-    public void apply() throws CTException;
+    public void apply(File image) throws CTException;
 
 }

@@ -229,6 +229,16 @@ public class BasicUtils {
         return hash;
     }
 
+    public static byte[] getSHA1(File inputFile) throws NoSuchAlgorithmException, IOException {
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(inputFile);
+            return getSHA1(fis);
+        } finally {
+            BasicUtils.closeQuietly(fis);
+        }
+    }
+
     public static byte[] getSHA1(InputStream inputStream) throws NoSuchAlgorithmException, IOException {
         MessageDigest digest = MessageDigest.getInstance("SHA-1");
         byte[] dataBuffer = new byte[Constants.BUFFER_SIZE];
@@ -244,6 +254,16 @@ public class BasicUtils {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] hash = digest.digest(text.getBytes(StandardCharsets.UTF_8));
         return hash;
+    }
+
+    public static byte[] getSHA256(File inputFile) throws NoSuchAlgorithmException, IOException {
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(inputFile);
+            return getSHA256(fis);
+        } finally {
+            BasicUtils.closeQuietly(fis);
+        }
     }
 
     public static byte[] getSHA256(InputStream inputStream) throws NoSuchAlgorithmException, IOException {

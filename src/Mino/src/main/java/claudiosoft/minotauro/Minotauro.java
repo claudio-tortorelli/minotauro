@@ -6,6 +6,7 @@ import claudiosoft.commons.Config;
 import claudiosoft.commons.Constants;
 import claudiosoft.imageplugin.BaseImagePlugin;
 import claudiosoft.indexer.Indexer;
+import claudiosoft.transientimage.TransientImageProvider;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -100,6 +101,9 @@ public class Minotauro {
             }
         });
 
+        String transientRootPath = config.get("transient", "ransientRootPath", "./tsImages");
+        TransientImageProvider transientImageProxy = new TransientImageProvider(new File(rootFolder), new File(transientRootPath));
+
         // for each image in the index execute enabled plugin using multithread
         int nPluginThread = Integer.parseInt(config.get("threads", "plugin_threads", "1"));
 
@@ -110,8 +114,12 @@ public class Minotauro {
 
             // apply plugins
             for (BaseImagePlugin plugin : pluginList) {
-                plugin.init(config);
-                plugin.apply();
+                try {
+                    plugin.init(config, transientImageProxy);
+                    plugin.apply(curImage);
+                } catch (CTException ex) {
+                    logger.error(ex.getMessage(), ex);
+                }
             }
             curImage = indexer.visitNext();
         }

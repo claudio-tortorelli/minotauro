@@ -1,9 +1,12 @@
 package claudiosoft.imageplugin;
 
+import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
-import claudiosoft.plugin.ImagePlugin;
+import claudiosoft.transientimage.TransientImageProvider;
 import java.io.File;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  *
@@ -14,6 +17,8 @@ public abstract class BaseImagePlugin implements ImagePlugin {
     protected int step;
     protected File imageFile;
     protected Config config;
+    protected BasicLogger logger;
+    protected TransientImageProvider transientImageProvider;
 
     public BaseImagePlugin(int step) {
         this.step = step;
@@ -24,17 +29,30 @@ public abstract class BaseImagePlugin implements ImagePlugin {
     }
 
     @Override
-    public void init(Config config) throws CTException {
-        this.config = config;
+    public void init(Config config, TransientImageProvider transientImageProvider) throws CTException {
+        if (this.config != null) {
+            return; // already initialized
+        }
+        try {
+            this.config = config;
+            this.transientImageProvider = transientImageProvider;
+            this.logger = BasicLogger.get();
+        } catch (Exception ex) {
+            throw new CTException(ex.getMessage(), ex);
+        }
     }
 
     @Override
-    public void apply() throws CTException {
+    public void apply(File image) throws CTException {
+        this.imageFile = image;
+    }
+
+    protected void store(String result) throws CTException, NoSuchAlgorithmException, IOException {
 
     }
 
-    protected void store() throws CTException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    protected void store(byte[] result) throws CTException {
+        //transientImageProvider
     }
 
 }
