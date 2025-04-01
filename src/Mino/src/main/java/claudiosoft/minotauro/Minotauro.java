@@ -7,6 +7,7 @@ import claudiosoft.commons.Constants;
 import claudiosoft.imageplugin.BaseImagePlugin;
 import claudiosoft.indexer.Indexer;
 import claudiosoft.transientimage.TransientImageProvider;
+import claudiosoft.utils.BasicUtils;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -66,7 +67,7 @@ public class Minotauro {
             // instance classes by names
             String pluginId = String.format("plugin_%02d", iPlug + 1);
             String pluginName = config.get("plugins", pluginId);
-            String pluginClassName = String.format("claudiosoft.plugin.plugins.%s", pluginName);
+            String pluginClassName = String.format("claudiosoft.imageplugin.%s", pluginName);
 
             int step = Integer.parseInt(config.get(pluginName, "step", "0"));
             boolean enabled = Boolean.parseBoolean(config.get(pluginName, "enabled", "false"));
@@ -100,17 +101,23 @@ public class Minotauro {
                 return 1;
             }
         });
+        for (BaseImagePlugin plugin : pluginList) {
+            logger.info(String.format("- %s", plugin.getClass().getName()));
+        }
 
         String transientRootPath = config.get("transient", "ransientRootPath", "./tsImages");
         TransientImageProvider transientImageProxy = new TransientImageProvider(new File(rootFolder), new File(transientRootPath));
 
         // for each image in the index execute enabled plugin using multithread
         int nPluginThread = Integer.parseInt(config.get("threads", "plugin_threads", "1"));
+        logger.info(String.format("%d thread used", nPluginThread));
 
+        int nErrors = 0;
+        BasicUtils.startElapsedTime();
         logger.info("start plugin process");
         File curImage = indexer.startVisit();
         while (curImage != null) {
-            logger.debug(String.format("processing image %s", curImage.getCanonicalPath()));
+            logger.debug(String.format("%s - processing image %s", indexer.getVisitIndex(), curImage.getCanonicalPath()));
 
             // apply plugins
             for (BaseImagePlugin plugin : pluginList) {
@@ -118,14 +125,14 @@ public class Minotauro {
                     plugin.init(config, transientImageProxy);
                     plugin.apply(curImage);
                 } catch (CTException ex) {
-                    logger.error(ex.getMessage(), ex);
+                    logger.error(String.format("%s: %s", plugin.getClass().getName(), ex.getMessage()), ex);
+                    nErrors++;
                 }
             }
             curImage = indexer.visitNext();
         }
-
-        logger.info("end process");
-        System.exit(0); // If the tool ends without errors, return 0 to the system
+        logger.info(String.format("process terminated with %d errors in %d seconds", nErrors, BasicUtils.getElapsedTime()));
+        System.exit(nErrors == 0 ? 0 : 1); // If the tool ends without errors, return 0 to the system
     }
 
     private static void parseArgs(String[] args) {

@@ -8,7 +8,6 @@ import claudiosoft.utils.BasicUtils;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 /**
  *
@@ -35,9 +34,9 @@ public class ImageId extends BaseImagePlugin {
         String hashId = "";
         try {
             if (algo.equalsIgnoreCase("sha-1")) {
-                hashId = Arrays.toString(BasicUtils.getSHA1(image));
+                hashId = BasicUtils.bytesToHex(BasicUtils.getSHA1(image));
             } else {
-                hashId = Arrays.toString(BasicUtils.getSHA256(image));
+                hashId = BasicUtils.bytesToHex(BasicUtils.getSHA256(image));
             }
             store(hashId);
         } catch (Exception ex) {

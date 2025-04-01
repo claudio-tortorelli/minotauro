@@ -63,7 +63,7 @@ public class Indexer {
 
     public synchronized void buildIndex(boolean recursive) throws IOException {
         if (index.exists()) {
-            logger.info(String.format("index already present in %s", index.getCanonicalPath()));
+            logger.info(String.format("index already present in %s with %d entries", index.getCanonicalPath(), countIndexEntries()));
             return;
         }
         if (!tempIndex.exists()) {
@@ -105,6 +105,13 @@ public class Indexer {
             exts.add(ext);
         }
         return exts;
+    }
+
+    public synchronized int countIndexEntries() throws IOException {
+        if (!index.exists()) {
+            return 0;
+        }
+        return Files.readAllLines(index.toPath()).size();
     }
 
     public synchronized String getVisitIndex() throws IOException {

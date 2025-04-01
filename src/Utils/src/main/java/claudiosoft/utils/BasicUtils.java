@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Some usefull common utilities
@@ -49,6 +50,8 @@ public class BasicUtils {
 
     private static RandomAccessFile lockFis = null;
     private static FileLock fileLock;
+
+    private static long nanoTimeStart;
 
     public static File getFileFromRes(String resPath) throws IOException {
 
@@ -327,6 +330,15 @@ public class BasicUtils {
                 }
             }
         }).start();
+    }
+
+    // TODO, should have a map of times
+    public static synchronized void startElapsedTime() {
+        nanoTimeStart = System.nanoTime();
+    }
+
+    public static synchronized long getElapsedTime() {
+        return TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - nanoTimeStart);
     }
 
     // imported from jdk > 1.7
