@@ -5,8 +5,6 @@ import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.transientimage.TransientImageProvider;
 import java.io.File;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 /**
  *
@@ -46,13 +44,4 @@ public abstract class BaseImagePlugin implements ImagePlugin {
     public void apply(File image) throws CTException {
         this.imageFile = image;
     }
-
-    protected void store(String result) throws CTException, NoSuchAlgorithmException, IOException {
-
-    }
-
-    protected void store(byte[] result) throws CTException {
-        //transientImageProvider
-    }
-
 }
