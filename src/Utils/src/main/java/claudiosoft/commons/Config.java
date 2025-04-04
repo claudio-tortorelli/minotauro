@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import org.ini4j.Ini;
+import org.ini4j.Wini;
 
 /**
  *
@@ -12,10 +13,10 @@ import org.ini4j.Ini;
  */
 public class Config {
 
-    private Ini ini;
+    private Wini ini;
 
     public Config(File configFile) throws FileNotFoundException, IOException {
-        ini = new Ini();
+        ini = new Wini();
         ini.load(new FileReader(configFile));
     }
 

@@ -60,16 +60,18 @@ public class Minotauro {
         indexer.buildIndex();
 
         LinkedList<BaseImagePlugin> pluginList = new LinkedList<>();
-        String nPlug = config.get("plugins", "plugins_num", "0");
-        int nPlugin = Integer.parseInt(nPlug);
+        int nPlugin = 100;
         final Class<?>[] defaultConstructor = {int.class};
         for (int iPlug = 0; iPlug < nPlugin; iPlug++) {
             // instance classes by names
             String pluginId = String.format("plugin_%02d", iPlug + 1);
             String pluginName = config.get("plugins", pluginId);
+            if (pluginName == null || pluginName.isEmpty()) {
+                break;
+            }
             String pluginClassName = String.format("claudiosoft.imageplugin.%s", pluginName);
 
-            int step = Integer.parseInt(config.get(pluginName, "step", "0"));
+            int step = iPlug + 1;
             boolean enabled = Boolean.parseBoolean(config.get(pluginName, "enabled", "false"));
             if (!enabled) {
                 logger.warn(String.format("plugin %s is not enabled", pluginName));
