@@ -3,6 +3,7 @@ package claudiosoft.transientimage;
 import claudiosoft.commons.CTException;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import org.ini4j.Ini;
 import org.ini4j.Wini;
 
@@ -41,7 +42,39 @@ public class TransientImage {
         section.put(property, value);
     }
 
+    public void set(String sectionName, String property, int value) throws CTException {
+        Ini.Section section = transientFile.get(sectionName);
+        if (section == null) {
+            section = transientFile.add(sectionName);
+        }
+        section.put(property, value);
+    }
+
+    public void set(String sectionName, String property, double value) throws CTException {
+        Ini.Section section = transientFile.get(sectionName);
+        if (section == null) {
+            section = transientFile.add(sectionName);
+        }
+        section.put(property, value);
+    }
+
+    public void set(String sectionName, String property, boolean value) throws CTException {
+        Ini.Section section = transientFile.get(sectionName);
+        if (section == null) {
+            section = transientFile.add(sectionName);
+        }
+        section.put(property, value);
+    }
+
     public void set(String sectionName, String property, byte[] value) throws CTException {
+        Ini.Section section = transientFile.get(sectionName);
+        if (section == null) {
+            throw new CTException("section undefined");
+        }
+        section.put(property, value);
+    }
+
+    public void set(String sectionName, String property, Date value) throws CTException {
         Ini.Section section = transientFile.get(sectionName);
         if (section == null) {
             throw new CTException("section undefined");

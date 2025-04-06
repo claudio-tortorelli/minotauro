@@ -22,7 +22,6 @@ public class Minotauro {
     private static Config config;
     private static BasicLogger logger;
 
-//    private static final Logger logger = LoggerFactory.getLogger(Minotauro.class);
     public static void main(String[] args) throws IOException, CTException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         // Print the tool version on standard output
         System.out.println("Minotauro v1.0");
