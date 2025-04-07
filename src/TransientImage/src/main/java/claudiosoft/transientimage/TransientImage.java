@@ -4,7 +4,10 @@ import claudiosoft.commons.CTException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import org.ini4j.Ini;
+import org.ini4j.Profile.Section;
 import org.ini4j.Wini;
 
 /**
@@ -88,5 +91,20 @@ public class TransientImage {
         } catch (IOException ex) {
             throw new CTException(ex);
         }
+    }
+
+    public HashMap<String, String> getErrors() throws CTException {
+        HashMap<String, String> errorMap = new HashMap<>();
+        List<Section> sections = transientFile.getAll(this);
+        for (Section section : sections) {
+            String error = get(section.getName(), "error", "");
+            if (!error.isEmpty()) {
+                errorMap.put(section.getName(), error);
+            }
+        }
+        if (errorMap.isEmpty()) {
+            return null;
+        }
+        return errorMap;
     }
 }
