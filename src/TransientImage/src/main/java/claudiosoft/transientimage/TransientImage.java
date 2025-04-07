@@ -82,7 +82,11 @@ public class TransientImage {
         section.put(property, value);
     }
 
-    public void store() throws IOException {
-        transientFile.store();
+    public void store() throws CTException {
+        try {
+            transientFile.store();
+        } catch (IOException ex) {
+            throw new CTException(ex);
+        }
     }
 }

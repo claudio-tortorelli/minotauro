@@ -3,7 +3,6 @@ package claudiosoft.imageplugin;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.transientimage.TransientImage;
-import claudiosoft.transientimage.TransientImageProvider;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -13,8 +12,6 @@ import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import java.io.File;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 /**
@@ -42,8 +39,8 @@ public class ImageExif extends BaseImagePlugin {
     }
 
     @Override
-    public void init(Config config, TransientImageProvider transientImageProvider) throws CTException {
-        super.init(config, transientImageProvider);
+    public void init(Config config, String pluginName) throws CTException {
+        super.init(config, pluginName);
         imgWidthPix = 0;
         imgHeightPix = 0;
         make = "";
@@ -58,8 +55,8 @@ public class ImageExif extends BaseImagePlugin {
     }
 
     @Override
-    public void apply(File image) throws CTException {
-        super.apply(image);
+    public void apply(File image, TransientImage transientImage) throws CTException {
+        super.apply(image, transientImage);
         try {
             Metadata metadata = ImageMetadataReader.readMetadata(imageFile);
             boolean somethingToStore = false;
@@ -139,22 +136,21 @@ public class ImageExif extends BaseImagePlugin {
         } catch (Exception ex) {
             throw new CTException(ex.getMessage(), ex);
         }
-
     }
 
-    protected void store() throws NoSuchAlgorithmException, IOException, CTException {
-        TransientImage transientImage = transientImageProvider.get(imageFile);
-        transientImage.set(this.getClass().getSimpleName(), "imgWidthPix", imgWidthPix);
-        transientImage.set(this.getClass().getSimpleName(), "imgHeightPix", imgHeightPix);
-        transientImage.set(this.getClass().getSimpleName(), "make", make);
-        transientImage.set(this.getClass().getSimpleName(), "model", model);
-        transientImage.set(this.getClass().getSimpleName(), "date", date);
-        transientImage.set(this.getClass().getSimpleName(), "orientation", orientation);
-        transientImage.set(this.getClass().getSimpleName(), "photographer", photographer);
-        transientImage.set(this.getClass().getSimpleName(), "latitude", latitude);
-        transientImage.set(this.getClass().getSimpleName(), "latitudeRef", latitudeRef);
-        transientImage.set(this.getClass().getSimpleName(), "longitude", longitude);
-        transientImage.set(this.getClass().getSimpleName(), "longitudeRef", longitudeRef);
+    @Override
+    public void store() throws CTException {
+        transientImage.set(pluginName, "imgWidthPix", imgWidthPix);
+        transientImage.set(pluginName, "imgHeightPix", imgHeightPix);
+        transientImage.set(pluginName, "make", make);
+        transientImage.set(pluginName, "model", model);
+        transientImage.set(pluginName, "date", date);
+        transientImage.set(pluginName, "orientation", orientation);
+        transientImage.set(pluginName, "photographer", photographer);
+        transientImage.set(pluginName, "latitude", latitude);
+        transientImage.set(pluginName, "latitudeRef", latitudeRef);
+        transientImage.set(pluginName, "longitude", longitude);
+        transientImage.set(pluginName, "longitudeRef", longitudeRef);
         transientImage.store();
     }
 

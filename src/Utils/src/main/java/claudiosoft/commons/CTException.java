@@ -8,6 +8,10 @@ package claudiosoft.commons;
  */
 public class CTException extends Exception {
 
+    public CTException(Exception ex) {
+        super(ex.getMessage(), ex);
+    }
+
     public CTException(String errorMessage) {
         super(errorMessage);
     }

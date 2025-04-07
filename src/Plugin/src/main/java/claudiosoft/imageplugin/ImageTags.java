@@ -2,10 +2,8 @@ package claudiosoft.imageplugin;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
-import claudiosoft.transientimage.TransientImageProvider;
+import claudiosoft.transientimage.TransientImage;
 import java.io.File;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 /**
  *
@@ -18,21 +16,22 @@ public class ImageTags extends BaseImagePlugin {
     }
 
     @Override
-    public void init(Config config, TransientImageProvider transientImageProvider) throws CTException {
-        super.init(config, transientImageProvider);
-
+    public void init(Config config, String pluginName) throws CTException {
+        super.init(config, pluginName);
     }
 
     @Override
-    public void apply(File image) throws CTException {
-        super.apply(image);
-
+    public void apply(File image, TransientImage transientImage) throws CTException {
+        super.apply(image, transientImage);
+        try {
+            store();
+        } catch (Exception ex) {
+            throw new CTException(ex.getMessage(), ex);
+        }
     }
 
-    protected void store(String result) throws NoSuchAlgorithmException, IOException, CTException {
-//        TransientImage transientImage = transientImageProvider.get(imageFile);
-//        transientImage.set(this.getClass().getSimpleName(), "id", result);
-//        transientImage.store();
-    }
+    @Override
+    public void store() throws CTException {
 
+    }
 }

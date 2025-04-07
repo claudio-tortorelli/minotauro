@@ -3,8 +3,9 @@ package claudiosoft.imageplugin;
 import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
-import claudiosoft.transientimage.TransientImageProvider;
+import claudiosoft.transientimage.TransientImage;
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -12,11 +13,15 @@ import java.io.File;
  */
 public abstract class BaseImagePlugin implements ImagePlugin {
 
+    protected String pluginName;
+
     protected int step;
     protected File imageFile;
     protected Config config;
     protected BasicLogger logger;
-    protected TransientImageProvider transientImageProvider;
+    protected TransientImage transientImage;
+
+    private long nanoTimer;
 
     public BaseImagePlugin(int step) {
         this.step = step;
@@ -27,13 +32,13 @@ public abstract class BaseImagePlugin implements ImagePlugin {
     }
 
     @Override
-    public void init(Config config, TransientImageProvider transientImageProvider) throws CTException {
+    public void init(Config config, String pluginName) throws CTException {
         if (this.config != null) {
             return; // already initialized
         }
         try {
+            this.pluginName = pluginName;
             this.config = config;
-            this.transientImageProvider = transientImageProvider;
             this.logger = BasicLogger.get();
         } catch (Exception ex) {
             throw new CTException(ex.getMessage(), ex);
@@ -41,7 +46,24 @@ public abstract class BaseImagePlugin implements ImagePlugin {
     }
 
     @Override
-    public void apply(File image) throws CTException {
+    public void apply(File image, TransientImage transientImage) throws CTException {
         this.imageFile = image;
+        this.transientImage = transientImage;
+        nanoTimer = System.nanoTime();
     }
+
+    @Override
+    public void close() throws CTException {
+        long msec = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - nanoTimer);
+        logger.debug(String.format("%s done on %s in %d msec", pluginName, imageFile.getName(), msec));
+    }
+
+    public void traceErrorToTransientImage(String error) throws CTException {
+        try {
+            transientImage.set(pluginName, "error", error);
+        } catch (Exception ex) {
+            throw new CTException(ex);
+        }
+    }
+
 }

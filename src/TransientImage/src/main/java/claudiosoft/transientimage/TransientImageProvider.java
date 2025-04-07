@@ -6,7 +6,6 @@ import claudiosoft.utils.BasicUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Give access to the transient image file and its properties
@@ -26,19 +25,23 @@ public class TransientImageProvider {
         Files.createDirectories(this.transientRootPath.toPath());
     }
 
-    public TransientImage get(File imageFile) throws NoSuchAlgorithmException, IOException, CTException {
+    public TransientImage get(File imageFile) throws CTException {
 
-        String imgFilePath = imageFile.getCanonicalPath().toLowerCase();
-        String rootPath = imageRootPath.getCanonicalPath().toLowerCase();
-        if (!imgFilePath.toLowerCase().contains(rootPath)) {
-            throw new CTException(String.format("%s is not included into index", imageFile.getCanonicalPath()));
+        try {
+            String imgFilePath = imageFile.getCanonicalPath().toLowerCase();
+            String rootPath = imageRootPath.getCanonicalPath().toLowerCase();
+            if (!imgFilePath.toLowerCase().contains(rootPath)) {
+                throw new CTException(String.format("%s is not included into index", imageFile.getCanonicalPath()));
+            }
+            String relativePath = imgFilePath.substring(rootPath.length(), imgFilePath.length());
+            String sha1 = BasicUtils.bytesToHex(BasicUtils.getSHA1(relativePath));
+
+            String transientImagePath = String.format("%s/%s_%s.transient", transientRootPath.getCanonicalPath(), sha1, imageFile.getName());
+            File transientImageFile = new File(transientImagePath);
+
+            return new TransientImage(transientImageFile);
+        } catch (Exception ex) {
+            throw new CTException(ex);
         }
-        String relativePath = imgFilePath.substring(rootPath.length(), imgFilePath.length());
-        String sha1 = BasicUtils.bytesToHex(BasicUtils.getSHA1(relativePath));
-
-        String transientImagePath = String.format("%s/%s_%s.transient", transientRootPath.getCanonicalPath(), sha1, imageFile.getName());
-        File transientImageFile = new File(transientImagePath);
-
-        return new TransientImage(transientImageFile);
     }
 }

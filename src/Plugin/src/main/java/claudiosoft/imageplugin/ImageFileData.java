@@ -3,11 +3,8 @@ package claudiosoft.imageplugin;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.transientimage.TransientImage;
-import claudiosoft.transientimage.TransientImageProvider;
 import claudiosoft.utils.BasicUtils;
 import java.io.File;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 /**
@@ -25,13 +22,13 @@ public class ImageFileData extends BaseImagePlugin {
     }
 
     @Override
-    public void init(Config config, TransientImageProvider transientImageProvider) throws CTException {
-        super.init(config, transientImageProvider);
+    public void init(Config config, String pluginName) throws CTException {
+        super.init(config, pluginName);
     }
 
     @Override
-    public void apply(File image) throws CTException {
-        super.apply(image);
+    public void apply(File image, TransientImage transientImage) throws CTException {
+        super.apply(image, transientImage);
         try {
             originalPath = imageFile.getCanonicalPath();
             fileName = imageFile.getName();
@@ -43,8 +40,8 @@ public class ImageFileData extends BaseImagePlugin {
 
     }
 
-    protected void store() throws CTException, IOException, NoSuchAlgorithmException {
-        TransientImage transientImage = transientImageProvider.get(imageFile);
+    @Override
+    public void store() throws CTException {
         transientImage.set(this.getClass().getSimpleName(), "originalPath", originalPath);
         transientImage.set(this.getClass().getSimpleName(), "fileName", fileName);
         transientImage.set(this.getClass().getSimpleName(), "lastModifiedDate", lastModifiedDate);
