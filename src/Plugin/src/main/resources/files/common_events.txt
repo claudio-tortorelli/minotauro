@@ -1,0 +1,32 @@
+matrimonio
+compleanno
+battesimo
+funerale
+comunione
+cresima
+anniversario
+onomastico
+ritrovo
+gita
+festa
+nascita
+sagra
+cena
+pranzo
+merenda
+colazione
+capodanno
+carnevale
+pasqua
+natale
+ferragosto
+primo maggio
+25 aprile
+2 giugno
+befana
+san valentino
+pasquetta
+santi
+morti
+santo stefano
+immacolata

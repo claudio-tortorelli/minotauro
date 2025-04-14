@@ -118,7 +118,7 @@ public class Minotauro {
             logger.info(String.format("- %s", plugin.getClass().getName()));
         }
 
-        String transientRootPath = config.get("transient", "ransientRootPath", "./tsImages");
+        String transientRootPath = config.get("transient", "transientRootPath", "./tsImages");
         TransientImageProvider transientImageProxy = new TransientImageProvider(new File(rootFolder), new File(transientRootPath));
 
         // for each image in the index execute enabled plugin using multithread
@@ -129,6 +129,8 @@ public class Minotauro {
         BasicUtils.startElapsedTime();
         logger.info("start plugin process"); // TODO, should be multithread here...
         File curImage = indexer.startVisit();
+
+        // TODO invert annidation with plugin outside and images inside to optimize the work
         while (curImage != null) {
             logger.debug(String.format("%s - processing image %s", indexer.getVisitIndex(), curImage.getCanonicalPath()));
             TransientImage transientImage = transientImageProxy.get(curImage);

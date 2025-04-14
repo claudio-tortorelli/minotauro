@@ -1,0 +1,9 @@
+lightroom
+gimp
+acdsee
+irfanview
+photoshop
+rawtherapee
+darktable
+digikam
+

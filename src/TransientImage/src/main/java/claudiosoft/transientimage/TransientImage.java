@@ -16,7 +16,7 @@ import org.ini4j.Wini;
  */
 public class TransientImage {
 
-    private Wini transientFile;
+    protected Wini transientFile;
 
     public TransientImage(File transientImageFile) throws IOException {
         if (!transientImageFile.exists()) {
@@ -96,6 +96,9 @@ public class TransientImage {
     public HashMap<String, String> getErrors() throws CTException {
         HashMap<String, String> errorMap = new HashMap<>();
         List<Section> sections = transientFile.getAll(this);
+        if (sections == null) {
+            return null;
+        }
         for (Section section : sections) {
             String error = get(section.getName(), "error", "");
             if (!error.isEmpty()) {
