@@ -24,14 +24,9 @@ public class ImageTags extends BaseImagePlugin {
     public void apply(File image, TransientImage transientImage) throws CTException {
         super.apply(image, transientImage);
         try {
-            store();
+
         } catch (Exception ex) {
             throw new CTException(ex.getMessage(), ex);
         }
-    }
-
-    @Override
-    public void store() throws CTException {
-
     }
 }

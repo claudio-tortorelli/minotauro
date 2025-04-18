@@ -163,7 +163,7 @@ public class Indexer {
         return new File(indexData.get(nextFile));
     }
 
-    private void reset() throws CTException {
+    public synchronized void reset() throws CTException {
         if (!index.exists()) {
             throw new CTException("index must be built");
         }

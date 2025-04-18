@@ -127,33 +127,34 @@ public class Minotauro {
 
         int nErrors = 0;
         BasicUtils.startElapsedTime();
-        logger.info("start plugin process"); // TODO, should be multithread here...
-        File curImage = indexer.startVisit();
+        logger.info("= start plugin process ="); // TODO, should be multithread here...
+        for (BaseImagePlugin plugin : pluginList) {
+            try {
+                logger.debug(String.format("-- start plugin %s --", plugin.getClass().getSimpleName()));
+                plugin.init(config, plugin.getClass().getSimpleName());
 
-        // TODO invert annidation with plugin outside and images inside to optimize the work
-        while (curImage != null) {
-            logger.debug(String.format("%s - processing image %s", indexer.getVisitIndex(), curImage.getCanonicalPath()));
-            TransientImage transientImage = transientImageProxy.get(curImage);
-            // apply plugins
-            for (BaseImagePlugin plugin : pluginList) {
-                try {
-                    plugin.init(config, plugin.getClass().getSimpleName());
+                File curImage = indexer.startVisit();
+                while (curImage != null) {
+                    logger.debug(String.format("%s - processing image %s", indexer.getVisitIndex(), curImage.getCanonicalPath()));
+                    TransientImage transientImage = transientImageProxy.get(curImage);
                     plugin.apply(curImage, transientImage);
-                } catch (CTException ex) {
-                    plugin.traceErrorToTransientImage(ex.getMessage());
-                    nErrors++;
-                } finally {
-                    plugin.close();
+                    HashMap<String, String> tsErrors = transientImage.getErrors();
+                    if (tsErrors != null) {
+                        for (Entry<String, String> entry : tsErrors.entrySet()) {
+                            errLogger.error(String.format("[%s] %s: %s", curImage.getCanonicalPath(), entry.getKey(), entry.getValue()));
+                        }
+                    }
+                    curImage = indexer.visitNext();
                 }
+            } catch (CTException ex) {
+                indexer.reset();
+                plugin.traceErrorToTransientImage(ex.getMessage());
+                nErrors++;
+            } finally {
+                plugin.close();
             }
-            HashMap<String, String> tsErrors = transientImage.getErrors();
-            if (tsErrors != null) {
-                for (Entry<String, String> entry : tsErrors.entrySet()) {
-                    errLogger.error(String.format("[%s] %s: %s", curImage.getCanonicalPath(), entry.getKey(), entry.getValue()));
-                }
-            }
-            curImage = indexer.visitNext();
         }
+
         logger.info(String.format("process terminated with %d errors in %d seconds", nErrors, BasicUtils.getElapsedTime()));
         System.exit(nErrors == 0 ? 0 : 1); // If the tool ends without errors, return 0 to the system
     }

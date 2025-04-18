@@ -2,6 +2,7 @@ package claudiosoft.imageplugin;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
+import claudiosoft.pluginbean.BeanId;
 import claudiosoft.transientimage.TransientImage;
 import claudiosoft.utils.BasicUtils;
 import java.io.File;
@@ -13,7 +14,6 @@ import java.io.File;
 public class ImageId extends BaseImagePlugin {
 
     private String algo;
-    private String hashId;
 
     public ImageId(int step) {
         super(step);
@@ -30,22 +30,17 @@ public class ImageId extends BaseImagePlugin {
         super.apply(image, transientImage);
 
         try {
+            BeanId data = new BeanId(this.getClass().getSimpleName());
             if (algo.equalsIgnoreCase("sha-1")) {
-                hashId = BasicUtils.bytesToHex(BasicUtils.getSHA1(image));
+                data.hashId = BasicUtils.bytesToHex(BasicUtils.getSHA1(image));
             } else {
-                hashId = BasicUtils.bytesToHex(BasicUtils.getSHA256(image));
+                data.hashId = BasicUtils.bytesToHex(BasicUtils.getSHA256(image));
             }
-            store();
+            data.store(transientImage);
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
             throw new CTException(ex.getMessage(), ex);
         }
-    }
-
-    @Override
-    public void store() throws CTException {
-        transientImage.set(this.getClass().getSimpleName(), "id", hashId);
-        transientImage.store();
     }
 
 }

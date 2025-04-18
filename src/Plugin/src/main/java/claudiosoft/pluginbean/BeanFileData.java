@@ -1,0 +1,36 @@
+package claudiosoft.pluginbean;
+
+import claudiosoft.commons.CTException;
+import claudiosoft.transientimage.TransientImage;
+
+/**
+ *
+ * @author claudio.tortorelli
+ */
+public class BeanFileData extends BasePluginBean {
+
+    public String originalPath;
+    public String fileName;
+    public String lastModifiedDate;
+
+    public BeanFileData(String pluginName) {
+        super(pluginName);
+        originalPath = "";
+        fileName = "";
+        lastModifiedDate = null;
+    }
+
+    @Override
+    public void store(TransientImage transientImage) throws CTException {
+        transientImage.set(pluginName, "originalPath", originalPath);
+        transientImage.set(pluginName, "fileName", fileName);
+        transientImage.set(pluginName, "lastModifiedDate", lastModifiedDate);
+        transientImage.store();
+    }
+
+    @Override
+    public void read(TransientImage transientImage) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+}

@@ -2,6 +2,7 @@ package claudiosoft.imageplugin;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
+import claudiosoft.pluginbean.BeanAnalyzeFolderName;
 import claudiosoft.transientimage.TransientImage;
 import claudiosoft.utils.BasicUtils;
 import io.github.fastily.jwiki.core.Wiki;
@@ -19,26 +20,14 @@ import java.util.regex.Pattern;
  */
 public class ImageAnalyzeFolderName extends BaseImagePlugin {
 
-    private String year;
-    private String month;
-    private String description;
-    private boolean elaborated;
-
     private boolean advanced;
-    private LinkedList<String> places;
-    private LinkedList<String> people;
-    private LinkedList<String> events;
-
     private boolean enableWikipedia;
-
     private LinkedList<Pattern> patterns;
 
-    private File fileCities;
-    private File fileEvents;
-    private File fileNames;
-    private File fileTools;
-
-    private boolean done;
+    private List<String> storedEvents;
+    private List<String> storedCities;
+    private List<String> storedNames;
+    private List<String> storedTools;
 
     public ImageAnalyzeFolderName(int step) {
         super(step);
@@ -48,54 +37,66 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
     public void init(Config config, String pluginName) throws CTException {
         super.init(config, pluginName);
 
+        /**
+         * TODO adesso deve essere implementato il multi pattern per parsare i
+         * casi diversi dallo standard
+         */
         patterns = new LinkedList<>();
         String regex = config.get(this.getClass().getSimpleName(), "regex1", "");
         patterns.add(Pattern.compile(regex, Pattern.CASE_INSENSITIVE));
 
+        storedEvents = new LinkedList<>();
+        storedCities = new LinkedList<>();
+        storedNames = new LinkedList<>();
+        storedTools = new LinkedList<>();
+
         advanced = config.get(this.getClass().getSimpleName(), "parseDesc", "false").equalsIgnoreCase("true");
         if (advanced) {
+            File fileCities;
             try {
                 fileCities = BasicUtils.getFileFromRes("files/city_list.txt");
+                storedCities = Files.readAllLines(fileCities.toPath());
             } catch (IOException ex) {
                 logger.error("city files not found");
                 throw new CTException(ex);
             }
-            places = new LinkedList<>();
 
+            File fileEvents;
             try {
                 fileEvents = BasicUtils.getFileFromRes("files/common_events.txt");
+                storedEvents = Files.readAllLines(fileEvents.toPath());
             } catch (IOException ex) {
                 logger.error("event files not found");
                 throw new CTException(ex);
             }
-            events = new LinkedList<>();
 
+            File fileNames;
             try {
                 fileNames = BasicUtils.getFileFromRes("files/nomi_italiani.txt");
+                storedNames = Files.readAllLines(fileNames.toPath());
             } catch (IOException ex) {
                 logger.error("name files not found");
                 throw new CTException(ex);
             }
-            people = new LinkedList<>();
 
+            File fileTools;
             try {
                 fileTools = BasicUtils.getFileFromRes("files/tool_list.txt");
+                storedTools = Files.readAllLines(fileTools.toPath());
             } catch (IOException ex) {
                 logger.error("name files not found");
                 throw new CTException(ex);
             }
         }
-        elaborated = false;
+
         enableWikipedia = config.get(this.getClass().getSimpleName(), "enableWikipedia", "false").equalsIgnoreCase("true");
-        done = false;
     }
 
     @Override
     public void apply(File image, TransientImage transientImage) throws CTException {
         super.apply(image, transientImage);
-        if (done) {
-            return;
-        }
+
+        BeanAnalyzeFolderName data = new BeanAnalyzeFolderName(this.getClass().getSimpleName());
 
         String folderPath = image.getParent();
         try {
@@ -107,14 +108,9 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
                 return;
             }
 
-            List<String> storedEvents = Files.readAllLines(this.fileEvents.toPath());
-            List<String> storedCities = Files.readAllLines(this.fileCities.toPath());
-            List<String> storedNames = Files.readAllLines(this.fileNames.toPath());
-            List<String> storedTools = Files.readAllLines(this.fileTools.toPath());
-
             for (String parent : folders) {
                 if (storedTools.contains(parent)) {
-                    elaborated = true;
+                    data.elaborated = true;
                 }
 
                 Matcher matcher = patterns.get(0).matcher(parent);
@@ -126,9 +122,13 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
                     logger.error(String.format("unable to extract fields from %s", folderPath));
                     break;
                 }
-                year = fields[0];
-                month = fields[1];
-                description = fields[2];
+                data.year = fields[0];
+                data.month = fields[1];
+                for (int iD = 2; iD < fields.length; iD++) {
+                    data.description += fields[iD];
+                    data.description += " ";
+                }
+                data.description = data.description.trim();
 
                 if (advanced) {
                     Wiki wiki = null;
@@ -137,26 +137,26 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
                     }
 
                     String[] phrases = new String[1];
-                    phrases[0] = description;
-                    if (description.contains(",")) {
-                        phrases = description.split(",");
+                    phrases[0] = data.description;
+                    if (data.description.contains(",")) {
+                        phrases = data.description.split(",");
                     } else {
-                        phrases = description.split(" ");
+                        phrases = data.description.split(" ");
                     }
                     for (String phrase : phrases) {
                         if (phrase.length() <= 2) {
                             continue;
                         }
                         if (storedEvents.contains(phrase)) {
-                            events.add(phrase);
+                            data.events.add(phrase);
                             continue;
                         }
                         if (storedCities.contains(phrase)) {
-                            places.add(phrase); //TODO use countries and other lists
+                            data.places.add(phrase); //TODO use countries and other lists
                             continue;
                         }
                         if (storedNames.contains(phrase)) {
-                            people.add(phrase);
+                            data.people.add(phrase);
                             continue;
                         }
                         // TODO wiki.
@@ -168,50 +168,11 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
                 }
 
                 logger.debug(String.format("found this folder %s", parent));
-                store();
-                done = true;
+                data.store(transientImage);
                 break;
             }
         } catch (Exception ex) {
             throw new CTException(ex.getMessage(), ex);
         }
     }
-
-    @Override
-    public void store() throws CTException {
-        transientImage.set(this.getClass().getSimpleName(), "year", year);
-        transientImage.set(this.getClass().getSimpleName(), "month", month);
-        transientImage.set(this.getClass().getSimpleName(), "description", description);
-        if (advanced) {
-            if (!events.isEmpty()) {
-                String eventList = "";
-                for (String event : events) {
-                    eventList += event;
-                    eventList += ",";
-                }
-                eventList = eventList.substring(0, eventList.length() - 1);
-                transientImage.set(this.getClass().getSimpleName(), "events", eventList);
-            }
-            if (!places.isEmpty()) {
-                String placeList = "";
-                for (String place : places) {
-                    placeList += place;
-                    placeList += ",";
-                }
-                placeList = placeList.substring(0, placeList.length() - 1);
-                transientImage.set(this.getClass().getSimpleName(), "places", placeList);
-            }
-            if (!people.isEmpty()) {
-                String peopleList = "";
-                for (String name : people) {
-                    peopleList += name;
-                    peopleList += ",";
-                }
-                peopleList = peopleList.substring(0, peopleList.length() - 1);
-                transientImage.set(this.getClass().getSimpleName(), "peoples", peopleList);
-            }
-        }
-        //transientImage.store();
-    }
-
 }
