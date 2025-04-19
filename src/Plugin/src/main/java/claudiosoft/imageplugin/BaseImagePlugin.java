@@ -21,6 +21,7 @@ public abstract class BaseImagePlugin implements Plugin {
     protected Config config;
     protected BasicLogger logger;
     protected TransientImage transientImage;
+    protected boolean failed;
 
     private long nanoTimer;
 
@@ -49,6 +50,7 @@ public abstract class BaseImagePlugin implements Plugin {
 
     @Override
     public void apply(File image, TransientImage transientImage) throws CTException {
+        this.failed = false;
         this.imageFile = image;
         this.transientImage = transientImage;
     }
@@ -61,10 +63,14 @@ public abstract class BaseImagePlugin implements Plugin {
 
     public void traceErrorToTransientImage(String error) throws CTException {
         try {
+            logger.error(String.format("error in %s", transientImage.get(ImageId.class.getSimpleName(), "id", "")));
             transientImage.set(pluginName, "error", error);
         } catch (Exception ex) {
             throw new CTException(ex);
         }
     }
 
+    public boolean isFailed() {
+        return failed;
+    }
 }

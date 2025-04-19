@@ -108,6 +108,7 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
                 return;
             }
 
+            boolean matched = false;
             for (String parent : folders) {
                 if (storedTools.contains(parent)) {
                     data.elaborated = true;
@@ -129,6 +130,7 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
                     data.description += " ";
                 }
                 data.description = data.description.trim();
+                matched = true;
 
                 if (advanced) {
                     Wiki wiki = null;
@@ -170,6 +172,10 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
                 logger.debug(String.format("found this folder %s", parent));
                 data.store(transientImage);
                 break;
+            }
+            if (!matched) {
+                logger.warn(String.format("unable to analyze or parse the folder"));
+                failed = true;
             }
         } catch (Exception ex) {
             throw new CTException(ex.getMessage(), ex);

@@ -126,6 +126,7 @@ public class Minotauro {
         logger.info(String.format("%d thread used", nPluginThread));
 
         int nErrors = 0;
+        int nWarns = 0;
         BasicUtils.startElapsedTime();
         logger.info("= start plugin process ="); // TODO, should be multithread here...
         for (BaseImagePlugin plugin : pluginList) {
@@ -144,6 +145,9 @@ public class Minotauro {
                             errLogger.error(String.format("[%s] %s: %s", curImage.getCanonicalPath(), entry.getKey(), entry.getValue()));
                         }
                     }
+                    if (plugin.isFailed()) {
+                        nWarns++;
+                    }
                     curImage = indexer.visitNext();
                 }
             } catch (CTException ex) {
@@ -155,7 +159,7 @@ public class Minotauro {
             }
         }
 
-        logger.info(String.format("process terminated with %d errors in %d seconds", nErrors, BasicUtils.getElapsedTime()));
+        logger.info(String.format("process terminated with %d errors and %d warnings in %d seconds", nErrors, nWarns, BasicUtils.getElapsedTime()));
         System.exit(nErrors == 0 ? 0 : 1); // If the tool ends without errors, return 0 to the system
     }
 

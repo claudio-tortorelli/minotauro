@@ -108,7 +108,8 @@ public class ImageExif extends BaseImagePlugin {
                 }
             }
             if (!somethingToStore) {
-                logger.debug("no exif data tag");
+                logger.warn("no exif data tag");
+                failed = true;
                 return;
             }
             data.store(transientImage);
