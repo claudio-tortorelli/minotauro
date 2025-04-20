@@ -26,6 +26,7 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
 
     private List<String> storedEvents;
     private List<String> storedCities;
+    private List<String> storedCountries;
     private List<String> storedNames;
     private List<String> storedTools;
 
@@ -47,6 +48,7 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
 
         storedEvents = new LinkedList<>();
         storedCities = new LinkedList<>();
+        storedCountries = new LinkedList<>();
         storedNames = new LinkedList<>();
         storedTools = new LinkedList<>();
 
@@ -58,6 +60,15 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
                 storedCities = Files.readAllLines(fileCities.toPath());
             } catch (IOException ex) {
                 logger.error("city files not found");
+                throw new CTException(ex);
+            }
+
+            File fileCountries;
+            try {
+                fileCountries = BasicUtils.getFileFromRes("files/country_list.txt");
+                storedCountries = Files.readAllLines(fileCountries.toPath());
+            } catch (IOException ex) {
+                logger.error("country files not found");
                 throw new CTException(ex);
             }
 
@@ -109,16 +120,22 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
             }
 
             boolean matched = false;
-            for (String parent : folders) {
-                if (storedTools.contains(parent)) {
+            for (int i = folders.length - 1; i >= 0; i--) {
+                String folderName = folders[i];
+                if (storedTools.contains(folderName)) {
                     data.elaborated = true;
-                }
-
-                Matcher matcher = patterns.get(0).matcher(parent);
-                if (!matcher.find()) {
                     continue;
                 }
-                String[] fields = parent.split(" ");
+
+                folderName = folderName.replace(".", " ");
+                folderName = folderName.replace("-", " ");
+
+                Matcher matcher = patterns.get(0).matcher(folderName);
+                if (!matcher.find()) {
+                    data = checkAdvanced(data, folderName);
+                    continue;
+                }
+                String[] fields = folderName.split(" ");
                 if (fields.length < 3) {
                     logger.error(String.format("unable to extract fields from %s", folderPath));
                     break;
@@ -132,44 +149,9 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
                 data.description = data.description.trim();
                 matched = true;
 
-                if (advanced) {
-                    Wiki wiki = null;
-                    if (enableWikipedia) {
-                        wiki = new Wiki.Builder().build();
-                    }
+                data = checkAdvanced(data, data.description);
 
-                    String[] phrases = new String[1];
-                    phrases[0] = data.description;
-                    if (data.description.contains(",")) {
-                        phrases = data.description.split(",");
-                    } else {
-                        phrases = data.description.split(" ");
-                    }
-                    for (String phrase : phrases) {
-                        if (phrase.length() <= 2) {
-                            continue;
-                        }
-                        if (storedEvents.contains(phrase)) {
-                            data.events.add(phrase);
-                            continue;
-                        }
-                        if (storedCities.contains(phrase)) {
-                            data.places.add(phrase); //TODO use countries and other lists
-                            continue;
-                        }
-                        if (storedNames.contains(phrase)) {
-                            data.people.add(phrase);
-                            continue;
-                        }
-                        // TODO wiki.
-                        if (wiki != null) {
-                            //https://github.com/fastily/jwiki
-                            //wiki.search(year, step, ns) 
-                        }
-                    }
-                }
-
-                logger.debug(String.format("found this folder %s", parent));
+                logger.debug(String.format("found this folder %s", folderName));
                 data.store(transientImage);
                 break;
             }
@@ -180,5 +162,53 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
         } catch (Exception ex) {
             throw new CTException(ex.getMessage(), ex);
         }
+    }
+
+    private BeanAnalyzeFolderName checkAdvanced(BeanAnalyzeFolderName data, String description) {
+        if (!advanced) {
+            return data;
+        }
+        String[] words = new String[1];
+        words[0] = description;
+        if (description.contains(",")) {
+            words = description.split(",");
+        } else {
+            words = description.split(" ");
+        }
+
+        Wiki wiki = null;
+        if (enableWikipedia) {
+            wiki = new Wiki.Builder().build();
+        }
+
+        for (String word : words) {
+            word = word.trim();
+            word = word.replace(",", "");
+            if (word.length() <= 2) {
+                continue;
+            }
+            if (storedEvents.contains(word)) {
+                data.events.add(word);
+                continue;
+            }
+            if (storedCities.contains(word)) {
+                data.cities.add(word);
+                continue;
+            }
+            if (storedCountries.contains(word)) {
+                data.countries.add(word);
+                continue;
+            }
+            if (storedNames.contains(word)) {
+                data.people.add(word);
+                continue;
+            }
+            // TODO wiki.
+            if (wiki != null) {
+                //https://github.com/fastily/jwiki
+                //wiki.search(year, step, ns) 
+            }
+        }
+        return data;
     }
 }

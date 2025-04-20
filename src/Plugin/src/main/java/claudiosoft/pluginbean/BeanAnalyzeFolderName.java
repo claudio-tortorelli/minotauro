@@ -15,7 +15,8 @@ public class BeanAnalyzeFolderName extends BasePluginBean {
     public String description;
     public boolean elaborated;
 
-    public LinkedList<String> places;
+    public LinkedList<String> cities;
+    public LinkedList<String> countries;
     public LinkedList<String> people;
     public LinkedList<String> events;
 
@@ -27,7 +28,8 @@ public class BeanAnalyzeFolderName extends BasePluginBean {
         description = "";
         elaborated = false;
 
-        places = new LinkedList<>();
+        cities = new LinkedList<>();
+        countries = new LinkedList<>();
         people = new LinkedList<>();
         events = new LinkedList<>();
     }
@@ -47,14 +49,23 @@ public class BeanAnalyzeFolderName extends BasePluginBean {
             eventList = eventList.substring(0, eventList.length() - 1);
             transientImage.set(pluginName, "events", eventList);
         }
-        if (!places.isEmpty()) {
+        if (!cities.isEmpty()) {
             String placeList = "";
-            for (String place : places) {
+            for (String place : cities) {
                 placeList += place;
                 placeList += ",";
             }
             placeList = placeList.substring(0, placeList.length() - 1);
-            transientImage.set(pluginName, "places", placeList);
+            transientImage.set(pluginName, "cities", placeList);
+        }
+        if (!countries.isEmpty()) {
+            String placeList = "";
+            for (String place : countries) {
+                placeList += place;
+                placeList += ",";
+            }
+            placeList = placeList.substring(0, placeList.length() - 1);
+            transientImage.set(pluginName, "countries", placeList);
         }
         if (!people.isEmpty()) {
             String peopleList = "";
@@ -65,6 +76,8 @@ public class BeanAnalyzeFolderName extends BasePluginBean {
             peopleList = peopleList.substring(0, peopleList.length() - 1);
             transientImage.set(pluginName, "peoples", peopleList);
         }
+        transientImage.set(pluginName, "elaborated", elaborated);
+
         transientImage.store();
     }
 
