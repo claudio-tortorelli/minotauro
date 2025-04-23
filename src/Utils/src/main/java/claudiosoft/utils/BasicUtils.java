@@ -128,6 +128,10 @@ public class BasicUtils {
         return new File(BasicUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getAbsolutePath();
     }
 
+    public static String getExtension(File file) throws IOException {
+        return getExtension(file.getCanonicalPath());
+    }
+
     public static String getExtension(String filePath) {
         String extension = "";
         int i = filePath.lastIndexOf('.');

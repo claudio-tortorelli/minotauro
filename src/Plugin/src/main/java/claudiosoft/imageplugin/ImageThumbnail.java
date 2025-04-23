@@ -32,7 +32,7 @@ public class ImageThumbnail extends BaseImagePlugin {
     }
 
     /**
-     * todo, why take mov too???
+     *
      *
      * @param image
      * @param transientImage
@@ -44,10 +44,21 @@ public class ImageThumbnail extends BaseImagePlugin {
 
         File tmpImage = null;
         try {
+            if (!image.exists()) {
+                logger.error("image not found");
+                failed = true;
+                return;
+            }
+
             BeanThumbnail data = new BeanThumbnail(this.getClass().getSimpleName());
 
             // load the image
             Mat cvImage = Imgcodecs.imread(image.getCanonicalPath());
+            if (cvImage == null || cvImage.empty() || cvImage.width() == 0 || cvImage.height() == 0) {
+                logger.error("unable to read the image. Look for unicode chars in the path");
+                failed = true;
+                return;
+            }
 
             // evaluate the max size and get the destination sizes
             Size destSize;
@@ -69,7 +80,7 @@ public class ImageThumbnail extends BaseImagePlugin {
 
             // read the image byte array and convert to base64
             byte[] imgByte = Files.readAllBytes(tmpImage.toPath());
-            data.base64Image = new String(Base64.getEncoder().encode(imgByte));
+            data.base64Image = Base64.getEncoder().encodeToString(imgByte);
 
             // save to transient image
             data.store(transientImage);

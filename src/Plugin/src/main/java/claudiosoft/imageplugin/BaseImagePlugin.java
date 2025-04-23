@@ -58,7 +58,7 @@ public abstract class BaseImagePlugin implements Plugin {
     @Override
     public void close() throws CTException {
         long msec = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - nanoTimer);
-        logger.debug(String.format("%s done in %d msec", pluginName, msec));
+        logger.debug(String.format("%s terminated in %d msec", pluginName, msec));
     }
 
     public void traceErrorToTransientImage(String error) throws CTException {

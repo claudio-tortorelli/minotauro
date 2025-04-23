@@ -12,11 +12,13 @@ public class BeanFileData extends BasePluginBean {
     public String originalPath;
     public String fileName;
     public String lastModifiedDate;
+    public String ext;
 
     public BeanFileData(String pluginName) {
         super(pluginName);
         originalPath = "";
         fileName = "";
+        ext = "";
         lastModifiedDate = null;
     }
 
@@ -24,6 +26,7 @@ public class BeanFileData extends BasePluginBean {
     public void store(TransientImage transientImage) throws CTException {
         transientImage.set(pluginName, "originalPath", originalPath);
         transientImage.set(pluginName, "fileName", fileName);
+        transientImage.set(pluginName, "ext", ext);
         transientImage.set(pluginName, "lastModifiedDate", lastModifiedDate);
         transientImage.store();
     }

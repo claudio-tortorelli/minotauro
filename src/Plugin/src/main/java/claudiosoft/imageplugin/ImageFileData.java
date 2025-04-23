@@ -31,6 +31,7 @@ public class ImageFileData extends BaseImagePlugin {
 
             data.originalPath = imageFile.getCanonicalPath();
             data.fileName = imageFile.getName();
+            data.ext = BasicUtils.getExtension(imageFile);
             data.lastModifiedDate = BasicUtils.dateToString(new Date(imageFile.lastModified()));
             data.store(transientImage);
         } catch (Exception ex) {
