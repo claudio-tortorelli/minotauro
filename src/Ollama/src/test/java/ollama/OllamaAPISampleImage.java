@@ -25,15 +25,13 @@ public class OllamaAPISampleImage {
         OAPI.setModel(curModel);
         OAPI.setTimeout(120);
 
-        //String answerPrefix = "Please describe as better as possible this picture using up to 255 characters and not less than 128 character. Location is Villa Lante Viterbo";
-        String answerPrefix = "create 10 tag for this image";
-        //String answerPrefix = "Please return the file format description and some image features like image sizes in pixel, and exif data";
+        //String prompt = "Please describe as better as possible this picture using up to 255 characters and not less than 128 character. Location is Villa Lante Viterbo";
+        String prompt = "create 10 tag for this image, in a single line with tags separated by comma";
+        //String prompt = "Please return the file format description and some image features like image sizes in pixel, and exif data";
         ArrayList<File> images = new ArrayList<>();
-        //images.add(new File("C:\\dev\\GitHub\\minotauro\\testImg\\image-1.jpg"));
-        //images.add(new File("C:\\media\\CameraObscura\\2025\\2025 01 Compleanno Federica\\IMG20250119191641.jpg"));
         images.add(new File("..\\..\\testImg\\lante.jpg"));
 
-        String response = OAPI.generateWithImage(answerPrefix, images);
+        String response = OAPI.generateWithImage(prompt, images);
         System.out.println(response);
     }
 }

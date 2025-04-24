@@ -131,12 +131,14 @@ public class Minotauro {
         logger.info("= start plugin process ="); // TODO, should be multithread here...
         for (BaseImagePlugin plugin : pluginList) {
             try {
-                logger.debug(String.format("-- start plugin %s --", plugin.getClass().getSimpleName()));
+                logger.info(String.format("-- start plugin %s --", plugin.getClass().getSimpleName()));
                 plugin.init(config, plugin.getClass().getSimpleName());
 
                 File curImage = indexer.startVisit();
                 while (curImage != null) {
-                    logger.debug(String.format("%s - processing image %s", indexer.getVisitIndex(), curImage.getCanonicalPath()));
+                    if (logger.isDebug()) {
+                        logger.debug(String.format("%s - processing image %s", indexer.getVisitIndex(), curImage.getCanonicalPath()));
+                    }
                     TransientImage transientImage = transientImageProxy.get(curImage);
                     plugin.apply(curImage, transientImage);
                     HashMap<String, String> tsErrors = transientImage.getErrors();

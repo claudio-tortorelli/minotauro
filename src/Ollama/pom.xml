@@ -18,6 +18,10 @@
             <artifactId>ollama4j</artifactId>
             <version>1.0.97</version>
         </dependency>
+        <dependency>
+            <groupId>claudiosoft</groupId>
+            <artifactId>Utils</artifactId>
+        </dependency>   
     </dependencies>
     
 </project>

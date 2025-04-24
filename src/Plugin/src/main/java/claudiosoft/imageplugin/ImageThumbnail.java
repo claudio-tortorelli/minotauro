@@ -64,11 +64,11 @@ public class ImageThumbnail extends BaseImagePlugin {
             Size destSize;
             double ratio = cvImage.width() / (double) cvImage.height();
             if (ratio >= 1.0) {
-                int dstWidth = Integer.parseInt(config.get(this.getClass().getSimpleName(), "maxSizePix", "1024"));
+                int dstWidth = Integer.min(cvImage.width(), Integer.parseInt(config.get(this.getClass().getSimpleName(), "maxSizePix", "1024")));
                 int dstHeight = (int) (dstWidth * cvImage.height()) / cvImage.width();
                 destSize = new Size(dstWidth, dstHeight);
             } else {
-                int dstHeight = Integer.parseInt(config.get(this.getClass().getSimpleName(), "maxSizePix", "1024"));
+                int dstHeight = Integer.min(cvImage.height(), Integer.parseInt(config.get(this.getClass().getSimpleName(), "maxSizePix", "1024")));
                 int dstWidth = (int) (dstHeight * cvImage.width()) / cvImage.height();
                 destSize = new Size(dstWidth, dstHeight);
             }

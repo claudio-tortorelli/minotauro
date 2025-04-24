@@ -64,6 +64,7 @@ public abstract class BaseImagePlugin implements Plugin {
     public void traceErrorToTransientImage(String error) throws CTException {
         try {
             logger.error(String.format("error in %s", transientImage.get(ImageId.class.getSimpleName(), "id", "")));
+            logger.error(error);
             transientImage.set(pluginName, "error", error);
         } catch (Exception ex) {
             throw new CTException(ex);

@@ -22,6 +22,10 @@
             <artifactId>TransientImage</artifactId>
         </dependency>   
         <dependency>
+                <groupId>claudiosoft</groupId>
+                <artifactId>Ollama</artifactId>
+            </dependency> 
+        <dependency>
             <groupId>com.drewnoakes</groupId>
             <artifactId>metadata-extractor</artifactId>
             <version>2.19.0</version>

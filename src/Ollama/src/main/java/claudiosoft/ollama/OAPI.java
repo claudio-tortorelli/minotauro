@@ -1,12 +1,12 @@
 package claudiosoft.ollama;
 
+import claudiosoft.commons.CTException;
 import io.github.ollama4j.OllamaAPI;
 import io.github.ollama4j.models.response.Model;
 import io.github.ollama4j.models.response.OllamaResult;
 import io.github.ollama4j.types.OllamaModelType;
 import io.github.ollama4j.utils.OptionsBuilder;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -19,26 +19,26 @@ public class OAPI {
     private static OllamaAPI ollamaSrv = null;
     private static Model selectedModel = null;
 
-    private static final String host = "http://localhost:11434/";
-    private static final int timeout = 30;
+    private static final String AI_HOST = "http://localhost:11434/";
+    private static final int TIMEOUT = 30;
 
-    public static synchronized void init() throws IOException {
-        init(host);
+    public static synchronized void init() throws CTException {
+        init(AI_HOST);
     }
 
-    public static synchronized void init(String hostPort) throws IOException {
+    public static synchronized void init(String hostPort) throws CTException {
         if (ollamaSrv == null) {
             ollamaSrv = new OllamaAPI(hostPort);
         }
         ollamaSrv.setVerbose(true);
-        ollamaSrv.setRequestTimeoutSeconds(timeout);
+        ollamaSrv.setRequestTimeoutSeconds(TIMEOUT);
         boolean isOllamaServerReachable = ollamaSrv.ping();
         if (!isOllamaServerReachable) {
-            throw new IOException("Ollama server not reachable");
+            throw new CTException("Ollama server not reachable");
         }
     }
 
-    public static void setTimeout(int seconds) throws Exception {
+    public static void setTimeout(int seconds) throws CTException {
         if (ollamaSrv == null) {
             init();
         }

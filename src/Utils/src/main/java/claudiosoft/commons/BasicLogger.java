@@ -110,4 +110,8 @@ public class BasicLogger {
             internalLogger.log(Level.INFO, "[DEBUG] {0}", message);
         }
     }
+
+    public boolean isDebug() {
+        return (level == LogLevel.DEBUG);
+    }
 }
