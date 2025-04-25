@@ -203,7 +203,6 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
                 data.people.add(word);
                 continue;
             }
-            // TODO wiki.
             if (wiki != null) {
                 //https://github.com/fastily/jwiki
                 //wiki.search(year, step, ns) 

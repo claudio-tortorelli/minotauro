@@ -336,7 +336,6 @@ public class BasicUtils {
         }).start();
     }
 
-    // TODO, should have a map of times
     public static synchronized void startElapsedTime() {
         nanoTimeStart = System.nanoTime();
     }

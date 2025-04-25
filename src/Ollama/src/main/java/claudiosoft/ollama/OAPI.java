@@ -19,17 +19,18 @@ public class OAPI {
     private static OllamaAPI ollamaSrv = null;
     private static Model selectedModel = null;
 
-    private static final String AI_HOST = "http://localhost:11434/";
+    private static final String DEFAULT_OLLAMA_HOST = "http://localhost:11434/";
     private static final int TIMEOUT = 30;
 
     public static synchronized void init() throws CTException {
-        init(AI_HOST);
+        init(DEFAULT_OLLAMA_HOST);
     }
 
     public static synchronized void init(String hostPort) throws CTException {
-        if (ollamaSrv == null) {
-            ollamaSrv = new OllamaAPI(hostPort);
+        if (ollamaSrv != null) {
+            return; // already initialized
         }
+        ollamaSrv = new OllamaAPI(hostPort);
         ollamaSrv.setVerbose(true);
         ollamaSrv.setRequestTimeoutSeconds(TIMEOUT);
         boolean isOllamaServerReachable = ollamaSrv.ping();
@@ -75,11 +76,11 @@ public class OAPI {
         return getModelList();
     }
 
-    public static final String generate(String answer) throws Exception {
-        return generate(selectedModel, answer);
+    public static final String generate(String prompt) throws Exception {
+        return generate(selectedModel, prompt);
     }
 
-    public static final String generate(Model model, String answer) throws Exception {
+    public static final String generate(Model model, String prompt) throws Exception {
         if (ollamaSrv == null) {
             init();
         }
@@ -87,15 +88,15 @@ public class OAPI {
             throw new Exception("no LLM model selected");
         }
         selectedModel = model;
-        OllamaResult result = ollamaSrv.generate(selectedModel.getModel(), answer, false, new OptionsBuilder().build());
+        OllamaResult result = ollamaSrv.generate(selectedModel.getModel(), prompt, false, new OptionsBuilder().build());
         return result.getResponse();
     }
 
-    public static final String generateWithImage(String answer, List<File> images) throws Exception {
-        return generateWithImage(selectedModel, answer, images);
+    public static final String generateWithImage(String prompt, List<File> images) throws Exception {
+        return generateWithImage(selectedModel, prompt, images);
     }
 
-    public static final String generateWithImage(Model model, String answer, List<File> images) throws Exception {
+    public static final String generateWithImage(Model model, String prompt, List<File> images) throws Exception {
         if (ollamaSrv == null) {
             init();
         }
@@ -106,7 +107,7 @@ public class OAPI {
             throw new Exception("no image to process");
         }
         selectedModel = model;
-        OllamaResult result = ollamaSrv.generateWithImageFiles(selectedModel.getModel(), answer, images, new OptionsBuilder().build());
+        OllamaResult result = ollamaSrv.generateWithImageFiles(selectedModel.getModel(), prompt, images, new OptionsBuilder().build());
         return result.getResponse();
     }
 

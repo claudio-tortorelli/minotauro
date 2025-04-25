@@ -19,6 +19,27 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
+/**
+ * //TODO analyze the extension to take note of presence of some files (video,
+ * documents etc)
+ *
+ * //TODO add a statistic analyzer that can produce an ipothesis about the
+ * remaining time of a plugin work
+ *
+ * //TODO, should be multithread ...
+ *
+ * //TODO, timer should have a map of times
+ *
+ * //TODO implement the wiki search
+ *
+ * //TODO implement a translation plugin
+ *
+ * //TODO evaluate a tag extraction from description
+ *
+ *
+ *
+ * @author claudio.tortorelli
+ */
 public class Minotauro {
 
     private static String configFilePath;
@@ -128,7 +149,7 @@ public class Minotauro {
         int nErrors = 0;
         int nWarns = 0;
         BasicUtils.startElapsedTime();
-        logger.info("= start plugin process ="); // TODO, should be multithread here...
+        logger.info("= start plugin process =");
         for (BaseImagePlugin plugin : pluginList) {
             try {
                 logger.info(String.format("-- start plugin %s --", plugin.getClass().getSimpleName()));
