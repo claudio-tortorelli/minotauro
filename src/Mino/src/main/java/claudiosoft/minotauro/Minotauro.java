@@ -11,6 +11,7 @@ import claudiosoft.transientimage.TransientImageProvider;
 import claudiosoft.utils.BasicUtils;
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
@@ -78,6 +79,22 @@ public class Minotauro {
         logger.info("----------------------");
         logger.info("Minotauro v1.0");
         logger.info("----------------------");
+
+        String osArch = System.getProperty("os.arch");
+        String osName = System.getProperty("os.name");
+        String osVersion = System.getProperty("os.version");
+        String homeDir = System.getProperty("user.home");
+        int nProc = Runtime.getRuntime().availableProcessors();
+        long diskSize = new File("/").getTotalSpace();
+        long ram = ((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalMemorySize();
+
+        logger.info(String.format("- operating system name: %s", osName));
+        logger.info(String.format("- operating system arch: %s", osArch));
+        logger.info(String.format("- operation System version: %s", osVersion));
+        logger.info(String.format("- user home: %s", homeDir));
+        logger.info(String.format("- processors available: %d", nProc));
+        logger.info(String.format("- disk size: %d mb", diskSize / (1024 * 1024)));
+        logger.info(String.format("- total ram available: %d mb", ram / (1024 * 1024)));
 
         String rootFolder = config.get("index", "rootPath");
         String index = config.get("index", "indexPath");

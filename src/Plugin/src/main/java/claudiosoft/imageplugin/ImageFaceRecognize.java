@@ -6,6 +6,7 @@ import claudiosoft.transientimage.TransientImage;
 import java.io.File;
 
 /**
+ * use opencv with https://www.baeldung.com/java-opencv
  *
  * @author claudio.tortorelli
  */
