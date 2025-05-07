@@ -80,11 +80,14 @@ public class Minotauro {
         logger.info("Minotauro v1.0");
         logger.info("----------------------");
 
+        Runtime runtimeEnv = Runtime.getRuntime();
         String osArch = System.getProperty("os.arch");
         String osName = System.getProperty("os.name");
         String osVersion = System.getProperty("os.version");
         String homeDir = System.getProperty("user.home");
-        int nProc = Runtime.getRuntime().availableProcessors();
+        String javaHome = System.getProperty("java.home");
+        String javaVer = System.getProperty("java.version");
+        int nProc = runtimeEnv.availableProcessors();
         long diskSize = new File("/").getTotalSpace();
         long ram = ((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalMemorySize();
 
@@ -95,6 +98,8 @@ public class Minotauro {
         logger.info(String.format("- processors available: %d", nProc));
         logger.info(String.format("- disk size: %d mb", diskSize / (1024 * 1024)));
         logger.info(String.format("- total ram available: %d mb", ram / (1024 * 1024)));
+        logger.info(String.format("- java home: %s", javaHome));
+        logger.info(String.format("- java version: %s", javaVer));
 
         String rootFolder = config.get("index", "rootPath");
         String index = config.get("index", "indexPath");
