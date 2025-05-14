@@ -1,6 +1,5 @@
 package claudiosoft.transientimage;
 
-import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTException;
 import claudiosoft.utils.BasicUtils;
 import java.io.File;
@@ -16,10 +15,24 @@ public class TransientImageProvider {
 
     private File imageRootPath;
     private File transientRootPath;
-    private BasicLogger logger;
 
-    public TransientImageProvider(File imageRootPath, File transientRootPath) throws IOException {
-        logger = BasicLogger.get();
+    public static TransientImageProvider imgProvider = null;
+
+    public static synchronized void init(File imageRootPath, File transientRootPath) throws IOException {
+        if (imgProvider != null) {
+            return;
+        }
+        imgProvider = new TransientImageProvider(imageRootPath, transientRootPath);
+    }
+
+    public static synchronized TransientImageProvider getProvider() throws CTException {
+        if (imgProvider == null) {
+            throw new CTException("Transient image provider not initialized");
+        }
+        return imgProvider;
+    }
+
+    private TransientImageProvider(File imageRootPath, File transientRootPath) throws IOException {
         this.imageRootPath = imageRootPath;
         this.transientRootPath = transientRootPath;
         Files.createDirectories(this.transientRootPath.toPath());

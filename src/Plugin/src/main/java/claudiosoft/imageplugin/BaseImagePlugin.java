@@ -3,9 +3,9 @@ package claudiosoft.imageplugin;
 import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
+import claudiosoft.indexer.Indexer;
 import claudiosoft.plugin.Plugin;
 import claudiosoft.transientimage.TransientImage;
-import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -17,11 +17,11 @@ public abstract class BaseImagePlugin implements Plugin {
     protected String pluginName;
 
     protected int step;
-    protected File imageFile;
     protected Config config;
     protected BasicLogger logger;
-    protected TransientImage transientImage;
+    protected Indexer indexer;
     protected boolean failed;
+    protected boolean multithread;
 
     private long nanoTimer;
 
@@ -34,25 +34,27 @@ public abstract class BaseImagePlugin implements Plugin {
     }
 
     @Override
-    public void init(Config config, String pluginName) throws CTException {
+    public void init(Config config) throws CTException {
         if (this.config != null) {
             return; // already initialized
         }
         try {
-            this.pluginName = pluginName;
             this.config = config;
+            this.pluginName = getClass().getSimpleName();
             this.logger = BasicLogger.get();
             this.nanoTimer = System.nanoTime();
+            this.multithread = false;
+
+            logger.info(String.format("-- start plugin %s --", pluginName));
         } catch (Exception ex) {
             throw new CTException(ex.getMessage(), ex);
         }
     }
 
     @Override
-    public void apply(File image, TransientImage transientImage) throws CTException {
+    public void apply(Indexer indexer) throws CTException {
         this.failed = false;
-        this.imageFile = image;
-        this.transientImage = transientImage;
+        this.indexer = indexer;
     }
 
     @Override
@@ -61,7 +63,7 @@ public abstract class BaseImagePlugin implements Plugin {
         logger.debug(String.format("%s terminated in %d msec", pluginName, msec));
     }
 
-    public void traceErrorToTransientImage(String error) throws CTException {
+    public void traceErrorToTransientImage(String error, TransientImage transientImage) throws CTException {
         try {
             logger.error(String.format("error in %s", transientImage.get(ImageId.class.getSimpleName(), "id", "")));
             logger.error(error);

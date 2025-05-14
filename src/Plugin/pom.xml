@@ -19,6 +19,10 @@
         </dependency>   
         <dependency>
             <groupId>claudiosoft</groupId>
+            <artifactId>Indexer</artifactId>
+        </dependency>   
+        <dependency>
+            <groupId>claudiosoft</groupId>
             <artifactId>TransientImage</artifactId>
         </dependency>   
         <dependency>

@@ -6,7 +6,6 @@ import claudiosoft.commons.Config;
 import claudiosoft.commons.Constants;
 import claudiosoft.imageplugin.BaseImagePlugin;
 import claudiosoft.indexer.Indexer;
-import claudiosoft.transientimage.TransientImage;
 import claudiosoft.transientimage.TransientImageProvider;
 import claudiosoft.utils.BasicUtils;
 import java.io.File;
@@ -16,9 +15,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map.Entry;
 
 /**
  * //TODO analyze the extension to take note of presence of some files (video,
@@ -44,7 +41,6 @@ import java.util.Map.Entry;
 public class Minotauro {
 
     private static String configFilePath;
-    private static Config config;
     private static BasicLogger logger;
     private static BasicLogger errLogger;
 
@@ -55,7 +51,7 @@ public class Minotauro {
         configFilePath = "../../config/config.ini";
         parseArgs(args);
 
-        config = new Config(new File(configFilePath));
+        Config config = new Config(new File(configFilePath));
 
         BasicLogger.LogLevel logLevel = BasicLogger.LogLevel.NORMAL;
         if (config.get("logger", "level").equalsIgnoreCase("debug")) {
@@ -71,10 +67,6 @@ public class Minotauro {
             // console logger
             logger = BasicLogger.get(logLevel, Constants.LOGGER_NAME);
         }
-
-        File errorLoggerFile = new File(config.get("logger", "errorLogPath", "./errors.log"));
-        errorLoggerFile.delete();
-        errLogger = BasicLogger.get(BasicLogger.LogLevel.NORMAL, "ErrorLogger", errorLoggerFile);
 
         logger.info("----------------------");
         logger.info("Minotauro v1.0");
@@ -162,7 +154,7 @@ public class Minotauro {
         }
 
         String transientRootPath = config.get("transient", "transientRootPath", "./tsImages");
-        TransientImageProvider transientImageProxy = new TransientImageProvider(new File(rootFolder), new File(transientRootPath));
+        TransientImageProvider.init(new File(rootFolder), new File(transientRootPath));
 
         // for each image in the index execute enabled plugin using multithread
         int nPluginThread = Integer.parseInt(config.get("threads", "plugin_threads", "1"));
@@ -174,32 +166,13 @@ public class Minotauro {
         logger.info("= start plugin process =");
         for (BaseImagePlugin plugin : pluginList) {
             try {
-                logger.info(String.format("-- start plugin %s --", plugin.getClass().getSimpleName()));
-                plugin.init(config, plugin.getClass().getSimpleName());
-
-                File curImage = indexer.startVisit();
-                while (curImage != null) {
-                    if (logger.isDebug()) {
-                        logger.debug(String.format("%s - processing image %s", indexer.getVisitIndex(), curImage.getCanonicalPath()));
-                    }
-                    TransientImage transientImage = transientImageProxy.get(curImage);
-                    plugin.apply(curImage, transientImage);
-                    HashMap<String, String> tsErrors = transientImage.getErrors();
-                    if (tsErrors != null) {
-                        for (Entry<String, String> entry : tsErrors.entrySet()) {
-                            errLogger.error(String.format("[%s] %s: %s", curImage.getCanonicalPath(), entry.getKey(), entry.getValue()));
-                        }
-                    }
-                    if (plugin.isFailed()) {
-                        nWarns++;
-                    }
-                    curImage = indexer.visitNext();
-                }
+                plugin.init(config);
+                plugin.apply(indexer);
             } catch (CTException ex) {
-                indexer.reset();
-                plugin.traceErrorToTransientImage(ex.getMessage());
                 nErrors++;
             } finally {
+                indexer.reset();
+
                 plugin.close();
             }
         }
