@@ -2,10 +2,9 @@ package claudiosoft.imageplugin;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
+import claudiosoft.indexer.Indexer;
 import claudiosoft.pluginbean.BeanFileData;
-import claudiosoft.transientimage.TransientImage;
 import claudiosoft.utils.BasicUtils;
-import java.io.File;
 import java.util.Date;
 
 /**
@@ -19,13 +18,13 @@ public class ImageFileData extends BaseImagePlugin {
     }
 
     @Override
-    public void init(Config config, String pluginName) throws CTException {
-        super.init(config, pluginName);
+    public void init(Config config) throws CTException {
+        super.init(config);
     }
 
     @Override
-    public void apply(File image, TransientImage transientImage) throws CTException {
-        super.apply(image, transientImage);
+    public void apply(Indexer indexer) throws CTException {
+        super.apply(indexer);
         try {
             BeanFileData data = new BeanFileData(this.getClass().getSimpleName());
 

@@ -2,8 +2,7 @@ package claudiosoft.imageplugin;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
-import claudiosoft.transientimage.TransientImage;
-import java.io.File;
+import claudiosoft.indexer.Indexer;
 
 /**
  * use opencv with https://www.baeldung.com/java-opencv
@@ -17,13 +16,13 @@ public class ImageFaceRecognize extends BaseImagePlugin {
     }
 
     @Override
-    public void init(Config config, String pluginName) throws CTException {
-        super.init(config, pluginName);
+    public void init(Config config) throws CTException {
+        super.init(config);
     }
 
     @Override
-    public void apply(File image, TransientImage transientImage) throws CTException {
-        super.apply(image, transientImage);
+    public void apply(Indexer indexer) throws CTException {
+        super.apply(indexer);
         try {
 
         } catch (Exception ex) {

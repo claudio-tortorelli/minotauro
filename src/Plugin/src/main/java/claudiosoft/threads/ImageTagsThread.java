@@ -3,6 +3,7 @@ package claudiosoft.threads;
 import claudiosoft.commons.CTException;
 import claudiosoft.ollama.OAPI;
 import claudiosoft.pluginbean.BeanTags;
+import claudiosoft.pluginconfig.ImageTagConfig;
 import claudiosoft.transientimage.TransientImage;
 import claudiosoft.transientimage.TransientImageProvider;
 import java.io.File;
@@ -14,11 +15,13 @@ import java.util.ArrayList;
  */
 public class ImageTagsThread extends PluginThread {
 
-    private String prompt;
+    private ImageTagConfig plugConf;
+    private BeanTags data;
 
-    public ImageTagsThread(File curImage, String prompt) throws CTException {
+    public ImageTagsThread(File curImage, ImageTagConfig plugConf, BeanTags data) throws CTException {
         super(curImage);
-        this.prompt = prompt;
+        this.plugConf = plugConf;
+        this.data = data;
     }
 
     @Override
@@ -29,14 +32,12 @@ public class ImageTagsThread extends PluginThread {
             }
             TransientImage transientImage = TransientImageProvider.getProvider().get(curImage);
 
-            BeanTags data = new BeanTags(this.getClass().getSimpleName());
-
             File imgToAnalyze = curImage;
 
             ArrayList<File> images = new ArrayList<>();
             images.add(imgToAnalyze);
 
-            data.tagList = OAPI.generateWithImage(prompt, images);
+            data.tagList = OAPI.generateWithImage(plugConf.prompt, images);
             if (logger.isDebug()) {
                 logger.debug(data.tagList);
             }

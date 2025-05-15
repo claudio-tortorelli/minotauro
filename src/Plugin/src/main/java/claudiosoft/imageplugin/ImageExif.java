@@ -2,8 +2,8 @@ package claudiosoft.imageplugin;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
+import claudiosoft.indexer.Indexer;
 import claudiosoft.pluginbean.BeanExif;
-import claudiosoft.transientimage.TransientImage;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -12,7 +12,6 @@ import com.drew.metadata.exif.ExifDirectoryBase;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
-import java.io.File;
 
 /**
  *
@@ -27,13 +26,13 @@ public class ImageExif extends BaseImagePlugin {
     }
 
     @Override
-    public void init(Config config, String pluginName) throws CTException {
-        super.init(config, pluginName);
+    public void init(Config config) throws CTException {
+        super.init(config);
     }
 
     @Override
-    public void apply(File image, TransientImage transientImage) throws CTException {
-        super.apply(image, transientImage);
+    public void apply(Indexer indexer) throws CTException {
+        super.apply(indexer);
         try {
             BeanExif data = new BeanExif(this.getClass().getSimpleName());
 

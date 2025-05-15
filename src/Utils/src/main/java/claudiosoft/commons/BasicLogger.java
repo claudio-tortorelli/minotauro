@@ -38,26 +38,27 @@ public class BasicLogger {
 
     private static BasicLogger logger;
 
-    public static BasicLogger get() throws SecurityException, IOException {
+    public static BasicLogger get() throws CTException {
         return get(LogLevel.NORMAL);
     }
 
-    public static BasicLogger get(LogLevel level) throws SecurityException, IOException {
+    public static BasicLogger get(LogLevel level) throws CTException {
         return get(level, "Logger");
     }
 
-    public static BasicLogger get(LogLevel level, String logName) throws SecurityException, IOException {
+    public static BasicLogger get(LogLevel level, String logName) throws CTException {
         return get(level, "Logger", null);
     }
 
-    public static BasicLogger get(LogLevel level, String logName, File logFile) throws SecurityException, IOException {
+    public static BasicLogger get(LogLevel level, String logName, File logFile) throws CTException {
         if (logger == null) {
             logger = new BasicLogger(level, logName, logFile);
         }
         return logger;
     }
 
-    private BasicLogger(LogLevel level, String logName, File logFile) throws SecurityException, IOException {
+    private BasicLogger(LogLevel level, String logName, File logFile) throws CTException {
+
         internalLogger = Logger.getLogger(logName);
         Handler handlerObj = new ConsoleHandler();
 
@@ -77,9 +78,13 @@ public class BasicLogger {
         }
         internalLogger.addHandler(handlerObj);
         if (logFile != null) {
-            FileHandler fileHandler = new FileHandler(logFile.getAbsolutePath(), true);
-            fileHandler.setFormatter(new SimpleFormatter());
-            internalLogger.addHandler(fileHandler);
+            try {
+                FileHandler fileHandler = new FileHandler(logFile.getAbsolutePath(), true);
+                fileHandler.setFormatter(new SimpleFormatter());
+                internalLogger.addHandler(fileHandler);
+            } catch (SecurityException | IOException ex) {
+                throw new CTException(ex);
+            }
         }
         internalLogger.setUseParentHandlers(false);
         this.level = level;

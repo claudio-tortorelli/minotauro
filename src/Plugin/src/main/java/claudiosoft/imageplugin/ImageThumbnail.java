@@ -2,8 +2,8 @@ package claudiosoft.imageplugin;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
+import claudiosoft.indexer.Indexer;
 import claudiosoft.pluginbean.BeanThumbnail;
-import claudiosoft.transientimage.TransientImage;
 import claudiosoft.utils.BasicUtils;
 import java.io.File;
 import java.nio.file.Files;
@@ -26,8 +26,8 @@ public class ImageThumbnail extends BaseImagePlugin {
     }
 
     @Override
-    public void init(Config config, String pluginName) throws CTException {
-        super.init(config, pluginName);
+    public void init(Config config) throws CTException {
+        super.init(config);
         OpenCV.loadShared();
     }
 
@@ -39,8 +39,8 @@ public class ImageThumbnail extends BaseImagePlugin {
      * @throws CTException
      */
     @Override
-    public void apply(File image, TransientImage transientImage) throws CTException {
-        super.apply(image, transientImage);
+    public void apply(Indexer indexer) throws CTException {
+        super.apply(indexer);
 
         File tmpImage = null;
         try {

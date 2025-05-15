@@ -158,7 +158,8 @@ public class Minotauro {
 
         // for each image in the index execute enabled plugin using multithread
         int nPluginThread = Integer.parseInt(config.get("threads", "plugin_threads", "1"));
-        logger.info(String.format("%d thread used", nPluginThread));
+        int nThread = Integer.max(1, Integer.min(Runtime.getRuntime().availableProcessors() - 1, nPluginThread));
+        logger.info(String.format("%d thread used", nThread));
 
         int nErrors = 0;
         int nWarns = 0;

@@ -21,7 +21,7 @@ public abstract class BaseImagePlugin implements Plugin {
     protected BasicLogger logger;
     protected Indexer indexer;
     protected boolean failed;
-    protected boolean multithread;
+    protected int nThread;
 
     private long nanoTimer;
 
@@ -43,7 +43,9 @@ public abstract class BaseImagePlugin implements Plugin {
             this.pluginName = getClass().getSimpleName();
             this.logger = BasicLogger.get();
             this.nanoTimer = System.nanoTime();
-            this.multithread = false;
+
+            int nPluginThread = Integer.parseInt(config.get("threads", "plugin_threads", "1"));
+            this.nThread = Integer.max(1, Integer.min(Runtime.getRuntime().availableProcessors() - 1, nPluginThread));
 
             logger.info(String.format("-- start plugin %s --", pluginName));
         } catch (Exception ex) {

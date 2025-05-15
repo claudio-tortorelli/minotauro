@@ -2,9 +2,9 @@ package claudiosoft.imageplugin;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
+import claudiosoft.indexer.Indexer;
 import claudiosoft.ollama.OAPI;
 import claudiosoft.pluginbean.BeanDescription;
-import claudiosoft.transientimage.TransientImage;
 import io.github.ollama4j.models.response.Model;
 import java.io.File;
 import java.util.ArrayList;
@@ -22,8 +22,8 @@ public class ImageDescription extends BaseImagePlugin {
     }
 
     @Override
-    public void init(Config config, String pluginName) throws CTException {
-        super.init(config, pluginName);
+    public void init(Config config) throws CTException {
+        super.init(config);
         Model curModel = null;
         try {
             String modelName = config.get(this.getClass().getSimpleName(), "modelName", "llava");
@@ -55,8 +55,8 @@ public class ImageDescription extends BaseImagePlugin {
     }
 
     @Override
-    public void apply(File image, TransientImage transientImage) throws CTException {
-        super.apply(image, transientImage);
+    public void apply(Indexer indexer) throws CTException {
+        super.apply(indexer);
         File tmpImage = null;
         try {
             BeanDescription data = new BeanDescription(this.getClass().getSimpleName());
