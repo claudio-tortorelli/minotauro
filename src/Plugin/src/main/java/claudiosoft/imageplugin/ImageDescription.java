@@ -5,9 +5,11 @@ import claudiosoft.commons.Config;
 import claudiosoft.indexer.Indexer;
 import claudiosoft.ollama.OAPI;
 import claudiosoft.pluginbean.BeanDescription;
-import io.github.ollama4j.models.response.Model;
+import claudiosoft.pluginconfig.ImageDescriptionConfig;
+import claudiosoft.threads.ImageDescriptionThread;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  *
@@ -15,7 +17,7 @@ import java.util.ArrayList;
  */
 public class ImageDescription extends BaseImagePlugin {
 
-    private String prompt;
+    private ImageDescriptionConfig plugConf;
 
     public ImageDescription(int step) {
         super(step);
@@ -24,57 +26,25 @@ public class ImageDescription extends BaseImagePlugin {
     @Override
     public void init(Config config) throws CTException {
         super.init(config);
-        Model curModel = null;
-        try {
-            String modelName = config.get(this.getClass().getSimpleName(), "modelName", "llava");
-            logger.info("looking for model " + modelName);
-
-            logger.info("list ollama installed models");
-            for (Model model : OAPI.getModelList()) {
-                logger.info("- " + model.getModelName());
-                if (model.getModelName().equalsIgnoreCase(modelName)) {
-                    curModel = model;
-                }
-            }
-            OAPI.setModel(curModel);
-        } catch (Exception ex) {
-            logger.error("unable to select current model", ex);
-        }
-
-        int timeout = Integer.parseInt(config.get(this.getClass().getSimpleName(), "timeout", "120"));
-        OAPI.setTimeout(timeout);
-
-        prompt = config.get(this.getClass().getSimpleName(), "prompt", "write a synthetic description of this image. The maximum length is %d characters");
-        if (!prompt.contains("%d")) {
-            throw new CTException("invalid prompt");
-        }
-        int maxLength = Integer.parseInt(config.get(this.getClass().getSimpleName(), "maxLengthChar", "255"));
-        prompt = String.format(prompt, maxLength);
-
-        logger.info(String.format("prompt: %s", prompt));
+        OAPI.init();
+        plugConf = new ImageDescriptionConfig(config, this.getClass().getSimpleName());
     }
 
     @Override
     public void apply(Indexer indexer) throws CTException {
         super.apply(indexer);
-        File tmpImage = null;
+        ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
-            BeanDescription data = new BeanDescription(this.getClass().getSimpleName());
-
-            ArrayList<File> images = new ArrayList<>();
-            images.add(image);
-
-            data.description = OAPI.generateWithImage(prompt, images);
-            if (logger.isDebug()) {
-                logger.debug(data.description);
+            File curImage = indexer.startVisit();
+            while (curImage != null) {
+                ImageDescriptionThread thread = new ImageDescriptionThread(curImage, plugConf, new BeanDescription(this.getClass().getSimpleName()));
+                exec.execute(thread);
+                curImage = indexer.visitNext();
             }
-            data.store(transientImage);
         } catch (Exception ex) {
             throw new CTException(ex.getMessage(), ex);
         } finally {
-            if (tmpImage != null) {
-                tmpImage.delete();
-            }
+            exec.shutdown();
         }
     }
 

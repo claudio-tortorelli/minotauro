@@ -26,11 +26,11 @@ public class ImageAnalyzeFolderConfig extends PluginConfig {
     public List<String> storedNames;
     public List<String> storedTools;
 
-    public ImageAnalyzeFolderConfig(Config config) throws CTException {
-        super(config);
+    public ImageAnalyzeFolderConfig(Config config, String pluginName) throws CTException {
+        super(config, pluginName);
 
         patterns = new LinkedList<>();
-        String regex = config.get(this.getClass().getSimpleName(), "regex1", "");
+        String regex = config.get(pluginName, "regex1", "");
         patterns.add(Pattern.compile(regex, Pattern.CASE_INSENSITIVE));
 
         storedEvents = new LinkedList<>();
@@ -39,7 +39,7 @@ public class ImageAnalyzeFolderConfig extends PluginConfig {
         storedNames = new LinkedList<>();
         storedTools = new LinkedList<>();
 
-        advanced = config.get(this.getClass().getSimpleName(), "parseDesc", "false").equalsIgnoreCase("true");
+        advanced = config.get(pluginName, "parseDesc", "false").equalsIgnoreCase("true");
         if (advanced) {
             File fileCities;
             try {
@@ -87,7 +87,7 @@ public class ImageAnalyzeFolderConfig extends PluginConfig {
             }
         }
 
-        enableWikipedia = config.get(this.getClass().getSimpleName(), "enableWikipedia", "false").equalsIgnoreCase("true");
+        enableWikipedia = config.get(pluginName, "enableWikipedia", "false").equalsIgnoreCase("true");
     }
 
 }

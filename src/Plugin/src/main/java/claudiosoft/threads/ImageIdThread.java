@@ -1,24 +1,23 @@
 package claudiosoft.threads;
 
 import claudiosoft.commons.CTException;
-import claudiosoft.ollama.OAPI;
-import claudiosoft.pluginbean.BeanTags;
-import claudiosoft.pluginconfig.ImageTagConfig;
+import claudiosoft.pluginbean.BeanId;
+import claudiosoft.pluginconfig.ImageIdConfig;
 import claudiosoft.transientimage.TransientImage;
 import claudiosoft.transientimage.TransientImageProvider;
+import claudiosoft.utils.BasicUtils;
 import java.io.File;
-import java.util.ArrayList;
 
 /**
  *
  * @author claudio.tortorelli
  */
-public class ImageTagsThread extends PluginThread {
+public class ImageIdThread extends PluginThread {
 
-    private final ImageTagConfig plugConf;
-    private final BeanTags data;
+    private final ImageIdConfig plugConf;
+    private final BeanId data;
 
-    public ImageTagsThread(File curImage, ImageTagConfig plugConf, BeanTags data) throws CTException {
+    public ImageIdThread(File curImage, ImageIdConfig plugConf, BeanId data) throws CTException {
         super(curImage);
         this.plugConf = plugConf;
         this.data = data;
@@ -32,14 +31,10 @@ public class ImageTagsThread extends PluginThread {
             }
             TransientImage transientImage = TransientImageProvider.getProvider().get(curImage);
 
-            File imgToAnalyze = curImage;
-
-            ArrayList<File> images = new ArrayList<>();
-            images.add(imgToAnalyze);
-
-            data.tagList = OAPI.generateWithImage(plugConf.prompt, images);
-            if (logger.isDebug()) {
-                logger.debug(data.tagList);
+            if (plugConf.algo.equalsIgnoreCase("sha-1")) {
+                data.hashId = BasicUtils.bytesToHex(BasicUtils.getSHA1(curImage));
+            } else {
+                data.hashId = BasicUtils.bytesToHex(BasicUtils.getSHA256(curImage));
             }
             data.store(transientImage);
             done = true;

@@ -11,9 +11,11 @@ import claudiosoft.commons.Config;
 public abstract class PluginConfig {
 
     protected BasicLogger logger;
+    protected String pluginName;
 
-    public PluginConfig(Config config) throws CTException {
-        logger = BasicLogger.get();
+    public PluginConfig(Config config, String pluginName) throws CTException {
+        this.logger = BasicLogger.get();
+        this.pluginName = pluginName;
 
     }
 }

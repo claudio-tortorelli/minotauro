@@ -27,7 +27,7 @@ public class ImageTags extends BaseImagePlugin {
     public void init(Config config) throws CTException {
         super.init(config);
         OAPI.init();
-        plugConf = new ImageTagConfig(config);
+        plugConf = new ImageTagConfig(config, this.getClass().getSimpleName());
     }
 
     @Override

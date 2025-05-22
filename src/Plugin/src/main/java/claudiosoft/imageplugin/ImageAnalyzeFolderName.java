@@ -30,7 +30,7 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
          * TODO adesso deve essere implementato il multi pattern per parsare i
          * casi diversi dallo standard
          */
-        plugConf = new ImageAnalyzeFolderConfig(config);
+        plugConf = new ImageAnalyzeFolderConfig(config, this.getClass().getSimpleName());
     }
 
     @Override

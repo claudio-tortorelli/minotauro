@@ -2,8 +2,8 @@ package claudiosoft.threads;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.ollama.OAPI;
-import claudiosoft.pluginbean.BeanTags;
-import claudiosoft.pluginconfig.ImageTagConfig;
+import claudiosoft.pluginbean.BeanDescription;
+import claudiosoft.pluginconfig.ImageDescriptionConfig;
 import claudiosoft.transientimage.TransientImage;
 import claudiosoft.transientimage.TransientImageProvider;
 import java.io.File;
@@ -13,12 +13,12 @@ import java.util.ArrayList;
  *
  * @author claudio.tortorelli
  */
-public class ImageTagsThread extends PluginThread {
+public class ImageDescriptionThread extends PluginThread {
 
-    private final ImageTagConfig plugConf;
-    private final BeanTags data;
+    private final ImageDescriptionConfig plugConf;
+    private final BeanDescription data;
 
-    public ImageTagsThread(File curImage, ImageTagConfig plugConf, BeanTags data) throws CTException {
+    public ImageDescriptionThread(File curImage, ImageDescriptionConfig plugConf, BeanDescription data) throws CTException {
         super(curImage);
         this.plugConf = plugConf;
         this.data = data;
@@ -37,9 +37,9 @@ public class ImageTagsThread extends PluginThread {
             ArrayList<File> images = new ArrayList<>();
             images.add(imgToAnalyze);
 
-            data.tagList = OAPI.generateWithImage(plugConf.prompt, images);
+            data.description = OAPI.generateWithImage(plugConf.prompt, images);
             if (logger.isDebug()) {
-                logger.debug(data.tagList);
+                logger.debug(data.description);
             }
             data.store(transientImage);
             done = true;

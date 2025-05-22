@@ -4,7 +4,11 @@ import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.Indexer;
 import claudiosoft.pluginbean.BeanId;
-import claudiosoft.utils.BasicUtils;
+import claudiosoft.pluginconfig.ImageIdConfig;
+import claudiosoft.threads.ImageIdThread;
+import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  *
@@ -12,7 +16,7 @@ import claudiosoft.utils.BasicUtils;
  */
 public class ImageId extends BaseImagePlugin {
 
-    private String algo;
+    private ImageIdConfig plugConf;
 
     public ImageId(int step) {
         super(step);
@@ -21,24 +25,25 @@ public class ImageId extends BaseImagePlugin {
     @Override
     public void init(Config config) throws CTException {
         super.init(config);
-        algo = config.get(this.getClass().getSimpleName(), "algorithm", "sha-1");
+        plugConf = new ImageIdConfig(config, this.getClass().getSimpleName());
     }
 
     @Override
     public void apply(Indexer indexer) throws CTException {
         super.apply(indexer);
 
+        ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
-            BeanId data = new BeanId(this.getClass().getSimpleName());
-            if (algo.equalsIgnoreCase("sha-1")) {
-                data.hashId = BasicUtils.bytesToHex(BasicUtils.getSHA1(image));
-            } else {
-                data.hashId = BasicUtils.bytesToHex(BasicUtils.getSHA256(image));
+            File curImage = indexer.startVisit();
+            while (curImage != null) {
+                ImageIdThread thread = new ImageIdThread(curImage, plugConf, new BeanId(this.getClass().getSimpleName()));
+                exec.execute(thread);
+                curImage = indexer.visitNext();
             }
-            data.store(transientImage);
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
             throw new CTException(ex.getMessage(), ex);
+        } finally {
+            exec.shutdown();
         }
     }
 

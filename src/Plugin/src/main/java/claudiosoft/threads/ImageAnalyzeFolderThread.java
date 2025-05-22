@@ -15,8 +15,8 @@ import java.util.regex.Matcher;
  */
 public class ImageAnalyzeFolderThread extends PluginThread {
 
-    private ImageAnalyzeFolderConfig plugConf;
-    private BeanAnalyzeFolderName data;
+    private final ImageAnalyzeFolderConfig plugConf;
+    private final BeanAnalyzeFolderName data;
 
     public ImageAnalyzeFolderThread(File curImage, ImageAnalyzeFolderConfig plugConf, BeanAnalyzeFolderName data) throws CTException {
         super(curImage);
@@ -50,7 +50,7 @@ public class ImageAnalyzeFolderThread extends PluginThread {
 
                 Matcher matcher = plugConf.patterns.get(0).matcher(folderName);
                 if (!matcher.find()) {
-                    data = checkAdvanced(data, folderName);
+                    checkAdvanced(folderName);
                     continue;
                 }
                 String[] fields = folderName.split(" ");
@@ -67,7 +67,7 @@ public class ImageAnalyzeFolderThread extends PluginThread {
                 data.description = data.description.trim();
                 matched = true;
 
-                data = checkAdvanced(data, data.description);
+                checkAdvanced(data.description);
 
                 logger.debug(String.format("found this folder %s", folderName));
                 data.store(transientImage);
@@ -76,6 +76,7 @@ public class ImageAnalyzeFolderThread extends PluginThread {
             if (!matched) {
                 logger.warn(String.format("unable to analyze or parse the folder"));
             }
+            done = true;
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         } finally {
@@ -83,9 +84,9 @@ public class ImageAnalyzeFolderThread extends PluginThread {
         }
     }
 
-    private BeanAnalyzeFolderName checkAdvanced(BeanAnalyzeFolderName data, String description) {
+    private void checkAdvanced(String description) {
         if (!plugConf.advanced) {
-            return data;
+            return;
         }
         String[] words = new String[1];
         words[0] = description;
@@ -127,7 +128,6 @@ public class ImageAnalyzeFolderThread extends PluginThread {
                 //wiki.search(year, step, ns) 
             }
         }
-        return data;
     }
 
 }

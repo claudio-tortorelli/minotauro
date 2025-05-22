@@ -1,24 +1,24 @@
 package claudiosoft.threads;
 
 import claudiosoft.commons.CTException;
-import claudiosoft.ollama.OAPI;
-import claudiosoft.pluginbean.BeanTags;
-import claudiosoft.pluginconfig.ImageTagConfig;
+import claudiosoft.pluginbean.BeanFileData;
+import claudiosoft.pluginconfig.ImageFileDataConfig;
 import claudiosoft.transientimage.TransientImage;
 import claudiosoft.transientimage.TransientImageProvider;
+import claudiosoft.utils.BasicUtils;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
  * @author claudio.tortorelli
  */
-public class ImageTagsThread extends PluginThread {
+public class ImageFileDataThread extends PluginThread {
 
-    private final ImageTagConfig plugConf;
-    private final BeanTags data;
+    private final ImageFileDataConfig plugConf;
+    private final BeanFileData data;
 
-    public ImageTagsThread(File curImage, ImageTagConfig plugConf, BeanTags data) throws CTException {
+    public ImageFileDataThread(File curImage, ImageFileDataConfig plugConf, BeanFileData data) throws CTException {
         super(curImage);
         this.plugConf = plugConf;
         this.data = data;
@@ -32,15 +32,11 @@ public class ImageTagsThread extends PluginThread {
             }
             TransientImage transientImage = TransientImageProvider.getProvider().get(curImage);
 
-            File imgToAnalyze = curImage;
+            data.originalPath = curImage.getCanonicalPath();
+            data.fileName = curImage.getName();
+            data.ext = BasicUtils.getExtension(curImage);
+            data.lastModifiedDate = BasicUtils.dateToString(new Date(curImage.lastModified()));
 
-            ArrayList<File> images = new ArrayList<>();
-            images.add(imgToAnalyze);
-
-            data.tagList = OAPI.generateWithImage(plugConf.prompt, images);
-            if (logger.isDebug()) {
-                logger.debug(data.tagList);
-            }
             data.store(transientImage);
             done = true;
         } catch (Exception ex) {

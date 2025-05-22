@@ -9,11 +9,11 @@ import io.github.ollama4j.models.response.Model;
  *
  * @author claudio.tortorelli
  */
-public class ImageTagConfig extends PluginConfig {
+public class ImageDescriptionConfig extends PluginConfig {
 
     public String prompt;
 
-    public ImageTagConfig(Config config, String pluginName) throws CTException {
+    public ImageDescriptionConfig(Config config, String pluginName) throws CTException {
         super(config, pluginName);
 
         Model curModel = null;
@@ -36,12 +36,13 @@ public class ImageTagConfig extends PluginConfig {
         int timeout = Integer.parseInt(config.get(pluginName, "timeout", "120"));
         OAPI.setTimeout(timeout);
 
-        prompt = config.get(pluginName, "prompt", "create %d tags for this image, in a single line with tags separated by comma");
+        prompt = config.get(pluginName, "prompt", "write a synthetic description of this image. The maximum length is %d characters");
         if (!prompt.contains("%d")) {
             throw new CTException("invalid prompt");
         }
-        int nTags = Integer.parseInt(config.get(pluginName, "tagNumber", "5"));
-        prompt = String.format(prompt, nTags);
+        int maxLength = Integer.parseInt(config.get(pluginName, "maxLengthChar", "255"));
+        prompt = String.format(prompt, maxLength);
+
         logger.info(String.format("prompt: %s", prompt));
     }
 

@@ -24,7 +24,9 @@ import java.util.LinkedList;
  * //TODO add a statistic analyzer that can produce an ipothesis about the
  * remaining time of a plugin work
  *
- * //TODO, should be multithread ...
+ * //TODO how to handle thread not critic failures
+ *
+ * //TODO check the plugin name right assignements in classes
  *
  * //TODO, timer should have a map of times
  *
@@ -33,6 +35,9 @@ import java.util.LinkedList;
  * //TODO implement a translation plugin
  *
  * //TODO evaluate a tag extraction from description
+ *
+ * //TODO transient image must become transiend data project with a base object
+ * and a new transientfolder
  *
  *
  *
