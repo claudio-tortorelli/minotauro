@@ -7,6 +7,9 @@ import claudiosoft.pluginbean.BeanFileData;
 import claudiosoft.pluginconfig.ImageFileDataConfig;
 import claudiosoft.threads.ImageFileDataThread;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,12 +37,14 @@ public class ImageFileData extends BaseImagePlugin {
 
         ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
+            List<CompletableFuture<?>> futures = new ArrayList<>();
             File curImage = indexer.startVisit();
             while (curImage != null) {
                 ImageFileDataThread thread = new ImageFileDataThread(curImage, plugConf, new BeanFileData(this.getClass().getSimpleName()));
-                exec.execute(thread);
+                futures.add(CompletableFuture.runAsync(thread, exec));
                 curImage = indexer.visitNext();
             }
+            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
         } catch (Exception ex) {
             throw new CTException(ex.getMessage(), ex);
         } finally {

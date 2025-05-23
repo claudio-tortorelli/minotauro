@@ -8,6 +8,9 @@ import claudiosoft.pluginbean.BeanDescription;
 import claudiosoft.pluginconfig.ImageDescriptionConfig;
 import claudiosoft.threads.ImageDescriptionThread;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -33,14 +36,17 @@ public class ImageDescription extends BaseImagePlugin {
     @Override
     public void apply(Indexer indexer) throws CTException {
         super.apply(indexer);
+
         ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
+            List<CompletableFuture<?>> futures = new ArrayList<>();
             File curImage = indexer.startVisit();
             while (curImage != null) {
                 ImageDescriptionThread thread = new ImageDescriptionThread(curImage, plugConf, new BeanDescription(this.getClass().getSimpleName()));
-                exec.execute(thread);
+                futures.add(CompletableFuture.runAsync(thread, exec));
                 curImage = indexer.visitNext();
             }
+            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
         } catch (Exception ex) {
             throw new CTException(ex.getMessage(), ex);
         } finally {

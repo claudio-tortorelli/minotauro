@@ -8,6 +8,9 @@ import claudiosoft.pluginbean.BeanTags;
 import claudiosoft.pluginconfig.ImageTagConfig;
 import claudiosoft.threads.ImageTagsThread;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -36,12 +39,14 @@ public class ImageTags extends BaseImagePlugin {
 
         ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
+            List<CompletableFuture<?>> futures = new ArrayList<>();
             File curImage = indexer.startVisit();
             while (curImage != null) {
                 ImageTagsThread thread = new ImageTagsThread(curImage, plugConf, new BeanTags(this.getClass().getSimpleName()));
-                exec.execute(thread);
+                futures.add(CompletableFuture.runAsync(thread, exec));
                 curImage = indexer.visitNext();
             }
+            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
         } catch (Exception ex) {
             throw new CTException(ex.getMessage(), ex);
         } finally {

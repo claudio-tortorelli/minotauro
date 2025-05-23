@@ -7,6 +7,9 @@ import claudiosoft.pluginbean.BeanExif;
 import claudiosoft.pluginconfig.ImageExifConfig;
 import claudiosoft.threads.ImageExifThread;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -20,12 +23,12 @@ public class ImageExif extends BaseImagePlugin {
 
     public ImageExif(int step) throws CTException {
         super(step);
-        plugConf = new ImageExifConfig(config, this.getClass().getSimpleName());
     }
 
     @Override
     public void init(Config config) throws CTException {
         super.init(config);
+        plugConf = new ImageExifConfig(config, this.getClass().getSimpleName());
     }
 
     @Override
@@ -34,12 +37,14 @@ public class ImageExif extends BaseImagePlugin {
 
         ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
+            List<CompletableFuture<?>> futures = new ArrayList<>();
             File curImage = indexer.startVisit();
             while (curImage != null) {
                 ImageExifThread thread = new ImageExifThread(curImage, plugConf, new BeanExif(this.getClass().getSimpleName()));
-                exec.execute(thread);
+                futures.add(CompletableFuture.runAsync(thread, exec));
                 curImage = indexer.visitNext();
             }
+            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
         } catch (Exception ex) {
             throw new CTException(ex.getMessage(), ex);
         } finally {

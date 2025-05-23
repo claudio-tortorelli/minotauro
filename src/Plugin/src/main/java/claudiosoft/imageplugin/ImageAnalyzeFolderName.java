@@ -7,6 +7,9 @@ import claudiosoft.pluginbean.BeanAnalyzeFolderName;
 import claudiosoft.pluginconfig.ImageAnalyzeFolderConfig;
 import claudiosoft.threads.ImageAnalyzeFolderThread;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -39,12 +42,14 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
 
         ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
+            List<CompletableFuture<?>> futures = new ArrayList<>();
             File curImage = indexer.startVisit();
             while (curImage != null) {
                 ImageAnalyzeFolderThread thread = new ImageAnalyzeFolderThread(curImage, plugConf, new BeanAnalyzeFolderName(this.getClass().getSimpleName()));
-                exec.execute(thread);
+                futures.add(CompletableFuture.runAsync(thread, exec));
                 curImage = indexer.visitNext();
             }
+            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
         } catch (Exception ex) {
             throw new CTException(ex.getMessage(), ex);
         } finally {
