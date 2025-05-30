@@ -36,12 +36,10 @@ import java.util.LinkedList;
  *
  * //TODO evaluate a tag extraction from description
  *
- * //TODO transient image must become transiend data project with a base object
+ * //TODO transient image must become transient data project with a base object
  * and a new transientfolder
  *
  * //TODO index must record the current plugin
- *
- * //TODO max thread x plugin
  *
  * //TODO check force use ollama gpu
  *
