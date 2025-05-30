@@ -44,10 +44,14 @@ public abstract class BaseImagePlugin implements Plugin {
             this.logger = BasicLogger.get();
             this.nanoTimer = System.nanoTime();
 
-            int nPluginThread = Integer.parseInt(config.get("threads", "plugin_threads", "1"));
-            this.nThread = Integer.max(1, Integer.min(Runtime.getRuntime().availableProcessors() - 1, nPluginThread));
+            String nThreadPluginStr = config.get(pluginName, "plugin_threads", config.get("threads", "plugin_threads", "1"));
+            int nThreadLocal = Runtime.getRuntime().availableProcessors() - 1;
+            if (!nThreadPluginStr.equals("MAX")) {
+                nThreadLocal = Integer.parseInt(nThreadPluginStr);
+            }
+            this.nThread = Integer.max(1, nThreadLocal);
 
-            logger.info(String.format("-- start plugin %s --", pluginName));
+            logger.info(String.format("======== start plugin %s with %d threads ========", pluginName, nThread));
         } catch (Exception ex) {
             throw new CTException(ex.getMessage(), ex);
         }

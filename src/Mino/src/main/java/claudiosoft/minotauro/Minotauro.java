@@ -39,7 +39,19 @@ import java.util.LinkedList;
  * //TODO transient image must become transiend data project with a base object
  * and a new transientfolder
  *
+ * //TODO index must record the current plugin
  *
+ * //TODO max thread x plugin
+ *
+ * //TODO check force use ollama gpu
+ *
+ * //TODO define the plugin order and sequence
+ *
+ * //TODO a plugin to get all extensions in input folders
+ *
+ * //TODO simplify the plugin classes and framework
+ *
+ * //TODO review plugin failure
  *
  * @author claudio.tortorelli
  */
@@ -160,11 +172,6 @@ public class Minotauro {
 
         String transientRootPath = config.get("transient", "transientRootPath", "./tsImages");
         TransientImageProvider.init(new File(rootFolder), new File(transientRootPath));
-
-        // for each image in the index execute enabled plugin using multithread
-        int nPluginThread = Integer.parseInt(config.get("threads", "plugin_threads", "1"));
-        int nThread = Integer.max(1, Integer.min(Runtime.getRuntime().availableProcessors() - 1, nPluginThread));
-        logger.info(String.format("%d thread used", nThread));
 
         int nErrors = 0;
         int nWarns = 0;

@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
  */
 public class ImageAnalyzeFolderConfig extends PluginConfig {
 
+    public int maxThread;
     public boolean advanced;
     public boolean enableWikipedia;
     public LinkedList<Pattern> patterns;

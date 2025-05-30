@@ -27,9 +27,7 @@ public class ImageDescriptionThread extends PluginThread {
     @Override
     public void run() {
         try {
-            if (logger.isDebug()) {
-                logger.debug(String.format("processing image %s", curImage.getCanonicalPath()));
-            }
+            super.run();
             TransientImage transientImage = TransientImageProvider.getProvider().get(curImage);
 
             File imgToAnalyze = curImage;

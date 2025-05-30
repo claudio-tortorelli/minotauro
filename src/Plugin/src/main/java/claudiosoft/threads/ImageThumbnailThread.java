@@ -34,9 +34,7 @@ public class ImageThumbnailThread extends PluginThread {
 
         File tmpImage = null;
         try {
-            if (logger.isDebug()) {
-                logger.debug(String.format("processing image %s", curImage.getCanonicalPath()));
-            }
+            super.run();
             TransientImage transientImage = TransientImageProvider.getProvider().get(curImage);
 
             if (!curImage.exists()) {

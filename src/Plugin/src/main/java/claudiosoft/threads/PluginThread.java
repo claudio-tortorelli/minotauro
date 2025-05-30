@@ -3,6 +3,7 @@ package claudiosoft.threads;
 import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTException;
 import java.io.File;
+import java.io.IOException;
 
 /**
  *
@@ -21,6 +22,15 @@ public abstract class PluginThread implements Runnable {
             this.done = false;
         } catch (Exception ex) {
             throw new CTException(ex);
+        }
+    }
+
+    public void run() {
+        if (logger.isDebug()) {
+            try {
+                logger.debug(String.format("processing image %s", curImage.getCanonicalPath()));
+            } catch (IOException ex) {
+            }
         }
     }
 

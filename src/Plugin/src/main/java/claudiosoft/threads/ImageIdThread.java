@@ -26,9 +26,7 @@ public class ImageIdThread extends PluginThread {
     @Override
     public void run() {
         try {
-            if (logger.isDebug()) {
-                logger.debug(String.format("processing image %s", curImage.getCanonicalPath()));
-            }
+            super.run();
             TransientImage transientImage = TransientImageProvider.getProvider().get(curImage);
 
             if (plugConf.algo.equalsIgnoreCase("sha-1")) {
