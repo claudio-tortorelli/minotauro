@@ -39,8 +39,6 @@ import java.util.LinkedList;
  * //TODO transient image must become transient data project with a base object
  * and a new transientfolder
  *
- * //TODO index must record the current plugin
- *
  * //TODO check force use ollama gpu
  *
  * //TODO define the plugin order and sequence
@@ -50,6 +48,8 @@ import java.util.LinkedList;
  * //TODO simplify the plugin classes and framework
  *
  * //TODO review plugin failure
+ *
+ * //TODO exception must have a code ID to handle the error
  *
  * @author claudio.tortorelli
  */
@@ -183,7 +183,6 @@ public class Minotauro {
                 nErrors++;
             } finally {
                 indexer.reset();
-
                 plugin.close();
             }
         }

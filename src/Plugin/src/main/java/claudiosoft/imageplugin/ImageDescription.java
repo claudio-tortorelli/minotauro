@@ -40,7 +40,7 @@ public class ImageDescription extends BaseImagePlugin {
         ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
             List<CompletableFuture<?>> futures = new ArrayList<>();
-            File curImage = indexer.startVisit();
+            File curImage = indexer.startVisit(pluginName);
             while (curImage != null) {
                 ImageDescriptionThread thread = new ImageDescriptionThread(curImage, plugConf, new BeanDescription(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));

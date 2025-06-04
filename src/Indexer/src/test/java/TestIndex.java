@@ -31,7 +31,7 @@ public class TestIndex {
         } catch (CTException ex) {
             System.err.println(ex.getMessage());
         }
-        File nextFile = indexer2.startVisit();
+        File nextFile = indexer2.startVisit("");
         while (nextFile != null) {
             System.out.println(indexer2.getVisitIndex() + " - " + nextFile.getAbsolutePath());
             nextFile = indexer2.visitNext();

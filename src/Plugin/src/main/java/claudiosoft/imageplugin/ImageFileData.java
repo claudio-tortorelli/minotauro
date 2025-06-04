@@ -38,7 +38,7 @@ public class ImageFileData extends BaseImagePlugin {
         ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
             List<CompletableFuture<?>> futures = new ArrayList<>();
-            File curImage = indexer.startVisit();
+            File curImage = indexer.startVisit(pluginName);
             while (curImage != null) {
                 ImageFileDataThread thread = new ImageFileDataThread(curImage, plugConf, new BeanFileData(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));

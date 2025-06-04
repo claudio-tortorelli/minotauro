@@ -46,7 +46,7 @@ public class ImageThumbnail extends BaseImagePlugin {
         ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
             List<CompletableFuture<?>> futures = new ArrayList<>();
-            File curImage = indexer.startVisit();
+            File curImage = indexer.startVisit(pluginName);
             while (curImage != null) {
                 ImageThumbnailThread thread = new ImageThumbnailThread(curImage, plugConf, new BeanThumbnail(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));

@@ -28,6 +28,7 @@ public class Indexer {
     private File visitIndex;
     private HashMap<String, String> extensions;
     private BasicLogger logger;
+    private String currentPluginName;
 
     public Indexer(File root, File index) throws CTException, SecurityException, IOException {
         this(root, index, "*");
@@ -36,6 +37,7 @@ public class Indexer {
     public Indexer(File root, File index, String globFilter) throws CTException, SecurityException, IOException {
         this.root = root;
         this.index = index;
+        this.currentPluginName = "";
         if (!root.exists()) {
             throw new CTException("root folder not exists");
         }
@@ -121,24 +123,29 @@ public class Indexer {
         return String.format("%d/%d", Integer.parseInt(Files.readString(visitIndex.toPath())) + 1, indexData.size());
     }
 
-    public synchronized File startVisit() throws CTException, IOException {
+    public synchronized File startVisit(String pluginName) throws CTException, IOException {
         if (!index.exists()) {
             throw new CTException("index must be built");
         }
         if (!index.canRead()) {
             throw new CTException("cannot read index");
         }
+        currentPluginName = pluginName;
         if (indexData.isEmpty()) {
             indexData = Files.readAllLines(index.toPath(), StandardCharsets.UTF_8);
         }
         int nextFile = 0;
         if (!visitIndex.exists()) {
             visitIndex.createNewFile();
-            Files.writeString(visitIndex.toPath(), String.format("%d", nextFile), StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.writeString(visitIndex.toPath(), String.format("%s;%d", currentPluginName, nextFile), StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING);
         } else {
             // previous visit was stopped so continue 
-            String visLine = Files.readString(visitIndex.toPath());
-            nextFile = Integer.parseInt(visLine);
+            String visitLine = Files.readString(visitIndex.toPath());
+            String prevPlugin = getLastPlugin(visitLine);
+            if (!prevPlugin.equalsIgnoreCase(currentPluginName)) {
+                throw new CTException("skip this plugin because the previous stopped was " + prevPlugin);
+            }
+            nextFile = getLastIndex(visitLine);
         }
         return new File(indexData.get(nextFile));
     }
@@ -153,13 +160,12 @@ public class Indexer {
         if (indexData.isEmpty() || !visitIndex.exists()) {
             throw new CTException("visit must be started");
         }
-        String visLine = Files.readString(visitIndex.toPath());
-        int nextFile = Integer.parseInt(visLine) + 1;
+        int nextFile = getLastIndex(Files.readString(visitIndex.toPath())) + 1;
         if (nextFile == indexData.size()) {
             reset();
             return null;
         }
-        Files.writeString(visitIndex.toPath(), String.format("%d", nextFile), StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING);
+        Files.writeString(visitIndex.toPath(), String.format("%s;%d", currentPluginName, nextFile), StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING);
         return new File(indexData.get(nextFile));
     }
 
@@ -167,7 +173,23 @@ public class Indexer {
         if (!index.exists()) {
             throw new CTException("index must be built");
         }
+        currentPluginName = "";
         visitIndex.delete();
     }
 
+    private synchronized int getLastIndex(String visitLine) {
+        String[] splitted = visitLine.split(";");
+        if (splitted.length < 2) {
+            return 0;
+        }
+        return Integer.parseInt(splitted[1]);
+    }
+
+    private synchronized String getLastPlugin(String visitLine) {
+        String[] splitted = visitLine.split(";");
+        if (splitted.length < 2) {
+            return "";
+        }
+        return splitted[0];
+    }
 }

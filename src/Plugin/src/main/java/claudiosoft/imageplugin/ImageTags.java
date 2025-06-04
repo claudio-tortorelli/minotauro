@@ -40,7 +40,7 @@ public class ImageTags extends BaseImagePlugin {
         ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
             List<CompletableFuture<?>> futures = new ArrayList<>();
-            File curImage = indexer.startVisit();
+            File curImage = indexer.startVisit(pluginName);
             while (curImage != null) {
                 ImageTagsThread thread = new ImageTagsThread(curImage, plugConf, new BeanTags(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));

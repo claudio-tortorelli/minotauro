@@ -38,7 +38,7 @@ public class ImageId extends BaseImagePlugin {
         ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
             List<CompletableFuture<?>> futures = new ArrayList<>();
-            File curImage = indexer.startVisit();
+            File curImage = indexer.startVisit(pluginName);
             while (curImage != null) {
                 ImageIdThread thread = new ImageIdThread(curImage, plugConf, new BeanId(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));

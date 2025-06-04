@@ -43,7 +43,7 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
         ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
             List<CompletableFuture<?>> futures = new ArrayList<>();
-            File curImage = indexer.startVisit();
+            File curImage = indexer.startVisit(pluginName);
             while (curImage != null) {
                 ImageAnalyzeFolderThread thread = new ImageAnalyzeFolderThread(curImage, plugConf, new BeanAnalyzeFolderName(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
