@@ -139,7 +139,7 @@ public class BasicUtils {
         if (i > p) {
             extension = filePath.substring(i + 1);
         }
-        return extension;
+        return extension.trim().toLowerCase();
     }
 
     public static void testLockFile(File testFile) throws CTException {

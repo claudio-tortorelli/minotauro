@@ -51,18 +51,23 @@ import java.util.LinkedList;
  *
  * //TODO exception must have a code ID to handle the error
  *
+ * //TODO version must be a resource
+ *
+ * //TODO File writes should be minimized or added to a queue
+ *
  * @author claudio.tortorelli
  */
 public class Minotauro {
 
     private static String configFilePath;
+    private static boolean rebuildIndexOnly;
     private static BasicLogger logger;
-    private static BasicLogger errLogger;
 
     public static void main(String[] args) throws IOException, CTException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         // Print the tool version on standard output
         System.out.println("Minotauro v1.0");
 
+        rebuildIndexOnly = false;
         configFilePath = "../../config/config.ini";
         parseArgs(args);
 
@@ -118,7 +123,11 @@ public class Minotauro {
         if (!filter.isEmpty()) {
             indexer = new Indexer(new File(rootFolder), new File(index), filter);
         }
-        indexer.buildIndex();
+        indexer.buildIndex(rebuildIndexOnly);
+        if (rebuildIndexOnly) {
+            logger.info("index built");
+            System.exit(0);
+        }
 
         LinkedList<BaseImagePlugin> pluginList = new LinkedList<>();
         int nPlugin = 100;
@@ -195,9 +204,12 @@ public class Minotauro {
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
 
-            if (arg.startsWith("--c") || arg.startsWith("--config")) {
+            if (arg.startsWith("-c") || arg.startsWith("--config")) {
                 // Set the custom configuration file path
                 configFilePath = args[++i];
+            } else if (arg.startsWith("-i") || arg.startsWith("--index")) {
+                // Set the custom configuration file path
+                rebuildIndexOnly = true;
             } else {
                 System.err.println("Unknown switch: " + arg);
                 System.exit(1);

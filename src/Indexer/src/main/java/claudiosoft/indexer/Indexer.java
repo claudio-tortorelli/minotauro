@@ -26,9 +26,10 @@ public class Indexer {
     private PathMatcher matcher;
     private List<String> indexData;
     private File visitIndex;
-    private HashMap<String, String> extensions;
+    private HashMap<String, Integer> extensions;
     private BasicLogger logger;
     private String currentPluginName;
+    private List<String> folders;
 
     public Indexer(File root, File index) throws CTException, SecurityException, IOException {
         this(root, index, "*");
@@ -37,7 +38,7 @@ public class Indexer {
     public Indexer(File root, File index, String globFilter) throws CTException, SecurityException, IOException {
         this.root = root;
         this.index = index;
-        this.currentPluginName = "";
+        this.currentPluginName = "plugin";
         if (!root.exists()) {
             throw new CTException("root folder not exists");
         }
@@ -55,15 +56,24 @@ public class Indexer {
         matcher = FileSystems.getDefault().getPathMatcher("glob:" + globFilter);
         indexData = new LinkedList<>();
         extensions = new HashMap<>();
+        folders = new LinkedList<>();
 
         logger = BasicLogger.get();
     }
 
     public void buildIndex() throws IOException {
-        buildIndex(true);
+        buildIndex(false);
     }
 
-    public synchronized void buildIndex(boolean recursive) throws IOException {
+    public void buildIndex(boolean force) throws IOException {
+        buildIndex(force, true);
+    }
+
+    public synchronized void buildIndex(boolean force, boolean recursive) throws IOException {
+        if (force) {
+            logger.info("index rebuilding is forced");
+            index.delete();
+        }
         if (index.exists()) {
             logger.info(String.format("index already present in %s with %d entries", index.getCanonicalPath(), countIndexEntries()));
             return;
@@ -79,7 +89,7 @@ public class Indexer {
 
             logger.info("index extensions found:");
             for (String ext : getExtensions()) {
-                logger.info(" - " + ext);
+                logger.info(String.format(" - %s (%d)", ext, extensions.get(ext)));
             }
         } finally {
 
@@ -92,12 +102,22 @@ public class Indexer {
             for (File child : children) {
                 if (child.isFile() && !Files.isSymbolicLink(child.toPath()) && matcher.matches(child.toPath().getFileName())) {
                     String path = child.getCanonicalPath();
-                    extensions.put(BasicUtils.getExtension(path), "");
+
+                    String ext = BasicUtils.getExtension(path);
+                    if (ext.isEmpty()) {
+                        ext = "<none>";
+                    }
+                    int count = 1;
+                    if (extensions.containsKey(ext)) {
+                        count = extensions.get(ext) + 1;
+                    }
+                    extensions.put(ext, count);
                     Files.write(index.toPath(), String.format("%s\n", path).getBytes(), StandardOpenOption.APPEND);
                 } else if (child.isDirectory() && recursive) {
                     addFolder(child, recursive);
                 }
             }
+            folders.add(folder.getCanonicalPath());
         }
     }
 
@@ -107,6 +127,10 @@ public class Indexer {
             exts.add(ext);
         }
         return exts;
+    }
+
+    public List<String> getFolders() {
+        return folders;
     }
 
     public synchronized int countIndexEntries() throws IOException {
@@ -120,7 +144,16 @@ public class Indexer {
         if (!visitIndex.exists()) {
             return "";
         }
-        return String.format("%d/%d", Integer.parseInt(Files.readString(visitIndex.toPath())) + 1, indexData.size());
+        String last = Files.readString(visitIndex.toPath());
+        String[] split = last.split(";");
+        return String.format("%d/%d", Integer.parseInt(split[1]) + 1, indexData.size());
+    }
+
+    public int countExtension(String ext) {
+        if (extensions.containsKey(ext)) {
+            return extensions.get(ext);
+        }
+        return 0;
     }
 
     public synchronized File startVisit(String pluginName) throws CTException, IOException {
@@ -142,7 +175,7 @@ public class Indexer {
             // previous visit was stopped so continue 
             String visitLine = Files.readString(visitIndex.toPath());
             String prevPlugin = getLastPlugin(visitLine);
-            if (!prevPlugin.equalsIgnoreCase(currentPluginName)) {
+            if (!prevPlugin.isEmpty() && !prevPlugin.equalsIgnoreCase(currentPluginName)) {
                 throw new CTException("skip this plugin because the previous stopped was " + prevPlugin);
             }
             nextFile = getLastIndex(visitLine);
