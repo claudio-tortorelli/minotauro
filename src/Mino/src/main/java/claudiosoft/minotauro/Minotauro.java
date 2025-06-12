@@ -51,9 +51,10 @@ import java.util.LinkedList;
  *
  * //TODO exception must have a code ID to handle the error
  *
- * //TODO version must be a resource
- *
  * //TODO File writes should be minimized or added to a queue
+ *
+ * //TODO each plugin must check if the transiend with its data is already
+ * present. If not do it or skip instead
  *
  * @author claudio.tortorelli
  */
@@ -65,7 +66,8 @@ public class Minotauro {
 
     public static void main(String[] args) throws IOException, CTException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         // Print the tool version on standard output
-        System.out.println("Minotauro v1.0");
+        String ver = Version.getVersion();
+        System.out.println("Minotauro " + ver);
 
         rebuildIndexOnly = false;
         configFilePath = "../../config/config.ini";
@@ -89,7 +91,7 @@ public class Minotauro {
         }
 
         logger.info("----------------------");
-        logger.info("Minotauro v1.0");
+        logger.info("Minotauro " + ver);
         logger.info("----------------------");
 
         Runtime runtimeEnv = Runtime.getRuntime();

@@ -30,6 +30,7 @@ public class Indexer {
     private BasicLogger logger;
     private String currentPluginName;
     private List<String> folders;
+    private String globFilter;
 
     public Indexer(File root, File index) throws CTException, SecurityException, IOException {
         this(root, index, "*");
@@ -53,7 +54,8 @@ public class Indexer {
         String visitPath = String.format("%s.next", index.getAbsolutePath());
         visitIndex = new File(visitPath);
 
-        matcher = FileSystems.getDefault().getPathMatcher("glob:" + globFilter);
+        this.globFilter = globFilter.toLowerCase();
+        matcher = FileSystems.getDefault().getPathMatcher("glob:" + this.globFilter);
         indexData = new LinkedList<>();
         extensions = new HashMap<>();
         folders = new LinkedList<>();
@@ -88,8 +90,21 @@ public class Indexer {
             tempIndex.delete();
 
             logger.info("index extensions found:");
+            int total = 0;
+            int totalFiltered = 0;
             for (String ext : getExtensions()) {
-                logger.info(String.format(" - %s (%d)", ext, extensions.get(ext)));
+                int instances = extensions.get(ext);
+                logger.info(String.format(" - %s (%d)", ext, instances));
+                total += instances;
+                if (globFilter.contains(ext)) {
+                    totalFiltered += instances;
+                }
+            }
+            logger.info("total: " + total);
+            logger.info("total extension filtered: " + totalFiltered);
+            logger.info("index folders found:");
+            for (String folder : getFolders()) {
+                logger.info(String.format(" - %s", folder));
             }
         } finally {
 
@@ -98,11 +113,11 @@ public class Indexer {
 
     private void addFolder(File folder, boolean recursive) throws IOException {
         File[] children = folder.listFiles();
+        boolean isFolderToBeStored = false;
         if (children != null) {
             for (File child : children) {
-                if (child.isFile() && !Files.isSymbolicLink(child.toPath()) && matcher.matches(child.toPath().getFileName())) {
+                if (child.isFile() && !Files.isSymbolicLink(child.toPath())) {
                     String path = child.getCanonicalPath();
-
                     String ext = BasicUtils.getExtension(path);
                     if (ext.isEmpty()) {
                         ext = "<none>";
@@ -112,12 +127,17 @@ public class Indexer {
                         count = extensions.get(ext) + 1;
                     }
                     extensions.put(ext, count);
-                    Files.write(index.toPath(), String.format("%s\n", path).getBytes(), StandardOpenOption.APPEND);
+                    if (matcher.matches(child.toPath().getFileName())) {
+                        Files.write(index.toPath(), String.format("%s\n", path).getBytes(), StandardOpenOption.APPEND);
+                        isFolderToBeStored = true;
+                    }
                 } else if (child.isDirectory() && recursive) {
                     addFolder(child, recursive);
                 }
             }
-            folders.add(folder.getCanonicalPath());
+            if (isFolderToBeStored) {
+                folders.add(folder.getCanonicalPath());
+            }
         }
     }
 
