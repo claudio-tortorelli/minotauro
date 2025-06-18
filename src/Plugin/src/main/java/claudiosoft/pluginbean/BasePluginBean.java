@@ -18,5 +18,4 @@ public abstract class BasePluginBean {
     public abstract void store(TransientImage transientImage) throws CTException;
 
     public abstract void read(TransientImage transientImage);
-
 }

@@ -6,6 +6,7 @@ import claudiosoft.pluginbean.BeanTags;
 import claudiosoft.pluginconfig.ImageTagConfig;
 import claudiosoft.transientimage.TransientImage;
 import claudiosoft.transientimage.TransientImageProvider;
+import claudiosoft.utils.Failures;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -40,9 +41,9 @@ public class ImageTagsThread extends PluginThread {
                 logger.debug(data.tagList);
             }
             data.store(transientImage);
-            done = true;
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
+            Failures.addFailure();
         } finally {
 
         }

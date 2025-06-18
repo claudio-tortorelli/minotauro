@@ -5,6 +5,7 @@ import claudiosoft.pluginbean.BeanExif;
 import claudiosoft.pluginconfig.ImageExifConfig;
 import claudiosoft.transientimage.TransientImage;
 import claudiosoft.transientimage.TransientImageProvider;
+import claudiosoft.utils.Failures;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -112,9 +113,9 @@ public class ImageExifThread extends PluginThread {
             }
 
             data.store(transientImage);
-            done = true;
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
+            Failures.addFailure();
         } finally {
 
         }

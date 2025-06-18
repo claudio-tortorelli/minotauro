@@ -1,17 +1,19 @@
-package claudiosoft.imageplugin;
+package claudiosoft.folderplugin;
 
 import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
+import claudiosoft.imageplugin.ImageId;
 import claudiosoft.indexer.Indexer;
 import claudiosoft.plugin.Plugin;
+import claudiosoft.transientimage.TransientImage;
 import java.util.concurrent.TimeUnit;
 
 /**
  *
  * @author claudio.tortorelli
  */
-public abstract class BaseImagePlugin implements Plugin {
+public abstract class BaseFolderPlugin implements Plugin {
 
     protected String pluginName;
 
@@ -19,11 +21,12 @@ public abstract class BaseImagePlugin implements Plugin {
     protected Config config;
     protected BasicLogger logger;
     protected Indexer indexer;
+    protected boolean failed;
     protected int nThread;
 
     private long nanoTimer;
 
-    public BaseImagePlugin(int step) {
+    public BaseFolderPlugin(int step) {
         this.step = step;
     }
 
@@ -57,6 +60,7 @@ public abstract class BaseImagePlugin implements Plugin {
 
     @Override
     public void apply(Indexer indexer) throws CTException {
+        this.failed = false;
         this.indexer = indexer;
     }
 
@@ -64,5 +68,19 @@ public abstract class BaseImagePlugin implements Plugin {
     public void close() throws CTException {
         long msec = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - nanoTimer);
         logger.debug(String.format("%s terminated in %d msec", pluginName, msec));
+    }
+
+    public void traceErrorToTransientImage(String error, TransientImage transientImage) throws CTException {
+        try {
+            logger.error(String.format("error in %s", transientImage.get(ImageId.class.getSimpleName(), "id", "")));
+            logger.error(error);
+            transientImage.set(pluginName, "error", error);
+        } catch (Exception ex) {
+            throw new CTException(ex);
+        }
+    }
+
+    public boolean isFailed() {
+        return failed;
     }
 }

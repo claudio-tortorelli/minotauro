@@ -5,6 +5,7 @@ import claudiosoft.pluginbean.BeanAnalyzeFolderName;
 import claudiosoft.pluginconfig.ImageAnalyzeFolderConfig;
 import claudiosoft.transientimage.TransientImage;
 import claudiosoft.transientimage.TransientImageProvider;
+import claudiosoft.utils.Failures;
 import io.github.fastily.jwiki.core.Wiki;
 import java.io.File;
 import java.util.regex.Matcher;
@@ -76,9 +77,9 @@ public class ImageAnalyzeFolderThread extends PluginThread {
             if (!matched) {
                 logger.warn(String.format("unable to analyze or parse the folder"));
             }
-            done = true;
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
+            Failures.addFailure();
         } finally {
 
         }

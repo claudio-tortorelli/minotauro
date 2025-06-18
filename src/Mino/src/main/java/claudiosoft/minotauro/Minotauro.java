@@ -8,6 +8,7 @@ import claudiosoft.imageplugin.BaseImagePlugin;
 import claudiosoft.indexer.Indexer;
 import claudiosoft.transientimage.TransientImageProvider;
 import claudiosoft.utils.BasicUtils;
+import claudiosoft.utils.Failures;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -46,8 +47,6 @@ import java.util.LinkedList;
  * //TODO a plugin to get all extensions in input folders
  *
  * //TODO simplify the plugin classes and framework
- *
- * //TODO review plugin failure
  *
  * //TODO exception must have a code ID to handle the error
  *
@@ -182,8 +181,7 @@ public class Minotauro {
         String transientRootPath = config.get("transient", "transientRootPath", "./tsImages");
         TransientImageProvider.init(new File(rootFolder), new File(transientRootPath));
 
-        int nErrors = 0;
-        int nWarns = 0;
+        int nGeneralErrors = 0;
         BasicUtils.startElapsedTime();
         logger.info("= start plugin process =");
         for (BaseImagePlugin plugin : pluginList) {
@@ -191,15 +189,16 @@ public class Minotauro {
                 plugin.init(config);
                 plugin.apply(indexer);
             } catch (CTException ex) {
-                nErrors++;
+                nGeneralErrors++; // when an exception arrives here then the entire plugin is crashed
             } finally {
                 indexer.reset();
                 plugin.close();
             }
         }
+        int nFailures = Failures.getFailures(); // this is the single plugin thread failure count
 
-        logger.info(String.format("process terminated with %d errors and %d warnings in %d seconds", nErrors, nWarns, BasicUtils.getElapsedTime()));
-        System.exit(nErrors == 0 ? 0 : 1); // If the tool ends without errors, return 0 to the system
+        logger.info(String.format("process terminated with %d general errors and %d failures in %d seconds", nGeneralErrors, nFailures, BasicUtils.getElapsedTime()));
+        System.exit(nGeneralErrors == 0 ? 0 : 1); // If the tool ends without errors, return 0 to the system
     }
 
     private static void parseArgs(String[] args) {

@@ -6,6 +6,7 @@ import claudiosoft.pluginconfig.ImageFileDataConfig;
 import claudiosoft.transientimage.TransientImage;
 import claudiosoft.transientimage.TransientImageProvider;
 import claudiosoft.utils.BasicUtils;
+import claudiosoft.utils.Failures;
 import java.io.File;
 import java.util.Date;
 
@@ -36,9 +37,9 @@ public class ImageFileDataThread extends PluginThread {
             data.lastModifiedDate = BasicUtils.dateToString(new Date(curImage.lastModified()));
 
             data.store(transientImage);
-            done = true;
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
+            Failures.addFailure();
         } finally {
 
         }

@@ -6,6 +6,7 @@ import claudiosoft.pluginbean.BeanDescription;
 import claudiosoft.pluginconfig.ImageDescriptionConfig;
 import claudiosoft.transientimage.TransientImage;
 import claudiosoft.transientimage.TransientImageProvider;
+import claudiosoft.utils.Failures;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -40,9 +41,9 @@ public class ImageDescriptionThread extends PluginThread {
                 logger.debug(data.description);
             }
             data.store(transientImage);
-            done = true;
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
+            Failures.addFailure();
         } finally {
 
         }

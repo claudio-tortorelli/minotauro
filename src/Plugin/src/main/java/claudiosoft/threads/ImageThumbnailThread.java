@@ -6,6 +6,7 @@ import claudiosoft.pluginconfig.ImageThumbnailConfig;
 import claudiosoft.transientimage.TransientImage;
 import claudiosoft.transientimage.TransientImageProvider;
 import claudiosoft.utils.BasicUtils;
+import claudiosoft.utils.Failures;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Base64;
@@ -72,9 +73,9 @@ public class ImageThumbnailThread extends PluginThread {
             data.base64Image = Base64.getEncoder().encodeToString(imgByte);
 
             data.store(transientImage);
-            done = true;
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
+            Failures.addFailure();
         } finally {
             if (tmpImage != null) {
                 tmpImage.delete();
