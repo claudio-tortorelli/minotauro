@@ -15,7 +15,7 @@
         <module>Ollama</module>
         <module>Utils</module>
         <module>Indexer</module>
-        <module>TransientImage</module>
+        <module>TransientData</module>
         <module>Plugin</module>
     </modules>
     <properties>
@@ -39,7 +39,7 @@
             </dependency>      
             <dependency>
                 <groupId>claudiosoft</groupId>
-                <artifactId>TransientImage</artifactId>
+                <artifactId>TransientData</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>                   
             <dependency>

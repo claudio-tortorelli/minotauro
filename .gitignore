@@ -39,3 +39,4 @@ src/Plugin/target/
 src/Mino/index.txt
 src/Mino/index.txt.next
 src/Mino/minotauro.log.lck
+/src/TransientData/target/

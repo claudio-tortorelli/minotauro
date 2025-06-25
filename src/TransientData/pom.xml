@@ -6,11 +6,11 @@
         <artifactId>Minotauro</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>TransientImage</artifactId>
+    <artifactId>TransientData</artifactId>
     <packaging>jar</packaging>
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
-        <exec.mainClass>claudiosoft.transientimage.TransientImageProxy</exec.mainClass>
+        <exec.mainClass></exec.mainClass>
     </properties>    
     <dependencies>
         <dependency>

@@ -23,7 +23,7 @@
         </dependency>   
         <dependency>
             <groupId>claudiosoft</groupId>
-            <artifactId>TransientImage</artifactId>
+            <artifactId>TransientData</artifactId>
         </dependency>   
         <dependency>
                 <groupId>claudiosoft</groupId>

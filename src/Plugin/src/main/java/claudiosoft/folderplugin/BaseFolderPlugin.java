@@ -21,7 +21,6 @@ public abstract class BaseFolderPlugin implements Plugin {
     protected Config config;
     protected BasicLogger logger;
     protected Indexer indexer;
-    protected boolean failed;
     protected int nThread;
 
     private long nanoTimer;
@@ -60,7 +59,6 @@ public abstract class BaseFolderPlugin implements Plugin {
 
     @Override
     public void apply(Indexer indexer) throws CTException {
-        this.failed = false;
         this.indexer = indexer;
     }
 
@@ -80,7 +78,4 @@ public abstract class BaseFolderPlugin implements Plugin {
         }
     }
 
-    public boolean isFailed() {
-        return failed;
-    }
 }

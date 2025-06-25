@@ -1,7 +1,8 @@
-package claudiosoft.imageplugin;
+package claudiosoft.folderplugin;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
+import claudiosoft.imageplugin.BaseImagePlugin;
 import claudiosoft.indexer.Indexer;
 import claudiosoft.pluginbean.BeanAnalyzeFolderName;
 import claudiosoft.pluginconfig.ImageAnalyzeFolderConfig;
@@ -43,11 +44,10 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
         ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
             List<CompletableFuture<?>> futures = new ArrayList<>();
-            File curImage = indexer.startVisit(pluginName);
-            while (curImage != null) {
-                ImageAnalyzeFolderThread thread = new ImageAnalyzeFolderThread(curImage, plugConf, new BeanAnalyzeFolderName(this.getClass().getSimpleName()));
+            List<String> folders = indexer.getFolders();
+            for (String folder : folders) {
+                ImageAnalyzeFolderThread thread = new ImageAnalyzeFolderThread(new File(folder), plugConf, new BeanAnalyzeFolderName(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
-                curImage = indexer.visitNext();
             }
             CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
         } catch (Exception ex) {

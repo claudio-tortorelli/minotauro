@@ -6,6 +6,7 @@ import claudiosoft.commons.Config;
 import claudiosoft.commons.Constants;
 import claudiosoft.imageplugin.BaseImagePlugin;
 import claudiosoft.indexer.Indexer;
+import claudiosoft.transientfolder.TransientFolderProvider;
 import claudiosoft.transientimage.TransientImageProvider;
 import claudiosoft.utils.BasicUtils;
 import claudiosoft.utils.Failures;
@@ -178,8 +179,8 @@ public class Minotauro {
             logger.info(String.format("- %s", plugin.getClass().getName()));
         }
 
-        String transientRootPath = config.get("transient", "transientRootPath", "./tsImages");
-        TransientImageProvider.init(new File(rootFolder), new File(transientRootPath));
+        TransientImageProvider.init(new File(rootFolder), new File(config.get("transient", "transientImagePath", "./tsImages")));
+        TransientFolderProvider.init(new File(rootFolder), new File(config.get("transient", "transientFolderPath", "./tsImages")));
 
         int nGeneralErrors = 0;
         BasicUtils.startElapsedTime();
