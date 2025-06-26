@@ -3,8 +3,8 @@ package claudiosoft.threads;
 import claudiosoft.commons.CTException;
 import claudiosoft.pluginbean.BeanExif;
 import claudiosoft.pluginconfig.ImageExifConfig;
-import claudiosoft.transientimage.TransientImage;
-import claudiosoft.transientimage.TransientImageProvider;
+import claudiosoft.transientdata.TransientFile;
+import claudiosoft.transientdata.TransientProvider;
 import claudiosoft.utils.Failures;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
@@ -35,9 +35,9 @@ public class ImageExifThread extends PluginThread {
     public void run() {
         try {
             super.run();
-            TransientImage transientImage = TransientImageProvider.getProvider().get(curImage);
+            TransientFile transientImage = TransientProvider.getProvider().get(curFile);
 
-            Metadata metadata = ImageMetadataReader.readMetadata(curImage);
+            Metadata metadata = ImageMetadataReader.readMetadata(curFile);
             boolean somethingToStore = false;
 
             Directory directoryBase = metadata.getFirstDirectoryOfType(ExifDirectoryBase.class);

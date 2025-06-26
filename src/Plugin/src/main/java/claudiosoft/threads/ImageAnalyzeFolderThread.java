@@ -3,8 +3,8 @@ package claudiosoft.threads;
 import claudiosoft.commons.CTException;
 import claudiosoft.pluginbean.BeanAnalyzeFolderName;
 import claudiosoft.pluginconfig.ImageAnalyzeFolderConfig;
-import claudiosoft.transientimage.TransientImage;
-import claudiosoft.transientimage.TransientImageProvider;
+import claudiosoft.transientdata.TransientFile;
+import claudiosoft.transientdata.TransientProvider;
 import claudiosoft.utils.Failures;
 import io.github.fastily.jwiki.core.Wiki;
 import java.io.File;
@@ -19,8 +19,8 @@ public class ImageAnalyzeFolderThread extends PluginThread {
     private final ImageAnalyzeFolderConfig plugConf;
     private final BeanAnalyzeFolderName data;
 
-    public ImageAnalyzeFolderThread(File curImage, ImageAnalyzeFolderConfig plugConf, BeanAnalyzeFolderName data) throws CTException {
-        super(curImage);
+    public ImageAnalyzeFolderThread(File curFolder, ImageAnalyzeFolderConfig plugConf, BeanAnalyzeFolderName data) throws CTException {
+        super(curFolder);
         this.plugConf = plugConf;
         this.data = data;
     }
@@ -28,8 +28,8 @@ public class ImageAnalyzeFolderThread extends PluginThread {
     @Override
     public void run() {
         try {
-            TransientImage transientImage = TransientImageProvider.getProvider().get(curImage);
-            String folderPath = curImage.getParent();
+            TransientFile transientFolder = TransientProvider.getProvider().get(curFile);
+            String folderPath = curFile.getCanonicalPath();
             folderPath = folderPath.replace("\\", "/").toLowerCase();
 
             String[] folders = folderPath.split("/");
@@ -71,7 +71,7 @@ public class ImageAnalyzeFolderThread extends PluginThread {
                 checkAdvanced(data.description);
 
                 logger.debug(String.format("found this folder %s", folderName));
-                data.store(transientImage);
+                data.store(transientFolder);
                 break;
             }
             if (!matched) {

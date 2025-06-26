@@ -1,4 +1,4 @@
-package claudiosoft.plugin;
+package claudiosoft.baseplugin;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;

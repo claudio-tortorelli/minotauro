@@ -1,12 +1,12 @@
-package claudiosoft.imageplugin;
+package claudiosoft.plugin;
 
+import claudiosoft.baseplugin.BaseImagePlugin;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.Indexer;
-import claudiosoft.ollama.OAPI;
-import claudiosoft.pluginbean.BeanTags;
-import claudiosoft.pluginconfig.ImageTagConfig;
-import claudiosoft.threads.ImageTagsThread;
+import claudiosoft.pluginbean.BeanExif;
+import claudiosoft.pluginconfig.ImageExifConfig;
+import claudiosoft.threads.ImageExifThread;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,19 +18,18 @@ import java.util.concurrent.Executors;
  *
  * @author claudio.tortorelli
  */
-public class ImageTags extends BaseImagePlugin {
+public class ImageExif extends BaseImagePlugin {
 
-    private ImageTagConfig plugConf;
+    private ImageExifConfig plugConf;
 
-    public ImageTags(int step) {
+    public ImageExif(int step) throws CTException {
         super(step);
     }
 
     @Override
     public void init(Config config) throws CTException {
         super.init(config);
-        OAPI.init();
-        plugConf = new ImageTagConfig(config, this.getClass().getSimpleName());
+        plugConf = new ImageExifConfig(config, this.getClass().getSimpleName());
     }
 
     @Override
@@ -42,7 +41,7 @@ public class ImageTags extends BaseImagePlugin {
             List<CompletableFuture<?>> futures = new ArrayList<>();
             File curImage = indexer.startVisit(pluginName);
             while (curImage != null) {
-                ImageTagsThread thread = new ImageTagsThread(curImage, plugConf, new BeanTags(this.getClass().getSimpleName()));
+                ImageExifThread thread = new ImageExifThread(curImage, plugConf, new BeanExif(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
                 curImage = indexer.visitNext();
             }
@@ -53,4 +52,5 @@ public class ImageTags extends BaseImagePlugin {
             exec.shutdown();
         }
     }
+
 }

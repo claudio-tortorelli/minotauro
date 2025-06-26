@@ -1,7 +1,7 @@
 package claudiosoft.pluginbean;
 
 import claudiosoft.commons.CTException;
-import claudiosoft.transientimage.TransientImage;
+import claudiosoft.transientdata.TransientFile;
 import java.util.Date;
 
 /**
@@ -39,7 +39,7 @@ public class BeanExif extends BasePluginBean {
     }
 
     @Override
-    public void store(TransientImage transientImage) throws CTException {
+    public void store(TransientFile transientImage) throws CTException {
         transientImage.set(pluginName, "imgWidthPix", imgWidthPix);
         transientImage.set(pluginName, "imgHeightPix", imgHeightPix);
         transientImage.set(pluginName, "make", make);
@@ -55,7 +55,7 @@ public class BeanExif extends BasePluginBean {
     }
 
     @Override
-    public void read(TransientImage transientImage) {
+    public void read(TransientFile transientImage) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

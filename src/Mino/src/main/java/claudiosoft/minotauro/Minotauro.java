@@ -1,13 +1,12 @@
 package claudiosoft.minotauro;
 
+import claudiosoft.baseplugin.BaseImagePlugin;
 import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.commons.Constants;
-import claudiosoft.imageplugin.BaseImagePlugin;
 import claudiosoft.indexer.Indexer;
-import claudiosoft.transientfolder.TransientFolderProvider;
-import claudiosoft.transientimage.TransientImageProvider;
+import claudiosoft.transientdata.TransientProvider;
 import claudiosoft.utils.BasicUtils;
 import claudiosoft.utils.Failures;
 import java.io.File;
@@ -141,7 +140,7 @@ public class Minotauro {
             if (pluginName == null || pluginName.isEmpty()) {
                 break;
             }
-            String pluginClassName = String.format("claudiosoft.imageplugin.%s", pluginName);
+            String pluginClassName = String.format("claudiosoft.plugin.%s", pluginName);
 
             int step = iPlug + 1;
             boolean enabled = Boolean.parseBoolean(config.get(pluginName, "enabled", "false"));
@@ -179,8 +178,7 @@ public class Minotauro {
             logger.info(String.format("- %s", plugin.getClass().getName()));
         }
 
-        TransientImageProvider.init(new File(rootFolder), new File(config.get("transient", "transientImagePath", "./tsImages")));
-        TransientFolderProvider.init(new File(rootFolder), new File(config.get("transient", "transientFolderPath", "./tsImages")));
+        TransientProvider.init(new File(rootFolder), new File(config.get("transient", "transientDataPath", "./tsImages")));
 
         int nGeneralErrors = 0;
         BasicUtils.startElapsedTime();

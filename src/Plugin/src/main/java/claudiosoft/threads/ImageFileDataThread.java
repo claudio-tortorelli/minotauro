@@ -3,8 +3,8 @@ package claudiosoft.threads;
 import claudiosoft.commons.CTException;
 import claudiosoft.pluginbean.BeanFileData;
 import claudiosoft.pluginconfig.ImageFileDataConfig;
-import claudiosoft.transientimage.TransientImage;
-import claudiosoft.transientimage.TransientImageProvider;
+import claudiosoft.transientdata.TransientFile;
+import claudiosoft.transientdata.TransientProvider;
 import claudiosoft.utils.BasicUtils;
 import claudiosoft.utils.Failures;
 import java.io.File;
@@ -29,12 +29,12 @@ public class ImageFileDataThread extends PluginThread {
     public void run() {
         try {
             super.run();
-            TransientImage transientImage = TransientImageProvider.getProvider().get(curImage);
+            TransientFile transientImage = TransientProvider.getProvider().get(curFile);
 
-            data.originalPath = curImage.getCanonicalPath();
-            data.fileName = curImage.getName();
-            data.ext = BasicUtils.getExtension(curImage);
-            data.lastModifiedDate = BasicUtils.dateToString(new Date(curImage.lastModified()));
+            data.originalPath = curFile.getCanonicalPath();
+            data.fileName = curFile.getName();
+            data.ext = BasicUtils.getExtension(curFile);
+            data.lastModifiedDate = BasicUtils.dateToString(new Date(curFile.lastModified()));
 
             data.store(transientImage);
         } catch (Exception ex) {

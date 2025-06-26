@@ -1,10 +1,10 @@
-package claudiosoft.imageplugin;
+package claudiosoft.baseplugin;
 
 import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.Indexer;
-import claudiosoft.plugin.Plugin;
+import claudiosoft.baseplugin.Plugin;
 import java.util.concurrent.TimeUnit;
 
 /**

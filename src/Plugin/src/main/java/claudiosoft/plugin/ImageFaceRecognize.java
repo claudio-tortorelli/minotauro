@@ -1,5 +1,6 @@
-package claudiosoft.imageplugin;
+package claudiosoft.plugin;
 
+import claudiosoft.baseplugin.BaseImagePlugin;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.Indexer;

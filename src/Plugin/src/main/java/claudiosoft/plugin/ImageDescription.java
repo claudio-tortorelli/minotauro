@@ -1,44 +1,39 @@
-package claudiosoft.imageplugin;
+package claudiosoft.plugin;
 
+import claudiosoft.baseplugin.BaseImagePlugin;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.Indexer;
-import claudiosoft.pluginbean.BeanThumbnail;
-import claudiosoft.pluginconfig.ImageThumbnailConfig;
-import claudiosoft.threads.ImageThumbnailThread;
+import claudiosoft.ollama.OAPI;
+import claudiosoft.pluginbean.BeanDescription;
+import claudiosoft.pluginconfig.ImageDescriptionConfig;
+import claudiosoft.threads.ImageDescriptionThread;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import nu.pattern.OpenCV;
 
 /**
- * Uses opencv
  *
  * @author claudio.tortorelli
  */
-public class ImageThumbnail extends BaseImagePlugin {
+public class ImageDescription extends BaseImagePlugin {
 
-    private ImageThumbnailConfig plugConf;
+    private ImageDescriptionConfig plugConf;
 
-    public ImageThumbnail(int step) throws CTException {
+    public ImageDescription(int step) {
         super(step);
     }
 
     @Override
     public void init(Config config) throws CTException {
         super.init(config);
-        plugConf = new ImageThumbnailConfig(config, this.getClass().getSimpleName());
-        OpenCV.loadShared();
+        OAPI.init();
+        plugConf = new ImageDescriptionConfig(config, this.getClass().getSimpleName());
     }
 
-    /**
-     *
-     *
-     * @throws CTException
-     */
     @Override
     public void apply(Indexer indexer) throws CTException {
         super.apply(indexer);
@@ -48,7 +43,7 @@ public class ImageThumbnail extends BaseImagePlugin {
             List<CompletableFuture<?>> futures = new ArrayList<>();
             File curImage = indexer.startVisit(pluginName);
             while (curImage != null) {
-                ImageThumbnailThread thread = new ImageThumbnailThread(curImage, plugConf, new BeanThumbnail(this.getClass().getSimpleName()));
+                ImageDescriptionThread thread = new ImageDescriptionThread(curImage, plugConf, new BeanDescription(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
                 curImage = indexer.visitNext();
             }
@@ -59,4 +54,5 @@ public class ImageThumbnail extends BaseImagePlugin {
             exec.shutdown();
         }
     }
+
 }

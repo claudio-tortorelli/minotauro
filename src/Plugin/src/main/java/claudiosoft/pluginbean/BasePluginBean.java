@@ -1,7 +1,7 @@
 package claudiosoft.pluginbean;
 
 import claudiosoft.commons.CTException;
-import claudiosoft.transientimage.TransientImage;
+import claudiosoft.transientdata.TransientFile;
 
 /**
  *
@@ -15,7 +15,7 @@ public abstract class BasePluginBean {
         this.pluginName = pluginName;
     }
 
-    public abstract void store(TransientImage transientImage) throws CTException;
+    public abstract void store(TransientFile transientImage) throws CTException;
 
-    public abstract void read(TransientImage transientImage);
+    public abstract void read(TransientFile transientImage);
 }

@@ -1,12 +1,13 @@
-package claudiosoft.folderplugin;
+package claudiosoft.baseplugin;
 
 import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
-import claudiosoft.imageplugin.ImageId;
+import claudiosoft.plugin.ImageId;
 import claudiosoft.indexer.Indexer;
-import claudiosoft.plugin.Plugin;
-import claudiosoft.transientimage.TransientImage;
+import claudiosoft.baseplugin.Plugin;
+import claudiosoft.plugin.ImageId;
+import claudiosoft.transientdata.TransientFile;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -68,7 +69,7 @@ public abstract class BaseFolderPlugin implements Plugin {
         logger.debug(String.format("%s terminated in %d msec", pluginName, msec));
     }
 
-    public void traceErrorToTransientImage(String error, TransientImage transientImage) throws CTException {
+    public void traceErrorToTransientImage(String error, TransientFile transientImage) throws CTException {
         try {
             logger.error(String.format("error in %s", transientImage.get(ImageId.class.getSimpleName(), "id", "")));
             logger.error(error);

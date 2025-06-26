@@ -1,7 +1,7 @@
 package claudiosoft.pluginbean;
 
 import claudiosoft.commons.CTException;
-import claudiosoft.transientimage.TransientImage;
+import claudiosoft.transientdata.TransientFile;
 
 /**
  *
@@ -17,13 +17,13 @@ public class BeanTags extends BasePluginBean {
     }
 
     @Override
-    public void store(TransientImage transientImage) throws CTException {
+    public void store(TransientFile transientImage) throws CTException {
         transientImage.set(pluginName, "tagList", tagList);
         transientImage.store();
     }
 
     @Override
-    public void read(TransientImage transientImage) {
+    public void read(TransientFile transientImage) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

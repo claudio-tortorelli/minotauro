@@ -1,11 +1,12 @@
-package claudiosoft.imageplugin;
+package claudiosoft.plugin;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
+import claudiosoft.baseplugin.BaseImagePlugin;
 import claudiosoft.indexer.Indexer;
-import claudiosoft.pluginbean.BeanId;
-import claudiosoft.pluginconfig.ImageIdConfig;
-import claudiosoft.threads.ImageIdThread;
+import claudiosoft.pluginbean.BeanAnalyzeFolderName;
+import claudiosoft.pluginconfig.ImageAnalyzeFolderConfig;
+import claudiosoft.threads.ImageAnalyzeFolderThread;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,18 +18,23 @@ import java.util.concurrent.Executors;
  *
  * @author claudio.tortorelli
  */
-public class ImageId extends BaseImagePlugin {
+public class ImageAnalyzeFolderName extends BaseImagePlugin {
 
-    private ImageIdConfig plugConf;
+    private ImageAnalyzeFolderConfig plugConf;
 
-    public ImageId(int step) {
+    public ImageAnalyzeFolderName(int step) {
         super(step);
     }
 
     @Override
     public void init(Config config) throws CTException {
         super.init(config);
-        plugConf = new ImageIdConfig(config, this.getClass().getSimpleName());
+
+        /**
+         * TODO adesso deve essere implementato il multi pattern per parsare i
+         * casi diversi dallo standard
+         */
+        plugConf = new ImageAnalyzeFolderConfig(config, this.getClass().getSimpleName());
     }
 
     @Override
@@ -38,11 +44,10 @@ public class ImageId extends BaseImagePlugin {
         ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
             List<CompletableFuture<?>> futures = new ArrayList<>();
-            File curImage = indexer.startVisit(pluginName);
-            while (curImage != null) {
-                ImageIdThread thread = new ImageIdThread(curImage, plugConf, new BeanId(this.getClass().getSimpleName()));
+            List<String> folders = indexer.getFolders();
+            for (String folder : folders) {
+                ImageAnalyzeFolderThread thread = new ImageAnalyzeFolderThread(new File(folder), plugConf, new BeanAnalyzeFolderName(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
-                curImage = indexer.visitNext();
             }
             CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
         } catch (Exception ex) {

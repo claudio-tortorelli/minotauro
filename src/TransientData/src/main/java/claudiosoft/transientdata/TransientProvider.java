@@ -1,4 +1,4 @@
-package claudiosoft.transientimage;
+package claudiosoft.transientdata;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.utils.BasicUtils;
@@ -11,34 +11,34 @@ import java.nio.file.Files;
  *
  * @author claudio.tortorelli
  */
-public class TransientImageProvider {
+public class TransientProvider {
 
     private File imageRootPath;
     private File transientRootPath;
 
-    public static TransientImageProvider imgProvider = null;
+    public static TransientProvider imgProvider = null;
 
     public static synchronized void init(File imageRootPath, File transientRootPath) throws IOException {
         if (imgProvider != null) {
             return;
         }
-        imgProvider = new TransientImageProvider(imageRootPath, transientRootPath);
+        imgProvider = new TransientProvider(imageRootPath, transientRootPath);
     }
 
-    public static synchronized TransientImageProvider getProvider() throws CTException {
+    public static synchronized TransientProvider getProvider() throws CTException {
         if (imgProvider == null) {
             throw new CTException("Transient image provider not initialized");
         }
         return imgProvider;
     }
 
-    private TransientImageProvider(File imageRootPath, File transientRootPath) throws IOException {
+    private TransientProvider(File imageRootPath, File transientRootPath) throws IOException {
         this.imageRootPath = imageRootPath;
         this.transientRootPath = transientRootPath;
         Files.createDirectories(this.transientRootPath.toPath());
     }
 
-    public TransientImage get(File imageFile) throws CTException {
+    public TransientFile get(File imageFile) throws CTException {
 
         try {
             String imgFilePath = imageFile.getCanonicalPath().toLowerCase();
@@ -52,7 +52,7 @@ public class TransientImageProvider {
             String transientImagePath = String.format("%s/%s_%s.transient", transientRootPath.getCanonicalPath(), sha1, imageFile.getName());
             File transientImageFile = new File(transientImagePath);
 
-            return new TransientImage(transientImageFile);
+            return new TransientFile(transientImageFile);
         } catch (Exception ex) {
             throw new CTException(ex);
         }

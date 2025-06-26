@@ -1,7 +1,7 @@
 package claudiosoft.pluginbean;
 
 import claudiosoft.commons.CTException;
-import claudiosoft.transientimage.TransientImage;
+import claudiosoft.transientdata.TransientFile;
 import java.util.LinkedList;
 
 /**
@@ -35,10 +35,10 @@ public class BeanAnalyzeFolderName extends BasePluginBean {
     }
 
     @Override
-    public void store(TransientImage transientImage) throws CTException {
-        transientImage.set(pluginName, "year", year);
-        transientImage.set(pluginName, "month", month);
-        transientImage.set(pluginName, "description", description);
+    public void store(TransientFile transientFolder) throws CTException {
+        transientFolder.set(pluginName, "year", year);
+        transientFolder.set(pluginName, "month", month);
+        transientFolder.set(pluginName, "description", description);
 
         if (!events.isEmpty()) {
             String eventList = "";
@@ -47,7 +47,7 @@ public class BeanAnalyzeFolderName extends BasePluginBean {
                 eventList += ",";
             }
             eventList = eventList.substring(0, eventList.length() - 1);
-            transientImage.set(pluginName, "events", eventList);
+            transientFolder.set(pluginName, "events", eventList);
         }
         if (!cities.isEmpty()) {
             String placeList = "";
@@ -56,7 +56,7 @@ public class BeanAnalyzeFolderName extends BasePluginBean {
                 placeList += ",";
             }
             placeList = placeList.substring(0, placeList.length() - 1);
-            transientImage.set(pluginName, "cities", placeList);
+            transientFolder.set(pluginName, "cities", placeList);
         }
         if (!countries.isEmpty()) {
             String placeList = "";
@@ -65,7 +65,7 @@ public class BeanAnalyzeFolderName extends BasePluginBean {
                 placeList += ",";
             }
             placeList = placeList.substring(0, placeList.length() - 1);
-            transientImage.set(pluginName, "countries", placeList);
+            transientFolder.set(pluginName, "countries", placeList);
         }
         if (!people.isEmpty()) {
             String peopleList = "";
@@ -74,15 +74,15 @@ public class BeanAnalyzeFolderName extends BasePluginBean {
                 peopleList += ",";
             }
             peopleList = peopleList.substring(0, peopleList.length() - 1);
-            transientImage.set(pluginName, "peoples", peopleList);
+            transientFolder.set(pluginName, "peoples", peopleList);
         }
-        transientImage.set(pluginName, "elaborated", elaborated);
+        transientFolder.set(pluginName, "elaborated", elaborated);
 
-        transientImage.store();
+        transientFolder.store();
     }
 
     @Override
-    public void read(TransientImage transientImage) {
+    public void read(TransientFile transientImage) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

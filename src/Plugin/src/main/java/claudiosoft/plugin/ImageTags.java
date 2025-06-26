@@ -1,12 +1,13 @@
-package claudiosoft.imageplugin;
+package claudiosoft.plugin;
 
+import claudiosoft.baseplugin.BaseImagePlugin;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.Indexer;
 import claudiosoft.ollama.OAPI;
-import claudiosoft.pluginbean.BeanDescription;
-import claudiosoft.pluginconfig.ImageDescriptionConfig;
-import claudiosoft.threads.ImageDescriptionThread;
+import claudiosoft.pluginbean.BeanTags;
+import claudiosoft.pluginconfig.ImageTagConfig;
+import claudiosoft.threads.ImageTagsThread;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +19,11 @@ import java.util.concurrent.Executors;
  *
  * @author claudio.tortorelli
  */
-public class ImageDescription extends BaseImagePlugin {
+public class ImageTags extends BaseImagePlugin {
 
-    private ImageDescriptionConfig plugConf;
+    private ImageTagConfig plugConf;
 
-    public ImageDescription(int step) {
+    public ImageTags(int step) {
         super(step);
     }
 
@@ -30,7 +31,7 @@ public class ImageDescription extends BaseImagePlugin {
     public void init(Config config) throws CTException {
         super.init(config);
         OAPI.init();
-        plugConf = new ImageDescriptionConfig(config, this.getClass().getSimpleName());
+        plugConf = new ImageTagConfig(config, this.getClass().getSimpleName());
     }
 
     @Override
@@ -42,7 +43,7 @@ public class ImageDescription extends BaseImagePlugin {
             List<CompletableFuture<?>> futures = new ArrayList<>();
             File curImage = indexer.startVisit(pluginName);
             while (curImage != null) {
-                ImageDescriptionThread thread = new ImageDescriptionThread(curImage, plugConf, new BeanDescription(this.getClass().getSimpleName()));
+                ImageTagsThread thread = new ImageTagsThread(curImage, plugConf, new BeanTags(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
                 curImage = indexer.visitNext();
             }
@@ -53,5 +54,4 @@ public class ImageDescription extends BaseImagePlugin {
             exec.shutdown();
         }
     }
-
 }

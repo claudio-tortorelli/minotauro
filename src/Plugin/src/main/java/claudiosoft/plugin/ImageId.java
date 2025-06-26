@@ -1,11 +1,12 @@
-package claudiosoft.imageplugin;
+package claudiosoft.plugin;
 
+import claudiosoft.baseplugin.BaseImagePlugin;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.Indexer;
-import claudiosoft.pluginbean.BeanExif;
-import claudiosoft.pluginconfig.ImageExifConfig;
-import claudiosoft.threads.ImageExifThread;
+import claudiosoft.pluginbean.BeanId;
+import claudiosoft.pluginconfig.ImageIdConfig;
+import claudiosoft.threads.ImageIdThread;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,18 +18,18 @@ import java.util.concurrent.Executors;
  *
  * @author claudio.tortorelli
  */
-public class ImageExif extends BaseImagePlugin {
+public class ImageId extends BaseImagePlugin {
 
-    private ImageExifConfig plugConf;
+    private ImageIdConfig plugConf;
 
-    public ImageExif(int step) throws CTException {
+    public ImageId(int step) {
         super(step);
     }
 
     @Override
     public void init(Config config) throws CTException {
         super.init(config);
-        plugConf = new ImageExifConfig(config, this.getClass().getSimpleName());
+        plugConf = new ImageIdConfig(config, this.getClass().getSimpleName());
     }
 
     @Override
@@ -40,7 +41,7 @@ public class ImageExif extends BaseImagePlugin {
             List<CompletableFuture<?>> futures = new ArrayList<>();
             File curImage = indexer.startVisit(pluginName);
             while (curImage != null) {
-                ImageExifThread thread = new ImageExifThread(curImage, plugConf, new BeanExif(this.getClass().getSimpleName()));
+                ImageIdThread thread = new ImageIdThread(curImage, plugConf, new BeanId(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
                 curImage = indexer.visitNext();
             }

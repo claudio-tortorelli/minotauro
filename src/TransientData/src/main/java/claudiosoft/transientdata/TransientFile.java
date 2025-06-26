@@ -1,4 +1,4 @@
-package claudiosoft.transientimage;
+package claudiosoft.transientdata;
 
 import claudiosoft.commons.CTException;
 import java.io.File;
@@ -14,19 +14,19 @@ import org.ini4j.Wini;
  *
  * @author claudio.tortorelli
  */
-public class TransientImage {
+public class TransientFile {
 
-    protected Wini transientFile;
+    protected Wini transientDataIni;
 
-    public TransientImage(File transientImageFile) throws IOException {
-        if (!transientImageFile.exists()) {
-            transientImageFile.createNewFile();
+    public TransientFile(File transientFile) throws IOException {
+        if (!transientFile.exists()) {
+            transientFile.createNewFile();
         }
-        transientFile = new Wini(transientImageFile);
+        transientDataIni = new Wini(transientFile);
     }
 
     public String get(String sectionName, String property, String defaultValue) throws CTException {
-        Ini.Section section = transientFile.get(sectionName);
+        Ini.Section section = transientDataIni.get(sectionName);
         if (section == null) {
             throw new CTException("section undefined");
         }
@@ -38,39 +38,39 @@ public class TransientImage {
     }
 
     public void set(String sectionName, String property, String value) throws CTException {
-        Ini.Section section = transientFile.get(sectionName);
+        Ini.Section section = transientDataIni.get(sectionName);
         if (section == null) {
-            section = transientFile.add(sectionName);
+            section = transientDataIni.add(sectionName);
         }
         section.put(property, value);
     }
 
     public void set(String sectionName, String property, int value) throws CTException {
-        Ini.Section section = transientFile.get(sectionName);
+        Ini.Section section = transientDataIni.get(sectionName);
         if (section == null) {
-            section = transientFile.add(sectionName);
+            section = transientDataIni.add(sectionName);
         }
         section.put(property, value);
     }
 
     public void set(String sectionName, String property, double value) throws CTException {
-        Ini.Section section = transientFile.get(sectionName);
+        Ini.Section section = transientDataIni.get(sectionName);
         if (section == null) {
-            section = transientFile.add(sectionName);
+            section = transientDataIni.add(sectionName);
         }
         section.put(property, value);
     }
 
     public void set(String sectionName, String property, boolean value) throws CTException {
-        Ini.Section section = transientFile.get(sectionName);
+        Ini.Section section = transientDataIni.get(sectionName);
         if (section == null) {
-            section = transientFile.add(sectionName);
+            section = transientDataIni.add(sectionName);
         }
         section.put(property, value);
     }
 
     public void set(String sectionName, String property, byte[] value) throws CTException {
-        Ini.Section section = transientFile.get(sectionName);
+        Ini.Section section = transientDataIni.get(sectionName);
         if (section == null) {
             throw new CTException("section undefined");
         }
@@ -78,7 +78,7 @@ public class TransientImage {
     }
 
     public void set(String sectionName, String property, Date value) throws CTException {
-        Ini.Section section = transientFile.get(sectionName);
+        Ini.Section section = transientDataIni.get(sectionName);
         if (section == null) {
             throw new CTException("section undefined");
         }
@@ -87,7 +87,7 @@ public class TransientImage {
 
     public synchronized void store() throws CTException {
         try {
-            transientFile.store();
+            transientDataIni.store();
         } catch (IOException ex) {
             throw new CTException(ex);
         }
@@ -95,7 +95,7 @@ public class TransientImage {
 
     public HashMap<String, String> getErrors() throws CTException {
         HashMap<String, String> errorMap = new HashMap<>();
-        List<Section> sections = transientFile.getAll(this);
+        List<Section> sections = transientDataIni.getAll(this);
         if (sections == null) {
             return null;
         }

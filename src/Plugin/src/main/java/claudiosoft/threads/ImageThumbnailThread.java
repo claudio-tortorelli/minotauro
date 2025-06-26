@@ -3,8 +3,8 @@ package claudiosoft.threads;
 import claudiosoft.commons.CTException;
 import claudiosoft.pluginbean.BeanThumbnail;
 import claudiosoft.pluginconfig.ImageThumbnailConfig;
-import claudiosoft.transientimage.TransientImage;
-import claudiosoft.transientimage.TransientImageProvider;
+import claudiosoft.transientdata.TransientFile;
+import claudiosoft.transientdata.TransientProvider;
 import claudiosoft.utils.BasicUtils;
 import claudiosoft.utils.Failures;
 import java.io.File;
@@ -36,15 +36,15 @@ public class ImageThumbnailThread extends PluginThread {
         File tmpImage = null;
         try {
             super.run();
-            TransientImage transientImage = TransientImageProvider.getProvider().get(curImage);
+            TransientFile transientImage = TransientProvider.getProvider().get(curFile);
 
-            if (!curImage.exists()) {
+            if (!curFile.exists()) {
                 logger.error("image not found");
                 return;
             }
 
             // load the image
-            Mat cvImage = Imgcodecs.imread(curImage.getCanonicalPath());
+            Mat cvImage = Imgcodecs.imread(curFile.getCanonicalPath());
             if (cvImage == null || cvImage.empty() || cvImage.width() == 0 || cvImage.height() == 0) {
                 logger.error("unable to read the image. Look for unicode chars in the path");
                 return;
@@ -65,7 +65,7 @@ public class ImageThumbnailThread extends PluginThread {
 
             // resize the image and save to temporary file
             Imgproc.resize(cvImage, cvImage, destSize);
-            tmpImage = Files.createTempFile("cvImage", "." + BasicUtils.getExtension(curImage.getCanonicalPath())).toFile();
+            tmpImage = Files.createTempFile("cvImage", "." + BasicUtils.getExtension(curFile.getCanonicalPath())).toFile();
             Imgcodecs.imwrite(tmpImage.getCanonicalPath(), cvImage);
 
             // read the image byte array and convert to base64

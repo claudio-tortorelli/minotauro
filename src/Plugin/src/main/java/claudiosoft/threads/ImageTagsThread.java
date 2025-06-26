@@ -4,8 +4,8 @@ import claudiosoft.commons.CTException;
 import claudiosoft.ollama.OAPI;
 import claudiosoft.pluginbean.BeanTags;
 import claudiosoft.pluginconfig.ImageTagConfig;
-import claudiosoft.transientimage.TransientImage;
-import claudiosoft.transientimage.TransientImageProvider;
+import claudiosoft.transientdata.TransientFile;
+import claudiosoft.transientdata.TransientProvider;
 import claudiosoft.utils.Failures;
 import java.io.File;
 import java.util.ArrayList;
@@ -29,9 +29,9 @@ public class ImageTagsThread extends PluginThread {
     public void run() {
         try {
             super.run();
-            TransientImage transientImage = TransientImageProvider.getProvider().get(curImage);
+            TransientFile transientImage = TransientProvider.getProvider().get(curFile);
 
-            File imgToAnalyze = curImage;
+            File imgToAnalyze = curFile;
 
             ArrayList<File> images = new ArrayList<>();
             images.add(imgToAnalyze);

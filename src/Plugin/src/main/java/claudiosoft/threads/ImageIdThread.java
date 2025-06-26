@@ -3,8 +3,8 @@ package claudiosoft.threads;
 import claudiosoft.commons.CTException;
 import claudiosoft.pluginbean.BeanId;
 import claudiosoft.pluginconfig.ImageIdConfig;
-import claudiosoft.transientimage.TransientImage;
-import claudiosoft.transientimage.TransientImageProvider;
+import claudiosoft.transientdata.TransientFile;
+import claudiosoft.transientdata.TransientProvider;
 import claudiosoft.utils.BasicUtils;
 import claudiosoft.utils.Failures;
 import java.io.File;
@@ -28,12 +28,12 @@ public class ImageIdThread extends PluginThread {
     public void run() {
         try {
             super.run();
-            TransientImage transientImage = TransientImageProvider.getProvider().get(curImage);
+            TransientFile transientImage = TransientProvider.getProvider().get(curFile);
 
             if (plugConf.algo.equalsIgnoreCase("sha-1")) {
-                data.hashId = BasicUtils.bytesToHex(BasicUtils.getSHA1(curImage));
+                data.hashId = BasicUtils.bytesToHex(BasicUtils.getSHA1(curFile));
             } else {
-                data.hashId = BasicUtils.bytesToHex(BasicUtils.getSHA256(curImage));
+                data.hashId = BasicUtils.bytesToHex(BasicUtils.getSHA256(curFile));
             }
             data.store(transientImage);
         } catch (Exception ex) {

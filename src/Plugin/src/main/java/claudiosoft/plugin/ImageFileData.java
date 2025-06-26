@@ -1,12 +1,12 @@
-package claudiosoft.folderplugin;
+package claudiosoft.plugin;
 
+import claudiosoft.baseplugin.BaseImagePlugin;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
-import claudiosoft.imageplugin.BaseImagePlugin;
 import claudiosoft.indexer.Indexer;
-import claudiosoft.pluginbean.BeanAnalyzeFolderName;
-import claudiosoft.pluginconfig.ImageAnalyzeFolderConfig;
-import claudiosoft.threads.ImageAnalyzeFolderThread;
+import claudiosoft.pluginbean.BeanFileData;
+import claudiosoft.pluginconfig.ImageFileDataConfig;
+import claudiosoft.threads.ImageFileDataThread;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,23 +18,18 @@ import java.util.concurrent.Executors;
  *
  * @author claudio.tortorelli
  */
-public class ImageAnalyzeFolderName extends BaseImagePlugin {
+public class ImageFileData extends BaseImagePlugin {
 
-    private ImageAnalyzeFolderConfig plugConf;
+    private ImageFileDataConfig plugConf;
 
-    public ImageAnalyzeFolderName(int step) {
+    public ImageFileData(int step) {
         super(step);
     }
 
     @Override
     public void init(Config config) throws CTException {
         super.init(config);
-
-        /**
-         * TODO adesso deve essere implementato il multi pattern per parsare i
-         * casi diversi dallo standard
-         */
-        plugConf = new ImageAnalyzeFolderConfig(config, this.getClass().getSimpleName());
+        plugConf = new ImageFileDataConfig(config, this.getClass().getSimpleName());
     }
 
     @Override
@@ -44,10 +39,11 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
         ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
             List<CompletableFuture<?>> futures = new ArrayList<>();
-            List<String> folders = indexer.getFolders();
-            for (String folder : folders) {
-                ImageAnalyzeFolderThread thread = new ImageAnalyzeFolderThread(new File(folder), plugConf, new BeanAnalyzeFolderName(this.getClass().getSimpleName()));
+            File curImage = indexer.startVisit(pluginName);
+            while (curImage != null) {
+                ImageFileDataThread thread = new ImageFileDataThread(curImage, plugConf, new BeanFileData(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
+                curImage = indexer.visitNext();
             }
             CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
         } catch (Exception ex) {

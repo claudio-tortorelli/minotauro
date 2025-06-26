@@ -11,12 +11,12 @@ import java.io.IOException;
  */
 public abstract class PluginThread implements Runnable {
 
-    protected File curImage;
+    protected File curFile;
     protected BasicLogger logger;
 
     public PluginThread(File curImage) throws CTException {
         try {
-            this.curImage = curImage;
+            this.curFile = curImage;
             this.logger = BasicLogger.get();
         } catch (Exception ex) {
             throw new CTException(ex);
@@ -26,7 +26,7 @@ public abstract class PluginThread implements Runnable {
     public void run() {
         if (logger.isDebug()) {
             try {
-                logger.debug(String.format("processing image %s", curImage.getCanonicalPath()));
+                logger.debug(String.format("processing %s", curFile.getCanonicalPath()));
             } catch (IOException ex) {
             }
         }
