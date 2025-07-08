@@ -12,11 +12,11 @@ public class TestIndex {
 
     public static void main(String[] args) throws CTException, IOException {
         new File("./target/index.txt").delete();
-        Indexer indexer = new Indexer(new File("../../"), new File("./target/index.txt"));
+        Indexer indexer = new Indexer(new File("../../"), new File("./target/index.txt"), new File("./target/folders.txt"));
         indexer.buildIndex();
 
         new File("./target/index2.txt").delete();
-        Indexer indexer2 = new Indexer(new File("../../"), new File("./target/index2.txt"), "*.{jpg,jar}");
+        Indexer indexer2 = new Indexer(new File("../../"), new File("./target/index2.txt"), new File("./target/folders.txt"), "*.{jpg,jar}");
         indexer2.buildIndex();
 
         for (String folder : indexer2.getFolders()) {
@@ -24,7 +24,7 @@ public class TestIndex {
         }
 
         new File("./target/index3.txt").delete();
-        Indexer indexer3 = new Indexer(new File("../../"), new File("./target/index3.txt"));
+        Indexer indexer3 = new Indexer(new File("../../"), new File("./target/index3.txt"), new File("./target/folders.txt"));
         indexer3.buildIndex(false);
 
         try {

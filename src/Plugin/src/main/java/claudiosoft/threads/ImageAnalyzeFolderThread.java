@@ -75,7 +75,7 @@ public class ImageAnalyzeFolderThread extends PluginThread {
                 break;
             }
             if (!matched) {
-                logger.warn(String.format("unable to analyze or parse the folder"));
+                logger.warn(String.format("unable to analyze or parse the folder: %s", folderPath));
             }
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);

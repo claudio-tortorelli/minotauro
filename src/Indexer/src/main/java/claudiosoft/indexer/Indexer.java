@@ -22,6 +22,7 @@ public class Indexer {
 
     private File root;
     private File index;
+    private File folderIndex;
     private File tempIndex;
     private PathMatcher matcher;
     private List<String> indexData;
@@ -32,13 +33,14 @@ public class Indexer {
     private List<String> folders;
     private String globFilter;
 
-    public Indexer(File root, File index) throws CTException, SecurityException, IOException {
-        this(root, index, "*");
+    public Indexer(File root, File index, File folderIndex) throws CTException, SecurityException, IOException {
+        this(root, index, folderIndex, "*");
     }
 
-    public Indexer(File root, File index, String globFilter) throws CTException, SecurityException, IOException {
+    public Indexer(File root, File index, File folderIndex, String globFilter) throws CTException, SecurityException, IOException {
         this.root = root;
         this.index = index;
+        this.folderIndex = folderIndex;
         this.currentPluginName = "plugin";
         if (!root.exists()) {
             throw new CTException("root folder not exists");
@@ -50,6 +52,7 @@ public class Indexer {
         tempIndex = new File(tmpPath);
         if (tempIndex.exists()) {
             this.index.delete(); // remove incomplete index
+            this.folderIndex.delete(); // remove incomplete index
         }
         String visitPath = String.format("%s.next", index.getAbsolutePath());
         visitIndex = new File(visitPath);
@@ -75,6 +78,7 @@ public class Indexer {
         if (force) {
             logger.info("index rebuilding is forced");
             index.delete();
+            folderIndex.delete();
         }
         if (index.exists()) {
             logger.info(String.format("index already present in %s with %d entries", index.getCanonicalPath(), countIndexEntries()));
@@ -85,6 +89,8 @@ public class Indexer {
         }
         try {
             index.createNewFile();
+            folderIndex.createNewFile();
+
             logger.info("building index");
             addFolder(root, recursive);
             tempIndex.delete();
@@ -137,6 +143,7 @@ public class Indexer {
             }
             if (isFolderToBeStored) {
                 folders.add(folder.getCanonicalPath());
+                Files.write(folderIndex.toPath(), String.format("%s\n", folder.getCanonicalPath()).getBytes(), StandardOpenOption.APPEND);
             }
         }
     }
@@ -149,7 +156,10 @@ public class Indexer {
         return exts;
     }
 
-    public List<String> getFolders() {
+    public List<String> getFolders() throws IOException {
+        if (folders.isEmpty()) {
+            folders = Files.readAllLines(folderIndex.toPath());
+        }
         return folders;
     }
 

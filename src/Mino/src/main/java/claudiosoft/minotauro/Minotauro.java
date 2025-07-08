@@ -115,14 +115,15 @@ public class Minotauro {
         logger.info(String.format("- java version: %s", javaVer));
 
         String rootFolder = config.get("index", "rootPath");
-        String index = config.get("index", "indexPath");
+        String index = config.get("index", "indexPath", "./index.txt");
+        String folders = config.get("index", "folderPath", "./folders.txt");
         if (rootFolder.isEmpty() || index.isEmpty()) {
             throw new CTException("root folder and index path are required");
         }
         String filter = config.get("index", "filter");
-        Indexer indexer = new Indexer(new File(rootFolder), new File(index));
+        Indexer indexer = new Indexer(new File(rootFolder), new File(index), new File(folders));
         if (!filter.isEmpty()) {
-            indexer = new Indexer(new File(rootFolder), new File(index), filter);
+            indexer = new Indexer(new File(rootFolder), new File(index), new File(folders), filter);
         }
         indexer.buildIndex(rebuildIndexOnly);
         if (rebuildIndexOnly) {

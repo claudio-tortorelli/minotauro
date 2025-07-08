@@ -38,18 +38,23 @@ public class TransientProvider {
         Files.createDirectories(this.transientRootPath.toPath());
     }
 
-    public TransientFile get(File imageFile) throws CTException {
+    public TransientFile get(File origFile) throws CTException {
 
         try {
-            String imgFilePath = imageFile.getCanonicalPath().toLowerCase();
+            String origFilePath = origFile.getCanonicalPath().toLowerCase();
             String rootPath = imageRootPath.getCanonicalPath().toLowerCase();
-            if (!imgFilePath.toLowerCase().contains(rootPath)) {
-                throw new CTException(String.format("%s is not included into index", imageFile.getCanonicalPath()));
+            if (!origFilePath.toLowerCase().contains(rootPath)) {
+                throw new CTException(String.format("%s is not included into index", origFile.getCanonicalPath()));
             }
-            String relativePath = imgFilePath.substring(rootPath.length(), imgFilePath.length());
+            String relativePath = origFilePath.substring(rootPath.length(), origFilePath.length());
             String sha1 = BasicUtils.bytesToHex(BasicUtils.getSHA1(relativePath));
 
-            String transientImagePath = String.format("%s/%s_%s.transient", transientRootPath.getCanonicalPath(), sha1, imageFile.getName());
+            String origFileName = origFile.getName();
+            if (origFile.isDirectory()) {
+                origFileName = String.format("FOLD_%s", origFile.getName());
+            }
+            origFileName = origFileName.replace(" ", "_");
+            String transientImagePath = String.format("%s/%s_%s.transient", transientRootPath.getCanonicalPath(), origFileName, sha1);
             File transientImageFile = new File(transientImagePath);
 
             return new TransientFile(transientImageFile);
