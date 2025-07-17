@@ -1,6 +1,6 @@
 package claudiosoft.plugin;
 
-import claudiosoft.baseplugin.BaseImagePlugin;
+import claudiosoft.baseplugin.BasePlugin;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.Indexer;
@@ -10,7 +10,7 @@ import claudiosoft.indexer.Indexer;
  *
  * @author claudio.tortorelli
  */
-public class ImageFaceRecognize extends BaseImagePlugin {
+public class ImageFaceRecognize extends BasePlugin {
 
     public ImageFaceRecognize(int step) {
         super(step);

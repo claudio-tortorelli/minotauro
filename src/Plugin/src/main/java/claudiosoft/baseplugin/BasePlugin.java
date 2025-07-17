@@ -4,14 +4,13 @@ import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.Indexer;
-import claudiosoft.baseplugin.Plugin;
 import java.util.concurrent.TimeUnit;
 
 /**
  *
  * @author claudio.tortorelli
  */
-public abstract class BaseImagePlugin implements Plugin {
+public abstract class BasePlugin implements Plugin {
 
     protected String pluginName;
 
@@ -23,7 +22,7 @@ public abstract class BaseImagePlugin implements Plugin {
 
     private long nanoTimer;
 
-    public BaseImagePlugin(int step) {
+    public BasePlugin(int step) {
         this.step = step;
     }
 

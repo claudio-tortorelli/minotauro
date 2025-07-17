@@ -1,6 +1,6 @@
 package claudiosoft.plugin;
 
-import claudiosoft.baseplugin.BaseImagePlugin;
+import claudiosoft.baseplugin.BasePlugin;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.Indexer;
@@ -20,7 +20,7 @@ import nu.pattern.OpenCV;
  *
  * @author claudio.tortorelli
  */
-public class ImageThumbnail extends BaseImagePlugin {
+public class ImageThumbnail extends BasePlugin {
 
     private ImageThumbnailConfig plugConf;
 

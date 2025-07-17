@@ -8,7 +8,7 @@ import java.util.LinkedList;
  *
  * @author claudio.tortorelli
  */
-public class BeanAnalyzeFolderName extends BasePluginBean {
+public class BeanFolderParseName extends BasePluginBean {
 
     public String year;
     public String month;
@@ -20,7 +20,7 @@ public class BeanAnalyzeFolderName extends BasePluginBean {
     public LinkedList<String> people;
     public LinkedList<String> events;
 
-    public BeanAnalyzeFolderName(String pluginName) {
+    public BeanFolderParseName(String pluginName) {
         super(pluginName);
 
         year = "";

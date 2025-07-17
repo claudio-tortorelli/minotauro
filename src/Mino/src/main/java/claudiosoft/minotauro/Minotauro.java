@@ -1,6 +1,6 @@
 package claudiosoft.minotauro;
 
-import claudiosoft.baseplugin.BaseImagePlugin;
+import claudiosoft.baseplugin.BasePlugin;
 import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
@@ -131,7 +131,7 @@ public class Minotauro {
             System.exit(0);
         }
 
-        LinkedList<BaseImagePlugin> pluginList = new LinkedList<>();
+        LinkedList<BasePlugin> pluginList = new LinkedList<>();
         int nPlugin = 100;
         final Class<?>[] defaultConstructor = {int.class};
         for (int iPlug = 0; iPlug < nPlugin; iPlug++) {
@@ -152,7 +152,7 @@ public class Minotauro {
 
             Class<?> clazz = Class.forName(pluginClassName);
             Constructor<?> constructor = clazz.getConstructor(defaultConstructor);
-            pluginList.add((BaseImagePlugin) constructor.newInstance(step));
+            pluginList.add((BasePlugin) constructor.newInstance(step));
         }
 
         // if no enabled plugin are present, terminate
@@ -164,9 +164,9 @@ public class Minotauro {
         logger.info(String.format("%d plugins loaded", pluginList.size()));
 
         // sort plugin by ascending by step
-        Collections.sort(pluginList, new Comparator<BaseImagePlugin>() {
+        Collections.sort(pluginList, new Comparator<BasePlugin>() {
             @Override
-            public int compare(BaseImagePlugin a, BaseImagePlugin b) {
+            public int compare(BasePlugin a, BasePlugin b) {
                 if (a.getStep() < b.getStep()) {
                     return -1;
                 } else if (a.getStep() == b.getStep()) {
@@ -175,7 +175,7 @@ public class Minotauro {
                 return 1;
             }
         });
-        for (BaseImagePlugin plugin : pluginList) {
+        for (BasePlugin plugin : pluginList) {
             logger.info(String.format("- %s", plugin.getClass().getName()));
         }
 
@@ -184,7 +184,7 @@ public class Minotauro {
         int nGeneralErrors = 0;
         BasicUtils.startElapsedTime();
         logger.info("= start plugin process =");
-        for (BaseImagePlugin plugin : pluginList) {
+        for (BasePlugin plugin : pluginList) {
             try {
                 plugin.init(config);
                 plugin.apply(indexer);

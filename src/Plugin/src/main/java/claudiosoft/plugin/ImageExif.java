@@ -1,6 +1,6 @@
 package claudiosoft.plugin;
 
-import claudiosoft.baseplugin.BaseImagePlugin;
+import claudiosoft.baseplugin.BasePlugin;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.Indexer;
@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
  *
  * @author claudio.tortorelli
  */
-public class ImageExif extends BaseImagePlugin {
+public class ImageExif extends BasePlugin {
 
     private ImageExifConfig plugConf;
 

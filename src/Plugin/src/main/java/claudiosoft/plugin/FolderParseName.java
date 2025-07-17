@@ -1,12 +1,12 @@
 package claudiosoft.plugin;
 
+import claudiosoft.baseplugin.BasePlugin;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
-import claudiosoft.baseplugin.BaseImagePlugin;
 import claudiosoft.indexer.Indexer;
-import claudiosoft.pluginbean.BeanAnalyzeFolderName;
-import claudiosoft.pluginconfig.ImageAnalyzeFolderConfig;
-import claudiosoft.threads.ImageAnalyzeFolderThread;
+import claudiosoft.pluginbean.BeanFolderParseName;
+import claudiosoft.pluginconfig.FolderParseNameConfig;
+import claudiosoft.threads.FolderParseNameThread;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +18,11 @@ import java.util.concurrent.Executors;
  *
  * @author claudio.tortorelli
  */
-public class ImageAnalyzeFolderName extends BaseImagePlugin {
+public class FolderParseName extends BasePlugin {
 
-    private ImageAnalyzeFolderConfig plugConf;
+    private FolderParseNameConfig plugConf;
 
-    public ImageAnalyzeFolderName(int step) {
+    public FolderParseName(int step) {
         super(step);
     }
 
@@ -34,7 +34,7 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
          * TODO adesso deve essere implementato il multi pattern per parsare i
          * casi diversi dallo standard
          */
-        plugConf = new ImageAnalyzeFolderConfig(config, this.getClass().getSimpleName());
+        plugConf = new FolderParseNameConfig(config, this.getClass().getSimpleName());
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ImageAnalyzeFolderName extends BaseImagePlugin {
             List<CompletableFuture<?>> futures = new ArrayList<>();
             List<String> folders = indexer.getFolders();
             for (String folder : folders) {
-                ImageAnalyzeFolderThread thread = new ImageAnalyzeFolderThread(new File(folder), plugConf, new BeanAnalyzeFolderName(this.getClass().getSimpleName()));
+                FolderParseNameThread thread = new FolderParseNameThread(new File(folder), plugConf, new BeanFolderParseName(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
             }
             CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();

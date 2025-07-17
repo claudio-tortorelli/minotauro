@@ -1,8 +1,8 @@
 package claudiosoft.threads;
 
 import claudiosoft.commons.CTException;
-import claudiosoft.pluginbean.BeanAnalyzeFolderName;
-import claudiosoft.pluginconfig.ImageAnalyzeFolderConfig;
+import claudiosoft.pluginbean.BeanFolderParseName;
+import claudiosoft.pluginconfig.FolderParseNameConfig;
 import claudiosoft.transientdata.TransientFile;
 import claudiosoft.transientdata.TransientProvider;
 import claudiosoft.utils.Failures;
@@ -14,12 +14,12 @@ import java.util.regex.Matcher;
  *
  * @author claudio.tortorelli
  */
-public class ImageAnalyzeFolderThread extends PluginThread {
+public class FolderParseNameThread extends PluginThread {
 
-    private final ImageAnalyzeFolderConfig plugConf;
-    private final BeanAnalyzeFolderName data;
+    private final FolderParseNameConfig plugConf;
+    private final BeanFolderParseName data;
 
-    public ImageAnalyzeFolderThread(File curFolder, ImageAnalyzeFolderConfig plugConf, BeanAnalyzeFolderName data) throws CTException {
+    public FolderParseNameThread(File curFolder, FolderParseNameConfig plugConf, BeanFolderParseName data) throws CTException {
         super(curFolder);
         this.plugConf = plugConf;
         this.data = data;

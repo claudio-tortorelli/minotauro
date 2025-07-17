@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  *
  * @author claudio.tortorelli
  */
-public class ImageAnalyzeFolderConfig extends PluginConfig {
+public class FolderParseNameConfig extends PluginConfig {
 
     public int maxThread;
     public boolean advanced;
@@ -27,7 +27,7 @@ public class ImageAnalyzeFolderConfig extends PluginConfig {
     public List<String> storedNames;
     public List<String> storedTools;
 
-    public ImageAnalyzeFolderConfig(Config config, String pluginName) throws CTException {
+    public FolderParseNameConfig(Config config, String pluginName) throws CTException {
         super(config, pluginName);
 
         patterns = new LinkedList<>();
