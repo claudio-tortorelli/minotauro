@@ -9,14 +9,14 @@ import claudiosoft.transientdata.TransientFile;
  */
 public class BeanFileData extends BasePluginBean {
 
-    public String originalPath;
+    public String folder;
     public String fileName;
     public String lastModifiedDate;
     public String ext;
 
     public BeanFileData(String pluginName) {
         super(pluginName);
-        originalPath = "";
+        folder = "";
         fileName = "";
         ext = "";
         lastModifiedDate = null;
@@ -24,7 +24,7 @@ public class BeanFileData extends BasePluginBean {
 
     @Override
     public void store(TransientFile transientImage) throws CTException {
-        transientImage.set(pluginName, "originalPath", originalPath);
+        transientImage.set(pluginName, "folder", folder);
         transientImage.set(pluginName, "fileName", fileName);
         transientImage.set(pluginName, "ext", ext);
         transientImage.set(pluginName, "lastModifiedDate", lastModifiedDate);

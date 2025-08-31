@@ -32,8 +32,11 @@ public class FolderParseNameConfig extends PluginConfig {
 
         patterns = new LinkedList<>();
         String regex = config.get(pluginName, "regex1", "");
-        patterns.add(Pattern.compile(regex, Pattern.CASE_INSENSITIVE));
-
+        int id = 1;
+        while (!regex.isEmpty()) {
+            patterns.add(Pattern.compile(regex, Pattern.CASE_INSENSITIVE));
+            regex = config.get(pluginName, String.format("regex%d", ++id), "");
+        }
         storedEvents = new LinkedList<>();
         storedCities = new LinkedList<>();
         storedCountries = new LinkedList<>();

@@ -29,12 +29,11 @@ public class FolderParseNameThread extends PluginThread {
     public void run() {
         try {
             TransientFile transientFolder = TransientProvider.getProvider().get(curFile);
-            String folderPath = curFile.getCanonicalPath();
-            folderPath = folderPath.replace("\\", "/").toLowerCase();
+            data.path = curFile.getCanonicalPath().replace("\\", "/").toLowerCase();
 
-            String[] folders = folderPath.split("/");
+            String[] folders = data.path.split("/");
             if (folders.length < 2) {
-                logger.error(String.format("unable to extract target folder from %s", folderPath));
+                logger.error(String.format("unable to extract target folder from %s", data.path));
                 return;
             }
 
@@ -49,14 +48,16 @@ public class FolderParseNameThread extends PluginThread {
                 folderName = folderName.replace(".", " ");
                 folderName = folderName.replace("-", " ");
 
+                //TODO: gestire nell'indexer le folder skipped
+                //TODO: qui va gestito il pattern matching multiplo. Inoltre capire se opzionalmente è da evitare l'indicizzazione di cartelle che non riportano l'anno nel path
                 Matcher matcher = plugConf.patterns.get(0).matcher(folderName);
-                if (!matcher.find()) {
+                if (!matcher.find()) { // perché solo se non find???
                     checkAdvanced(folderName);
                     continue;
                 }
                 String[] fields = folderName.split(" ");
                 if (fields.length < 3) {
-                    logger.error(String.format("unable to extract fields from %s", folderPath));
+                    logger.error(String.format("unable to extract fields from %s", data.path));
                     break;
                 }
                 data.year = fields[0];
@@ -75,7 +76,7 @@ public class FolderParseNameThread extends PluginThread {
                 break;
             }
             if (!matched) {
-                logger.warn(String.format("unable to analyze or parse the folder: %s", folderPath));
+                logger.warn(String.format("unable to analyze or parse the folder: %s", data.path));
             }
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);

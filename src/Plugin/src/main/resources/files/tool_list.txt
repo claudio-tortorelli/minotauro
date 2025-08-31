@@ -6,4 +6,7 @@ photoshop
 rawtherapee
 darktable
 digikam
-
+export
+bw
+hdr
+elaborated

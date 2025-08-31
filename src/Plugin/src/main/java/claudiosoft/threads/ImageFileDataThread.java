@@ -31,7 +31,7 @@ public class ImageFileDataThread extends PluginThread {
             super.run();
             TransientFile transientImage = TransientProvider.getProvider().get(curFile);
 
-            data.originalPath = curFile.getCanonicalPath();
+            data.folder = curFile.getParentFile().getCanonicalPath().replace("\\", "/").toLowerCase();
             data.fileName = curFile.getName();
             data.ext = BasicUtils.getExtension(curFile);
             data.lastModifiedDate = BasicUtils.dateToString(new Date(curFile.lastModified()));
