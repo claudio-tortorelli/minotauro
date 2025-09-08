@@ -1,5 +1,7 @@
 package claudiosoft.pluginconfig;
 
+import claudiosoft.baseplugin.FolderPattern;
+import claudiosoft.baseplugin.PatternId;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.utils.BasicUtils;
@@ -19,7 +21,7 @@ public class FolderParseNameConfig extends PluginConfig {
     public int maxThread;
     public boolean advanced;
     public boolean enableWikipedia;
-    public LinkedList<Pattern> patterns;
+    public LinkedList<FolderPattern> foldPatterns;
 
     public List<String> storedEvents;
     public List<String> storedCities;
@@ -30,11 +32,12 @@ public class FolderParseNameConfig extends PluginConfig {
     public FolderParseNameConfig(Config config, String pluginName) throws CTException {
         super(config, pluginName);
 
-        patterns = new LinkedList<>();
+        foldPatterns = new LinkedList<>();
         String regex = config.get(pluginName, "regex1", "");
         int id = 1;
         while (!regex.isEmpty()) {
-            patterns.add(Pattern.compile(regex, Pattern.CASE_INSENSITIVE));
+            PatternId patId = PatternId.valueOf(String.format("p%d", id));
+            foldPatterns.add(new FolderPattern(patId, Pattern.compile(regex, Pattern.CASE_INSENSITIVE)));
             regex = config.get(pluginName, String.format("regex%d", ++id), "");
         }
         storedEvents = new LinkedList<>();

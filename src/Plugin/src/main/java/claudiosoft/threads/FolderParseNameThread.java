@@ -1,5 +1,6 @@
 package claudiosoft.threads;
 
+import claudiosoft.baseplugin.FolderPattern;
 import claudiosoft.commons.CTException;
 import claudiosoft.pluginbean.BeanFolderParseName;
 import claudiosoft.pluginconfig.FolderParseNameConfig;
@@ -8,7 +9,6 @@ import claudiosoft.transientdata.TransientProvider;
 import claudiosoft.utils.Failures;
 import io.github.fastily.jwiki.core.Wiki;
 import java.io.File;
-import java.util.regex.Matcher;
 
 /**
  *
@@ -45,35 +45,37 @@ public class FolderParseNameThread extends PluginThread {
                     continue;
                 }
 
-                folderName = folderName.replace(".", " ");
-                folderName = folderName.replace("-", " ");
-
+                //folderName = folderName.replace(".", " ");
+                //folderName = folderName.replace("-", " ");
                 //TODO: gestire nell'indexer le folder skipped
                 //TODO: qui va gestito il pattern matching multiplo. Inoltre capire se opzionalmente è da evitare l'indicizzazione di cartelle che non riportano l'anno nel path
-                Matcher matcher = plugConf.patterns.get(0).matcher(folderName);
-                if (!matcher.find()) { // perché solo se non find???
-                    checkAdvanced(folderName);
-                    continue;
-                }
-                String[] fields = folderName.split(" ");
-                if (fields.length < 3) {
-                    logger.error(String.format("unable to extract fields from %s", data.path));
+                for (FolderPattern pattern : plugConf.foldPatterns) {
+                    if (!pattern.applyPattern(folderName)) {
+                        continue;
+                    }
+
+                    checkAdvanced(pattern.getDescription());
+
+                    String[] fields = folderName.split(" ");
+                    if (fields.length < 3) {
+                        logger.error(String.format("unable to extract fields from %s", data.path));
+                        break;
+                    }
+                    data.year = fields[0];
+                    data.month = fields[1];
+                    for (int iD = 2; iD < fields.length; iD++) {
+                        data.description += fields[iD];
+                        data.description += " ";
+                    }
+                    data.description = data.description.trim();
+                    matched = true;
+
+                    checkAdvanced(data.description);
+
+                    logger.debug(String.format("found this folder %s", folderName));
+                    data.store(transientFolder);
                     break;
                 }
-                data.year = fields[0];
-                data.month = fields[1];
-                for (int iD = 2; iD < fields.length; iD++) {
-                    data.description += fields[iD];
-                    data.description += " ";
-                }
-                data.description = data.description.trim();
-                matched = true;
-
-                checkAdvanced(data.description);
-
-                logger.debug(String.format("found this folder %s", folderName));
-                data.store(transientFolder);
-                break;
             }
             if (!matched) {
                 logger.warn(String.format("unable to analyze or parse the folder: %s", data.path));
