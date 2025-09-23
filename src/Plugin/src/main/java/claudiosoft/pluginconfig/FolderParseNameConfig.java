@@ -8,6 +8,8 @@ import claudiosoft.utils.BasicUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -22,6 +24,7 @@ public class FolderParseNameConfig extends PluginConfig {
     public boolean advanced;
     public boolean enableWikipedia;
     public LinkedList<FolderPattern> foldPatterns;
+    public String rootFolder;
 
     public List<String> storedEvents;
     public List<String> storedCities;
@@ -32,14 +35,23 @@ public class FolderParseNameConfig extends PluginConfig {
     public FolderParseNameConfig(Config config, String pluginName) throws CTException {
         super(config, pluginName);
 
+        rootFolder = config.get("index", "rootPath");
+
         foldPatterns = new LinkedList<>();
-        String regex = config.get(pluginName, "regex1", "");
+        String regex = config.get(pluginName, "regex01", "");
         int id = 1;
         while (!regex.isEmpty()) {
-            PatternId patId = PatternId.valueOf(String.format("p%d", id));
+            PatternId patId = PatternId.valueOf(String.format("p%02d", id));
             foldPatterns.add(new FolderPattern(patId, Pattern.compile(regex, Pattern.CASE_INSENSITIVE)));
-            regex = config.get(pluginName, String.format("regex%d", ++id), "");
+            regex = config.get(pluginName, String.format("regex%02d", ++id), "");
         }
+        Collections.sort(foldPatterns, new Comparator<FolderPattern>() {
+            @Override
+            public int compare(FolderPattern a, FolderPattern b) {
+                return a.getId().name().compareTo(b.getId().name());
+            }
+        });
+
         storedEvents = new LinkedList<>();
         storedCities = new LinkedList<>();
         storedCountries = new LinkedList<>();

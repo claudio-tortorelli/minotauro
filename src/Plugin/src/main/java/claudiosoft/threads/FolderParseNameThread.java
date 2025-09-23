@@ -30,12 +30,8 @@ public class FolderParseNameThread extends PluginThread {
         try {
             TransientFile transientFolder = TransientProvider.getProvider().get(curFile);
             data.path = curFile.getCanonicalPath().replace("\\", "/").toLowerCase();
-
-            String[] folders = data.path.split("/");
-            if (folders.length < 2) {
-                logger.error(String.format("unable to extract target folder from %s", data.path));
-                return;
-            }
+            String relativePath = data.path.substring(plugConf.rootFolder.length(), data.path.length());
+            String[] folders = relativePath.split("/");
 
             boolean matched = false;
             for (int i = folders.length - 1; i >= 0; i--) {
@@ -45,35 +41,22 @@ public class FolderParseNameThread extends PluginThread {
                     continue;
                 }
 
-                //folderName = folderName.replace(".", " ");
-                //folderName = folderName.replace("-", " ");
                 //TODO: gestire nell'indexer le folder skipped
-                //TODO: qui va gestito il pattern matching multiplo. Inoltre capire se opzionalmente è da evitare l'indicizzazione di cartelle che non riportano l'anno nel path
                 for (FolderPattern pattern : plugConf.foldPatterns) {
                     if (!pattern.applyPattern(folderName)) {
                         continue;
                     }
+                    data.year = pattern.getYear();
+                    data.month = pattern.getMonth();
+                    data.description = pattern.getDescription();
+
+                    logger.debug("folder " + folderName + "\n   with pattern " + pattern.getPattern().pattern() + "\n   got" + "\n  " + pattern.toString());
 
                     checkAdvanced(pattern.getDescription());
 
-                    String[] fields = folderName.split(" ");
-                    if (fields.length < 3) {
-                        logger.error(String.format("unable to extract fields from %s", data.path));
-                        break;
-                    }
-                    data.year = fields[0];
-                    data.month = fields[1];
-                    for (int iD = 2; iD < fields.length; iD++) {
-                        data.description += fields[iD];
-                        data.description += " ";
-                    }
-                    data.description = data.description.trim();
-                    matched = true;
-
-                    checkAdvanced(data.description);
-
                     logger.debug(String.format("found this folder %s", folderName));
                     data.store(transientFolder);
+                    matched = true;
                     break;
                 }
             }
