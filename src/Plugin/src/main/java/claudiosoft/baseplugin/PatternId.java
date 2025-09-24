@@ -6,19 +6,34 @@ package claudiosoft.baseplugin;
  */
 public enum PatternId {
 
-    p01("AAAA_MM_X"),
-    p02("AAAA"),
-    p03("AAAA"),
-    p04("AAAA_MM_DD_X"),
-    p05("AAAA_MM_DD_X"),
-    p06("AAAA_MM_DD"),
-    p07("AAAA_MM_X"),
-    p08("AAAA_X"),
-    p09("X_AAAA"),
-    p10("X_DD_MM_AAAA"),
-    p11("DD_MM_AAAA_X"),
-    p12("AAAA_MM_DD"),
-    p13("AAAA_MM_DD_X");
+    //1 2002 04.20-1 bla
+    //2 2002 04.20 bla
+    //3 2002.05.20
+    //4 2002.05.20 bla
+    //5 2002.05 bla
+    //6 bla 10-02-2002 
+    //7 10_02_2002 bla
+    //8 2002-02-20
+    //9 2002-02-20 bla
+    //10 2002 04 bla
+    //11 bla 2002
+    //12 19xx
+    //13 2002
+    //14 2002 bla
+    p01("YYYY_MM_DD_X"),
+    p02("YYYY_MM_DD_X"),
+    p03("YYYY_MM_DD"),
+    p04("YYYY_MM_DD_X"),
+    p05("YYYY_MM_X"),
+    p06("X_DD_MM_YYYY"),
+    p07("DD_MM_YYYY_X"),
+    p08("YYYY_MM_DD"),
+    p09("YYYY_MM_DD_X"),
+    p10("YYYY_MM_X"),
+    p11("X_YYYY"),
+    p12("YYYY"),
+    p13("YYYY"),
+    p14("YYYY_X");
 
     private String schema;
 

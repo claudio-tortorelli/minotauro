@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  */
 public class FolderPattern {
 
-    public final String YEAR = "AAAA";
+    public final String YEAR = "YYYY";
     public final String MONTH = "MM";
     public final String DAY = "DD";
     public final String DESC = "X";
@@ -68,6 +68,11 @@ public class FolderPattern {
             } else {
                 description = folder.substring(index, folder.length());
             }
+            description = description.trim();
+            if (description.startsWith("-") || description.startsWith("_")) {
+                description = description.substring(1);
+                description = description.trim();
+            }
         }
         return true;
     }
@@ -90,7 +95,7 @@ public class FolderPattern {
 
     @Override
     public String toString() {
-        return String.format("year (%s), month (%s), description (%s)", year, month, description);
+        return String.format("year (%s), month (%s), day (%s), description (%s)", year, month, day, description);
     }
 
 }

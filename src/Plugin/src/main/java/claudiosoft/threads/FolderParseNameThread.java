@@ -19,6 +19,8 @@ public class FolderParseNameThread extends PluginThread {
     private final FolderParseNameConfig plugConf;
     private final BeanFolderParseName data;
 
+    private final boolean VERBOSE_MODE = true;
+
     public FolderParseNameThread(File curFolder, FolderParseNameConfig plugConf, BeanFolderParseName data) throws CTException {
         super(curFolder);
         this.plugConf = plugConf;
@@ -36,6 +38,9 @@ public class FolderParseNameThread extends PluginThread {
             boolean matched = false;
             for (int i = folders.length - 1; i >= 0; i--) {
                 String folderName = folders[i];
+                if (VERBOSE_MODE) {
+                    logger.debug("\n\n----- folder " + folderName);
+                }
                 if (plugConf.storedTools.contains(folderName)) {
                     data.elaborated = true;
                     continue;
@@ -44,17 +49,22 @@ public class FolderParseNameThread extends PluginThread {
                 //TODO: gestire nell'indexer le folder skipped
                 for (FolderPattern pattern : plugConf.foldPatterns) {
                     if (!pattern.applyPattern(folderName)) {
+                        if (VERBOSE_MODE) {
+                            logger.debug("NO pattern " + pattern.getPattern().pattern());
+                        }
                         continue;
                     }
                     data.year = pattern.getYear();
                     data.month = pattern.getMonth();
                     data.description = pattern.getDescription();
 
-                    logger.debug("folder " + folderName + "\n   with pattern " + pattern.getPattern().pattern() + "\n   got" + "\n  " + pattern.toString());
+                    if (VERBOSE_MODE) {
+                        logger.debug("MATCH with pattern " + pattern.getId().name() + " " + pattern.getPattern().pattern() + " and schema " + pattern.getId().getSchema() + "\n\tgot " + pattern.toString());
+                    }
 
                     checkAdvanced(pattern.getDescription());
 
-                    logger.debug(String.format("found this folder %s", folderName));
+                    logger.debug(String.format("folder %s was parsed", folderName));
                     data.store(transientFolder);
                     matched = true;
                     break;
