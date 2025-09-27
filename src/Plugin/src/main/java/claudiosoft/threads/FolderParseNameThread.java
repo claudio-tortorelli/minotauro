@@ -9,6 +9,7 @@ import claudiosoft.transientdata.TransientProvider;
 import claudiosoft.utils.Failures;
 import io.github.fastily.jwiki.core.Wiki;
 import java.io.File;
+import java.util.List;
 
 /**
  *
@@ -41,7 +42,7 @@ public class FolderParseNameThread extends PluginThread {
                 if (VERBOSE_MODE) {
                     logger.debug("\n\n----- folder " + folderName);
                 }
-                if (plugConf.storedTools.contains(folderName)) {
+                if (find(plugConf.storedTools, folderName)) {
                     data.elaborated = true;
                     continue;
                 }
@@ -99,32 +100,48 @@ public class FolderParseNameThread extends PluginThread {
         }
 
         for (String word : words) {
-            word = word.trim();
-            word = word.replace(",", "");
+            word = word.trim().toLowerCase().replace(",", "");
             if (word.length() <= 2) {
                 continue;
             }
-            if (plugConf.storedEvents.contains(word)) {
+            if (find(plugConf.storedEvents, word)) {
+                if (VERBOSE_MODE) {
+                    logger.debug("added event " + word);
+                }
                 data.events.add(word);
-                continue;
             }
-            if (plugConf.storedCities.contains(word)) {
+            if (find(plugConf.storedCities, word)) {
+                if (VERBOSE_MODE) {
+                    logger.debug("added city " + word);
+                }
                 data.cities.add(word);
-                continue;
             }
-            if (plugConf.storedCountries.contains(word)) {
+            if (find(plugConf.storedCountries, word)) {
+                if (VERBOSE_MODE) {
+                    logger.debug("added country " + word);
+                }
                 data.countries.add(word);
-                continue;
             }
-            if (plugConf.storedNames.contains(word)) {
+            if (find(plugConf.storedPeople, word)) {
+                if (VERBOSE_MODE) {
+                    logger.debug("added name " + word);
+                }
                 data.people.add(word);
-                continue;
             }
             if (wiki != null) {
                 //https://github.com/fastily/jwiki
                 //wiki.search(year, step, ns) 
             }
         }
+    }
+
+    private boolean find(List<String> inList, String word) {
+        for (String curWord : inList) {
+            if (curWord.equals(word)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

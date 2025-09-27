@@ -29,7 +29,7 @@ public class FolderParseNameConfig extends PluginConfig {
     public List<String> storedEvents;
     public List<String> storedCities;
     public List<String> storedCountries;
-    public List<String> storedNames;
+    public List<String> storedPeople;
     public List<String> storedTools;
 
     public FolderParseNameConfig(Config config, String pluginName) throws CTException {
@@ -43,7 +43,9 @@ public class FolderParseNameConfig extends PluginConfig {
         while (!regex.isEmpty()) {
             PatternId patId = PatternId.valueOf(String.format("p%02d", id));
             foldPatterns.add(new FolderPattern(patId, Pattern.compile(regex, Pattern.CASE_INSENSITIVE)));
-            regex = config.get(pluginName, String.format("regex%02d", ++id), "");
+
+            id++;
+            regex = config.get(pluginName, String.format("regex%02d", id), "");
         }
         Collections.sort(foldPatterns, new Comparator<FolderPattern>() {
             @Override
@@ -55,7 +57,7 @@ public class FolderParseNameConfig extends PluginConfig {
         storedEvents = new LinkedList<>();
         storedCities = new LinkedList<>();
         storedCountries = new LinkedList<>();
-        storedNames = new LinkedList<>();
+        storedPeople = new LinkedList<>();
         storedTools = new LinkedList<>();
 
         advanced = config.get(pluginName, "parseDesc", "false").equalsIgnoreCase("true");
@@ -90,7 +92,7 @@ public class FolderParseNameConfig extends PluginConfig {
             File fileNames;
             try {
                 fileNames = BasicUtils.getFileFromRes("files/nomi_italiani.txt");
-                storedNames = Files.readAllLines(fileNames.toPath());
+                storedPeople = Files.readAllLines(fileNames.toPath());
             } catch (IOException ex) {
                 logger.error("name files not found");
                 throw new CTException(ex);
