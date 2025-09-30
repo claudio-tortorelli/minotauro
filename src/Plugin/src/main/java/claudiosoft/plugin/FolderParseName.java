@@ -29,11 +29,6 @@ public class FolderParseName extends BasePlugin {
     @Override
     public void init(Config config) throws CTException {
         super.init(config);
-
-        /**
-         * TODO adesso deve essere implementato il multi pattern per parsare i
-         * casi diversi dallo standard
-         */
         plugConf = new FolderParseNameConfig(config, this.getClass().getSimpleName());
     }
 

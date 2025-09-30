@@ -35,11 +35,6 @@ import java.util.LinkedList;
  *
  * //TODO implement a translation plugin
  *
- * //TODO evaluate a tag extraction from description
- *
- * //TODO transient image must become transient data project with a base object
- * and a new transientfolder
- *
  * //TODO check force use ollama gpu
  *
  * //TODO define the plugin order and sequence
@@ -52,8 +47,10 @@ import java.util.LinkedList;
  *
  * //TODO File writes should be minimized or added to a queue
  *
- * //TODO each plugin must check if the transiend with its data is already
+ * //TODO each plugin must check if the transient with its data is already
  * present. If not do it or skip instead
+ *
+ * // TODO: handle in the indexer folders to be skipped
  *
  * @author claudio.tortorelli
  */
@@ -90,7 +87,7 @@ public class Minotauro {
         }
 
         logger.info("----------------------");
-        logger.info("Minotauro " + ver);
+        logger.info("  Minotauro " + ver);
         logger.info("----------------------");
 
         Runtime runtimeEnv = Runtime.getRuntime();

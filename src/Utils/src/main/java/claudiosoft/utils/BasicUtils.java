@@ -33,6 +33,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -357,5 +359,20 @@ public class BasicUtils {
             }
             return result;
         }
+    }
+
+    public static List<String> sort(List<String> inList, boolean reverse) {
+        Collections.sort(inList, new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+
+                int rev = 1;
+                if (reverse) {
+                    rev = -1;
+                }
+                return s1.compareTo(s2) * rev;
+            }
+        });
+        return inList;
     }
 }

@@ -10,6 +10,7 @@ import java.util.LinkedList;
  */
 public class BeanFolderParseName extends BasePluginBean {
 
+    public String path;
     public String year;
     public String month;
     public String description;
@@ -23,6 +24,7 @@ public class BeanFolderParseName extends BasePluginBean {
     public BeanFolderParseName(String pluginName) {
         super(pluginName);
 
+        path = "";
         year = "";
         month = "";
         description = "";
@@ -36,6 +38,7 @@ public class BeanFolderParseName extends BasePluginBean {
 
     @Override
     public void store(TransientFile transientFolder) throws CTException {
+        transientFolder.set(pluginName, "path", path);
         transientFolder.set(pluginName, "year", year);
         transientFolder.set(pluginName, "month", month);
         transientFolder.set(pluginName, "description", description);

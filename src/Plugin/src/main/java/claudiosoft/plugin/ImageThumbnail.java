@@ -32,7 +32,7 @@ public class ImageThumbnail extends BasePlugin {
     public void init(Config config) throws CTException {
         super.init(config);
         plugConf = new ImageThumbnailConfig(config, this.getClass().getSimpleName());
-        OpenCV.loadShared();
+        OpenCV.loadLocally();
     }
 
     /**
