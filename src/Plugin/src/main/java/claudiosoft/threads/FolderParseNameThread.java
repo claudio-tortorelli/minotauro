@@ -20,7 +20,7 @@ public class FolderParseNameThread extends PluginThread {
     private final FolderParseNameConfig plugConf;
     private final BeanFolderParseName data;
 
-    private final boolean VERBOSE_MODE = true;
+    private final boolean VERBOSE_MODE = false; // develop only
 
     public FolderParseNameThread(File curFolder, FolderParseNameConfig plugConf, BeanFolderParseName data) throws CTException {
         super(curFolder);
@@ -47,7 +47,6 @@ public class FolderParseNameThread extends PluginThread {
                     continue;
                 }
 
-                //TODO: gestire nell'indexer le folder skipped
                 for (FolderPattern pattern : plugConf.foldPatterns) {
                     if (!pattern.applyPattern(folderName)) {
                         if (VERBOSE_MODE) {
@@ -70,6 +69,8 @@ public class FolderParseNameThread extends PluginThread {
                     matched = true;
                     break;
                 }
+
+                checkAdvanced(folderName);
             }
             if (!matched) {
                 logger.warn(String.format("unable to analyze or parse the folder: %s", data.path));
