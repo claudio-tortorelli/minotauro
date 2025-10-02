@@ -1,5 +1,6 @@
 package claudiosoft.pluginconfig;
 
+import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.ollama.OAPI;
@@ -38,7 +39,7 @@ public class ImageDescriptionConfig extends PluginConfig {
 
         prompt = config.get(pluginName, "prompt", "write a synthetic description of this image. The maximum length is %d characters");
         if (!prompt.contains("%d")) {
-            throw new CTException("invalid prompt");
+            throw new CTException("invalid prompt", CTError.INVALID_ARGUMENT);
         }
         int maxLength = Integer.parseInt(config.get(pluginName, "maxLengthChar", "255"));
         prompt = String.format(prompt, maxLength);

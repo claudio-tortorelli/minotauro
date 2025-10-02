@@ -83,7 +83,7 @@ public class BasicLogger {
                 fileHandler.setFormatter(new SimpleFormatter());
                 internalLogger.addHandler(fileHandler);
             } catch (SecurityException | IOException ex) {
-                throw new CTException(ex);
+                throw new CTException(ex, CTError.FILESYSTEM_GENERIC_ERROR);
             }
         }
         internalLogger.setUseParentHandlers(false);

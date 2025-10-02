@@ -3,6 +3,7 @@
  */
 package claudiosoft.utils;
 
+import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Constants;
 import java.io.BufferedReader;
@@ -150,7 +151,7 @@ public class BasicUtils {
             FileLock lck = fis.getChannel().tryLock();
             lck.release();
         } catch (Exception ex) {
-            throw new CTException("Locked");
+            throw new CTException("Locked", CTError.IO_GENERIC_ERROR);
         }
         // try further with rename
         String parent = testFile.getParent();
@@ -159,7 +160,7 @@ public class BasicUtils {
         if (testFile.renameTo(newName)) {
             newName.renameTo(testFile);
         } else {
-            throw new CTException("Locked");
+            throw new CTException("Locked", CTError.IO_GENERIC_ERROR);
         }
     }
 

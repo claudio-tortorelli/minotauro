@@ -2,6 +2,7 @@ package claudiosoft.minotauro;
 
 import claudiosoft.baseplugin.BasePlugin;
 import claudiosoft.commons.BasicLogger;
+import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.commons.Constants;
@@ -19,8 +20,6 @@ import java.util.Comparator;
 import java.util.LinkedList;
 
 /**
- * //TODO analyze the extension to take note of presence of some files (video,
- * documents etc)
  *
  * //TODO add a statistic analyzer that can produce an ipothesis about the
  * remaining time of a plugin work
@@ -29,7 +28,7 @@ import java.util.LinkedList;
  *
  * //TODO check the plugin name right assignements in classes
  *
- * //TODO, timer should have a map of times
+ * //TODO timer should have a map of times
  *
  * //TODO implement the wiki search
  *
@@ -39,18 +38,18 @@ import java.util.LinkedList;
  *
  * //TODO define the plugin order and sequence
  *
- * //TODO a plugin to get all extensions in input folders
- *
  * //TODO simplify the plugin classes and framework
  *
  * //TODO exception must have a code ID to handle the error
  *
  * //TODO File writes should be minimized or added to a queue
  *
- * //TODO each plugin must check if the transient with its data is already
- * present. If not do it or skip instead
+ * //TODO each plugin must have a version. A file must be processed only if
+ * transient data are not present or are obsolete
  *
- * // TODO: handle in the indexer folders to be skipped
+ * //TODO: handle in the indexer folders to be completely ignored
+ *
+ * //TODO: translate transient to sqlite db
  *
  * @author claudio.tortorelli
  */
@@ -115,7 +114,7 @@ public class Minotauro {
         String index = config.get("index", "indexPath", "./index.txt");
         String folders = config.get("index", "folderPath", "./folders.txt");
         if (rootFolder.isEmpty() || index.isEmpty()) {
-            throw new CTException("root folder and index path are required");
+            throw new CTException("root folder and index path are required", CTError.FILESYSTEM_GENERIC_ERROR);
         }
         String filter = config.get("index", "filter");
         Indexer indexer = new Indexer(new File(rootFolder), new File(index), new File(folders));

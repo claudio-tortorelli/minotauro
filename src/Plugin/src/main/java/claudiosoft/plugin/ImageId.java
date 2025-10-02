@@ -1,6 +1,7 @@
 package claudiosoft.plugin;
 
 import claudiosoft.baseplugin.BasePlugin;
+import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.Indexer;
@@ -47,7 +48,7 @@ public class ImageId extends BasePlugin {
             }
             CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
         } catch (Exception ex) {
-            throw new CTException(ex.getMessage(), ex);
+            throw new CTException(ex.getMessage(), ex, CTError.PLUGIN_GENERIC);
         } finally {
             exec.shutdown();
         }

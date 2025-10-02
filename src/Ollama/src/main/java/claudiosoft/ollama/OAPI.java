@@ -1,5 +1,6 @@
 package claudiosoft.ollama;
 
+import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import io.github.ollama4j.OllamaAPI;
 import io.github.ollama4j.models.response.Model;
@@ -35,7 +36,7 @@ public class OAPI {
         ollamaSrv.setRequestTimeoutSeconds(TIMEOUT);
         boolean isOllamaServerReachable = ollamaSrv.ping();
         if (!isOllamaServerReachable) {
-            throw new CTException("Ollama server not reachable");
+            throw new CTException("Ollama server not reachable", CTError.OLLAMA_GENERIC);
         }
     }
 

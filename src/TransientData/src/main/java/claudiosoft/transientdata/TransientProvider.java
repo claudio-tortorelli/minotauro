@@ -1,5 +1,6 @@
 package claudiosoft.transientdata;
 
+import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.utils.BasicUtils;
 import java.io.File;
@@ -27,7 +28,7 @@ public class TransientProvider {
 
     public static synchronized TransientProvider getProvider() throws CTException {
         if (imgProvider == null) {
-            throw new CTException("Transient image provider not initialized");
+            throw new CTException("Transient image provider not initialized", CTError.TRANSIENT_GENERIC);
         }
         return imgProvider;
     }
@@ -44,7 +45,7 @@ public class TransientProvider {
             String origFilePath = origFile.getCanonicalPath().toLowerCase();
             String rootPath = imageRootPath.getCanonicalPath().toLowerCase();
             if (!origFilePath.toLowerCase().contains(rootPath)) {
-                throw new CTException(String.format("%s is not included into index", origFile.getCanonicalPath()));
+                throw new CTException(String.format("%s is not included into index", origFile.getCanonicalPath()), CTError.TRANSIENT_GENERIC);
             }
             String relativePath = origFilePath.substring(rootPath.length(), origFilePath.length());
             String sha1 = BasicUtils.bytesToHex(BasicUtils.getSHA1(relativePath));
@@ -59,7 +60,7 @@ public class TransientProvider {
 
             return new TransientFile(transientImageFile);
         } catch (Exception ex) {
-            throw new CTException(ex);
+            throw new CTException(ex, CTError.TRANSIENT_GENERIC);
         }
     }
 }
