@@ -1,6 +1,7 @@
 package claudiosoft.indexer;
 
 import claudiosoft.commons.BasicLogger;
+import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.utils.BasicUtils;
 import java.io.File;
@@ -43,10 +44,10 @@ public class Indexer {
         this.folderIndex = folderIndex;
         this.currentPluginName = "plugin";
         if (!root.exists()) {
-            throw new CTException("root folder not exists");
+            throw new CTException("root folder not exists", CTError.FILESYSTEM_GENERIC_ERROR);
         }
         if (!root.canRead()) {
-            throw new CTException("cannot access to root folder");
+            throw new CTException("cannot access to root folder", CTError.FILESYSTEM_GENERIC_ERROR);
         }
         String tmpPath = String.format("%s.tmp", index.getAbsolutePath());
         tempIndex = new File(tmpPath);
@@ -188,10 +189,10 @@ public class Indexer {
 
     public synchronized File startVisit(String pluginName) throws CTException, IOException {
         if (!index.exists()) {
-            throw new CTException("index must be built");
+            throw new CTException("index must be built", CTError.INDEXER_GENERIC);
         }
         if (!index.canRead()) {
-            throw new CTException("cannot read index");
+            throw new CTException("cannot read index", CTError.IO_GENERIC_ERROR);
         }
         currentPluginName = pluginName;
         if (indexData.isEmpty()) {
@@ -206,7 +207,7 @@ public class Indexer {
             String visitLine = Files.readString(visitIndex.toPath());
             String prevPlugin = getLastPlugin(visitLine);
             if (!prevPlugin.isEmpty() && !prevPlugin.equalsIgnoreCase(currentPluginName)) {
-                throw new CTException("skip this plugin because the previous stopped was " + prevPlugin);
+                throw new CTException("skip this plugin because the previous stopped was " + prevPlugin, CTError.INDEXER_GENERIC);
             }
             nextFile = getLastIndex(visitLine);
         }
@@ -215,13 +216,13 @@ public class Indexer {
 
     public synchronized File visitNext() throws CTException, IOException {
         if (!index.exists()) {
-            throw new CTException("index must be built");
+            throw new CTException("index must be built", CTError.INDEXER_GENERIC);
         }
         if (!index.canRead()) {
-            throw new CTException("cannot read index");
+            throw new CTException("cannot read index", CTError.IO_GENERIC_ERROR);
         }
         if (indexData.isEmpty() || !visitIndex.exists()) {
-            throw new CTException("visit must be started");
+            throw new CTException("visit must be started", CTError.INDEXER_GENERIC);
         }
         int nextFile = getLastIndex(Files.readString(visitIndex.toPath())) + 1;
         if (nextFile == indexData.size()) {
@@ -234,7 +235,7 @@ public class Indexer {
 
     public synchronized void reset() throws CTException {
         if (!index.exists()) {
-            throw new CTException("index must be built");
+            throw new CTException("index must be built", CTError.INDEXER_GENERIC);
         }
         currentPluginName = "";
         visitIndex.delete();

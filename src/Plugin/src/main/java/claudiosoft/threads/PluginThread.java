@@ -1,6 +1,7 @@
 package claudiosoft.threads;
 
 import claudiosoft.commons.BasicLogger;
+import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +20,7 @@ public abstract class PluginThread implements Runnable {
             this.curFile = curImage;
             this.logger = BasicLogger.get();
         } catch (Exception ex) {
-            throw new CTException(ex);
+            throw new CTException(ex, CTError.PLUGIN_THREAD);
         }
     }
 

@@ -1,5 +1,6 @@
 package claudiosoft.transientdata;
 
+import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class TransientFile {
     public String get(String sectionName, String property, String defaultValue) throws CTException {
         Ini.Section section = transientDataIni.get(sectionName);
         if (section == null) {
-            throw new CTException("section undefined");
+            throw new CTException("section undefined", CTError.UNDEFINED_VALUE);
         }
         String prop = section.get(property);
         if (prop == null) {
@@ -72,7 +73,7 @@ public class TransientFile {
     public void set(String sectionName, String property, byte[] value) throws CTException {
         Ini.Section section = transientDataIni.get(sectionName);
         if (section == null) {
-            throw new CTException("section undefined");
+            throw new CTException("section undefined", CTError.UNDEFINED_VALUE);
         }
         section.put(property, value);
     }
@@ -80,7 +81,7 @@ public class TransientFile {
     public void set(String sectionName, String property, Date value) throws CTException {
         Ini.Section section = transientDataIni.get(sectionName);
         if (section == null) {
-            throw new CTException("section undefined");
+            throw new CTException("section undefined", CTError.UNDEFINED_VALUE);
         }
         section.put(property, value);
     }
@@ -89,7 +90,7 @@ public class TransientFile {
         try {
             transientDataIni.store();
         } catch (IOException ex) {
-            throw new CTException(ex);
+            throw new CTException(ex, CTError.IO_GENERIC_ERROR);
         }
     }
 

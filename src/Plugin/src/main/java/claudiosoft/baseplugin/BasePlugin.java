@@ -1,6 +1,7 @@
 package claudiosoft.baseplugin;
 
 import claudiosoft.commons.BasicLogger;
+import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.Indexer;
@@ -50,7 +51,7 @@ public abstract class BasePlugin implements Plugin {
 
             logger.info(String.format("======== start plugin %s with %d threads ========", pluginName, nThread));
         } catch (Exception ex) {
-            throw new CTException(ex.getMessage(), ex);
+            throw new CTException(ex.getMessage(), ex, CTError.PLUGIN_GENERIC);
         }
     }
 

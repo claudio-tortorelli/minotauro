@@ -1,5 +1,6 @@
 package claudiosoft.pluginconfig;
 
+import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.ollama.OAPI;
@@ -38,7 +39,7 @@ public class ImageTagConfig extends PluginConfig {
 
         prompt = config.get(pluginName, "prompt", "create %d tags for this image, in a single line with tags separated by comma");
         if (!prompt.contains("%d")) {
-            throw new CTException("invalid prompt");
+            throw new CTException("invalid prompt", CTError.INVALID_ARGUMENT);
         }
         int nTags = Integer.parseInt(config.get(pluginName, "tagNumber", "5"));
         prompt = String.format(prompt, nTags);

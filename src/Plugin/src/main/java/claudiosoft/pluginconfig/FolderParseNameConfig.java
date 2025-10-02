@@ -2,6 +2,7 @@ package claudiosoft.pluginconfig;
 
 import claudiosoft.baseplugin.FolderPattern;
 import claudiosoft.baseplugin.PatternId;
+import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.utils.BasicUtils;
@@ -68,7 +69,7 @@ public class FolderParseNameConfig extends PluginConfig {
                 storedCities = Files.readAllLines(fileCities.toPath());
             } catch (IOException ex) {
                 logger.error("city files not found");
-                throw new CTException(ex);
+                throw new CTException(ex, CTError.IO_GENERIC_ERROR);
             }
 
             File fileCountries;
@@ -77,7 +78,7 @@ public class FolderParseNameConfig extends PluginConfig {
                 storedCountries = Files.readAllLines(fileCountries.toPath());
             } catch (IOException ex) {
                 logger.error("country files not found");
-                throw new CTException(ex);
+                throw new CTException(ex, CTError.IO_GENERIC_ERROR);
             }
 
             File fileEvents;
@@ -86,7 +87,7 @@ public class FolderParseNameConfig extends PluginConfig {
                 storedEvents = Files.readAllLines(fileEvents.toPath());
             } catch (IOException ex) {
                 logger.error("event files not found");
-                throw new CTException(ex);
+                throw new CTException(ex, CTError.IO_GENERIC_ERROR);
             }
 
             File fileNames;
@@ -95,7 +96,7 @@ public class FolderParseNameConfig extends PluginConfig {
                 storedPeople = Files.readAllLines(fileNames.toPath());
             } catch (IOException ex) {
                 logger.error("name files not found");
-                throw new CTException(ex);
+                throw new CTException(ex, CTError.IO_GENERIC_ERROR);
             }
 
             File fileTools;
@@ -104,7 +105,7 @@ public class FolderParseNameConfig extends PluginConfig {
                 storedTools = Files.readAllLines(fileTools.toPath());
             } catch (IOException ex) {
                 logger.error("name files not found");
-                throw new CTException(ex);
+                throw new CTException(ex, CTError.IO_GENERIC_ERROR);
             }
         }
 
