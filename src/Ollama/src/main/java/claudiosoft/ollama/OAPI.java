@@ -6,6 +6,7 @@ import io.github.ollama4j.OllamaAPI;
 import io.github.ollama4j.models.response.Model;
 import io.github.ollama4j.models.response.OllamaResult;
 import io.github.ollama4j.types.OllamaModelType;
+import io.github.ollama4j.utils.Options;
 import io.github.ollama4j.utils.OptionsBuilder;
 import java.io.File;
 import java.util.List;
@@ -82,6 +83,10 @@ public class OAPI {
     }
 
     public static final String generate(Model model, String prompt) throws Exception {
+        return generate(model, prompt, new OptionsBuilder().build());
+    }
+
+    public static final String generate(Model model, String prompt, Options opts) throws Exception {
         if (ollamaSrv == null) {
             init();
         }
@@ -89,7 +94,7 @@ public class OAPI {
             throw new Exception("no LLM model selected");
         }
         selectedModel = model;
-        OllamaResult result = ollamaSrv.generate(selectedModel.getModel(), prompt, false, new OptionsBuilder().build());
+        OllamaResult result = ollamaSrv.generate(selectedModel.getModel(), prompt, false, false, opts);
         return result.getResponse();
     }
 
@@ -98,6 +103,10 @@ public class OAPI {
     }
 
     public static final String generateWithImage(Model model, String prompt, List<File> images) throws Exception {
+        return generateWithImage(selectedModel, prompt, images, new OptionsBuilder().build());
+    }
+
+    public static final String generateWithImage(Model model, String prompt, List<File> images, Options opts) throws Exception {
         if (ollamaSrv == null) {
             init();
         }
@@ -108,7 +117,7 @@ public class OAPI {
             throw new Exception("no image to process");
         }
         selectedModel = model;
-        OllamaResult result = ollamaSrv.generateWithImageFiles(selectedModel.getModel(), prompt, images, new OptionsBuilder().build());
+        OllamaResult result = ollamaSrv.generateWithImageFiles(selectedModel.getModel(), prompt, images, opts);
         return result.getResponse();
     }
 

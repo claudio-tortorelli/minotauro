@@ -24,7 +24,7 @@ public class OllamaAPISample {
         //String imageSample = "C:\\dev\\GitHub\\minotauro\\testImg\\image-1.jpg";
         //String answerPrefix = "Please describe this picture using up to 50 words: ";
         //String response = OAPI.generate(answerPrefix + imageSample);
-        String response = OAPI.generate("Can you write a simple hello world in C?");
+        String response = OAPI.generate("Translate those words in italian: Crowded, lively, shopping, pedestrian, cityscape");
         System.out.println(response);
     }
 }
