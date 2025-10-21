@@ -40,8 +40,6 @@ import java.util.LinkedList;
  *
  * //TODO simplify the plugin classes and framework
  *
- * //TODO exception must have a code ID to handle the error
- *
  * //TODO File writes should be minimized or added to a queue
  *
  * //TODO each plugin must have a version. A file must be processed only if

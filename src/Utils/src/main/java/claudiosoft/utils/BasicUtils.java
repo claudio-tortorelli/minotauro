@@ -376,4 +376,14 @@ public class BasicUtils {
         });
         return inList;
     }
+
+    public static void listFilesForFolder(final File folder, List<File> files) throws IOException {
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                listFilesForFolder(fileEntry, files);
+            } else {
+                files.add(fileEntry);
+            }
+        }
+    }
 }
