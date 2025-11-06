@@ -197,7 +197,7 @@ public class Minotauro {
 
     private static void parseArgs(String[] args) {
         for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
+            String arg = args[i].trim().toLowerCase();
 
             if (arg.startsWith("-c") || arg.startsWith("--config")) {
                 // Set the custom configuration file path
