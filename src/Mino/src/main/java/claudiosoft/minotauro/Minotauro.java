@@ -6,6 +6,7 @@ import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.commons.Constants;
+import claudiosoft.indexer.IncrementalMechanism;
 import claudiosoft.indexer.Indexer;
 import claudiosoft.transientdata.TransientProvider;
 import claudiosoft.utils.BasicUtils;
@@ -114,6 +115,9 @@ public class Minotauro {
         if (rootFolder.isEmpty() || index.isEmpty()) {
             throw new CTException("root folder and index path are required", CTError.FILESYSTEM_GENERIC_ERROR);
         }
+
+        IncrementalMechanism indexMechanism = new IncrementalMechanism();
+
         String filter = config.get("index", "filter");
         Indexer indexer = new Indexer(new File(rootFolder), new File(index), new File(folders));
         if (!filter.isEmpty()) {
