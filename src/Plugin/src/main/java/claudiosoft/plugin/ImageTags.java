@@ -4,7 +4,7 @@ import claudiosoft.baseplugin.BasePlugin;
 import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
-import claudiosoft.indexer.Indexer;
+import claudiosoft.indexer.IndexMechanism;
 import claudiosoft.ollama.OAPI;
 import claudiosoft.pluginbean.BeanTags;
 import claudiosoft.pluginconfig.ImageTagConfig;
@@ -36,7 +36,7 @@ public class ImageTags extends BasePlugin {
     }
 
     @Override
-    public void apply(Indexer indexer) throws CTException {
+    public void apply(IndexMechanism indexer) throws CTException {
         super.apply(indexer);
 
         ExecutorService exec = Executors.newFixedThreadPool(nThread);

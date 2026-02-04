@@ -4,7 +4,8 @@ package claudiosoft.indexer;
  *
  * @author claudio.tortorelli
  */
-public class RefreshDBMechanism extends IndexMechanism {
+public class BasicMechanism extends IndexMechanism {
+
     /**
      * rules to follow in this mechanism that implements a refresh only
      * approach. 'build DB only' switch was provided
@@ -21,4 +22,8 @@ public class RefreshDBMechanism extends IndexMechanism {
      *
      * (*) = use this index as index to be visited later
      */
+    public BasicMechanism() {
+
+    }
+
 }

@@ -4,7 +4,7 @@ import claudiosoft.baseplugin.BasePlugin;
 import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
-import claudiosoft.indexer.Indexer;
+import claudiosoft.indexer.IndexMechanism;
 
 /**
  * use opencv with https://www.baeldung.com/java-opencv
@@ -23,7 +23,7 @@ public class ImageFaceRecognize extends BasePlugin {
     }
 
     @Override
-    public void apply(Indexer indexer) throws CTException {
+    public void apply(IndexMechanism indexer) throws CTException {
         super.apply(indexer);
         try {
 

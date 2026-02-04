@@ -4,7 +4,7 @@ import claudiosoft.baseplugin.BasePlugin;
 import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
-import claudiosoft.indexer.Indexer;
+import claudiosoft.indexer.IndexMechanism;
 import claudiosoft.pluginbean.BeanThumbnail;
 import claudiosoft.pluginconfig.ImageThumbnailConfig;
 import claudiosoft.threads.ImageThumbnailThread;
@@ -42,7 +42,7 @@ public class ImageThumbnail extends BasePlugin {
      * @throws CTException
      */
     @Override
-    public void apply(Indexer indexer) throws CTException {
+    public void apply(IndexMechanism indexer) throws CTException {
         super.apply(indexer);
 
         ExecutorService exec = Executors.newFixedThreadPool(nThread);

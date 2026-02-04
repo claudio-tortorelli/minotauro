@@ -1,0 +1,32 @@
+ * //TODO add a statistic analyzer that can produce an ipothesis about the
+ * remaining time of a plugin work
+ *
+ * //TODO how to handle thread not critic failures
+ *
+ * //TODO check the plugin name right assignements in classes
+ *
+ * //TODO timer should have a map of times
+ *
+ * //TODO implement the wiki search
+ *
+ * //TODO implement a translation plugin
+ *
+ * //TODO check force use ollama gpu
+ *
+ * //TODO define the plugin order and sequence
+ *
+ * //TODO simplify the plugin classes and framework
+ *
+ * //TODO File writes should be minimized or added to a queue
+ *
+ * //TODO each plugin must have a version. A file must be processed only if
+ * transient data are not present or are obsolete
+ *
+ * //TODO: handle in the indexer folders to be completely ignored
+ *
+ * //TODO: translate transient to sqlite db
+
+------------
+
+Analisi funzionale 
+

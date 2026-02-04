@@ -29,4 +29,8 @@ public class IncrementalMechanism extends IndexMechanism {
      *
      * (*) = use this index as index to be visited later
      */
+    @Override
+    public void buildIndex() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

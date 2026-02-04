@@ -2,7 +2,7 @@ package claudiosoft.baseplugin;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
-import claudiosoft.indexer.Indexer;
+import claudiosoft.indexer.IndexMechanism;
 
 /**
  *
@@ -12,7 +12,7 @@ public interface Plugin {
 
     public void init(Config config) throws CTException;
 
-    public void apply(Indexer indexer) throws CTException;
+    public void apply(IndexMechanism indexer) throws CTException;
 
     public void close() throws CTException;
 
