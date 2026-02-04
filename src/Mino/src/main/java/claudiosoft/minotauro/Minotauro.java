@@ -6,7 +6,10 @@ import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.commons.Constants;
-import claudiosoft.indexer.Indexer;
+import claudiosoft.indexer.IncrementalMechanism;
+import claudiosoft.indexer.IndexFactory;
+import claudiosoft.indexer.IndexMechanism;
+import claudiosoft.indexer.IndexMechanismType;
 import claudiosoft.transientdata.TransientProvider;
 import claudiosoft.utils.BasicUtils;
 import claudiosoft.utils.Failures;
@@ -21,33 +24,6 @@ import java.util.LinkedList;
 
 /**
  *
- * //TODO add a statistic analyzer that can produce an ipothesis about the
- * remaining time of a plugin work
- *
- * //TODO how to handle thread not critic failures
- *
- * //TODO check the plugin name right assignements in classes
- *
- * //TODO timer should have a map of times
- *
- * //TODO implement the wiki search
- *
- * //TODO implement a translation plugin
- *
- * //TODO check force use ollama gpu
- *
- * //TODO define the plugin order and sequence
- *
- * //TODO simplify the plugin classes and framework
- *
- * //TODO File writes should be minimized or added to a queue
- *
- * //TODO each plugin must have a version. A file must be processed only if
- * transient data are not present or are obsolete
- *
- * //TODO: handle in the indexer folders to be completely ignored
- *
- * //TODO: translate transient to sqlite db
  *
  * @author claudio.tortorelli
  */
@@ -94,8 +70,10 @@ public class Minotauro {
         String homeDir = System.getProperty("user.home");
         String javaHome = System.getProperty("java.home");
         String javaVer = System.getProperty("java.version");
+        String javaTemp = System.getProperty("java.io.tmpdir");
         int nProc = runtimeEnv.availableProcessors();
         long diskSize = new File("/").getTotalSpace();
+        long freeSpace = new File("/").getFreeSpace();
         long ram = ((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalMemorySize();
 
         logger.info(String.format("- operating system name: %s", osName));
@@ -104,9 +82,11 @@ public class Minotauro {
         logger.info(String.format("- user home: %s", homeDir));
         logger.info(String.format("- processors available: %d", nProc));
         logger.info(String.format("- disk size: %d mb", diskSize / (1024 * 1024)));
+        logger.info(String.format("- free space: %d mb", freeSpace / (1024 * 1024)));
         logger.info(String.format("- total ram available: %d mb", ram / (1024 * 1024)));
         logger.info(String.format("- java home: %s", javaHome));
         logger.info(String.format("- java version: %s", javaVer));
+        logger.info(String.format("- java temp folder: %s", javaTemp));
 
         String rootFolder = config.get("index", "rootPath");
         String index = config.get("index", "indexPath", "./index.txt");
@@ -114,12 +94,14 @@ public class Minotauro {
         if (rootFolder.isEmpty() || index.isEmpty()) {
             throw new CTException("root folder and index path are required", CTError.FILESYSTEM_GENERIC_ERROR);
         }
+
+        IncrementalMechanism indexMechanism = new IncrementalMechanism();
+
         String filter = config.get("index", "filter");
-        Indexer indexer = new Indexer(new File(rootFolder), new File(index), new File(folders));
-        if (!filter.isEmpty()) {
-            indexer = new Indexer(new File(rootFolder), new File(index), new File(folders), filter);
-        }
-        indexer.buildIndex(rebuildIndexOnly);
+        IndexMechanism indexer = IndexFactory.get(IndexMechanismType.BASIC);
+        indexer.init(new File(rootFolder), new File(index), new File(folders), filter);
+        indexer.setForcedBuild(rebuildIndexOnly);
+        indexer.buildIndex();
         if (rebuildIndexOnly) {
             logger.info("index built");
             System.exit(0);
@@ -185,7 +167,7 @@ public class Minotauro {
             } catch (CTException ex) {
                 nGeneralErrors++; // when an exception arrives here then the entire plugin is crashed
             } finally {
-                indexer.reset();
+                indexer.resetIndex();
                 plugin.close();
             }
         }
@@ -197,7 +179,7 @@ public class Minotauro {
 
     private static void parseArgs(String[] args) {
         for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
+            String arg = args[i].trim().toLowerCase();
 
             if (arg.startsWith("-c") || arg.startsWith("--config")) {
                 // Set the custom configuration file path

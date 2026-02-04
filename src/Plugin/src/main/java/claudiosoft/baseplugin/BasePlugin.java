@@ -4,7 +4,7 @@ import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
-import claudiosoft.indexer.Indexer;
+import claudiosoft.indexer.IndexMechanism;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -18,7 +18,7 @@ public abstract class BasePlugin implements Plugin {
     protected int step;
     protected Config config;
     protected BasicLogger logger;
-    protected Indexer indexer;
+    protected IndexMechanism indexer;
     protected int nThread;
 
     private long nanoTimer;
@@ -56,7 +56,7 @@ public abstract class BasePlugin implements Plugin {
     }
 
     @Override
-    public void apply(Indexer indexer) throws CTException {
+    public void apply(IndexMechanism indexer) throws CTException {
         this.indexer = indexer;
     }
 
