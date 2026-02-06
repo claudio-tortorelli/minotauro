@@ -20,7 +20,7 @@ public class FolderParseNameThread extends PluginThread {
     private final FolderParseNameConfig plugConf;
     private final BeanFolderParseName data;
 
-    private final boolean VERBOSE_MODE = false; // develop only
+    private final boolean VERBOSE_MODE = true; // develop only
 
     public FolderParseNameThread(File curFolder, FolderParseNameConfig plugConf, BeanFolderParseName data) throws CTException {
         super(curFolder);
@@ -64,13 +64,14 @@ public class FolderParseNameThread extends PluginThread {
 
                     checkAdvanced(pattern.getDescription());
 
-                    logger.debug(String.format("folder %s was parsed", folderName));
+                    logger.debug(String.format(">> folder %s was parsed <<", folderName));
                     data.store(transientFolder);
                     matched = true;
                     break;
                 }
-
-                checkAdvanced(folderName);
+                if (!matched) {
+                    checkAdvanced(folderName);
+                }
             }
             if (!matched) {
                 logger.warn(String.format("unable to analyze or parse the folder: %s", data.path));

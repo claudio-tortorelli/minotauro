@@ -9,6 +9,8 @@ import claudiosoft.utils.BasicUtils;
 import claudiosoft.utils.Failures;
 import java.io.File;
 import java.util.Date;
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
 
 /**
  *
@@ -35,6 +37,17 @@ public class ImageFileDataThread extends PluginThread {
             data.fileName = curFile.getName();
             data.ext = BasicUtils.getExtension(curFile);
             data.lastModifiedDate = BasicUtils.dateToString(new Date(curFile.lastModified()));
+            data.fileSize = String.format("%d", curFile.length());
+
+            if (plugConf.getImageSizePix) {
+                Mat cvImage = Imgcodecs.imread(curFile.getCanonicalPath());
+                if (cvImage == null || cvImage.empty() || cvImage.width() == 0 || cvImage.height() == 0) {
+                    logger.error("unable to read the image. Look for unicode chars in the path");
+                    return;
+                }
+                data.imgWidthPix = String.format("%s", cvImage.width());
+                data.imgHeightPix = String.format("%s", cvImage.height());
+            }
 
             data.store(transientImage);
         } catch (Exception ex) {

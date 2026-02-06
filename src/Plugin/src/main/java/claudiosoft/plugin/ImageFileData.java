@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import nu.pattern.OpenCV;
 
 /**
  *
@@ -31,6 +32,7 @@ public class ImageFileData extends BasePlugin {
     public void init(Config config) throws CTException {
         super.init(config);
         plugConf = new ImageFileDataConfig(config, this.getClass().getSimpleName());
+        OpenCV.loadLocally();
     }
 
     @Override

@@ -13,6 +13,9 @@ public class BeanFileData extends BasePluginBean {
     public String fileName;
     public String lastModifiedDate;
     public String ext;
+    public String fileSize;
+    public String imgWidthPix;
+    public String imgHeightPix;
 
     public BeanFileData(String pluginName) {
         super(pluginName);
@@ -20,6 +23,9 @@ public class BeanFileData extends BasePluginBean {
         fileName = "";
         ext = "";
         lastModifiedDate = null;
+        fileSize = "";
+        imgWidthPix = "";
+        imgHeightPix = "";
     }
 
     @Override
@@ -28,6 +34,9 @@ public class BeanFileData extends BasePluginBean {
         transientImage.set(pluginName, "fileName", fileName);
         transientImage.set(pluginName, "ext", ext);
         transientImage.set(pluginName, "lastModifiedDate", lastModifiedDate);
+        transientImage.set(pluginName, "sizeByte", fileSize);
+        transientImage.set(pluginName, "widthPix", imgWidthPix);
+        transientImage.set(pluginName, "heightPix", imgHeightPix);
         transientImage.store();
     }
 
