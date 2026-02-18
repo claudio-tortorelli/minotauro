@@ -1,4 +1,4 @@
-package ollama;
+package claudiosoft.test;
 
 import claudiosoft.ollama.OAPI;
 import claudiosoft.utils.BasicUtils;

@@ -13,9 +13,6 @@
         <exec.mainClass>claudiosoft.indexer.Indexer</exec.mainClass>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>claudiosoft</groupId>
-            <artifactId>Utils</artifactId>
-        </dependency>   
+        
     </dependencies>
 </project>

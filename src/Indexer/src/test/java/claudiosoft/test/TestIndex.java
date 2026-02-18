@@ -1,3 +1,5 @@
+package claudiosoft.test;
+
 
 import claudiosoft.commons.CTException;
 import claudiosoft.indexer.IndexFactory;

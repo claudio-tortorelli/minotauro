@@ -1,4 +1,4 @@
-package ollama;
+package claudiosoft.test;
 
 import claudiosoft.ollama.OAPI;
 import io.github.ollama4j.models.response.Model;

@@ -1,3 +1,5 @@
+package claudiosoft.test;
+
 
 import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.Constants;

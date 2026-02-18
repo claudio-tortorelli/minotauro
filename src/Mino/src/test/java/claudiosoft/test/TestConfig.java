@@ -1,4 +1,4 @@
-package config;
+package claudiosoft.test;
 
 import claudiosoft.commons.Config;
 import java.io.File;
