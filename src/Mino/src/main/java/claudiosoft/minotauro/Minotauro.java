@@ -6,7 +6,6 @@ import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.commons.Constants;
-import claudiosoft.indexer.IncrementalMechanism;
 import claudiosoft.indexer.IndexFactory;
 import claudiosoft.indexer.IndexMechanism;
 import claudiosoft.indexer.IndexMechanismType;
@@ -30,20 +29,59 @@ import java.util.LinkedList;
 public class Minotauro {
 
     private static String configFilePath;
-    private static boolean rebuildIndexOnly;
+    private static Task curTask;
     private static BasicLogger logger;
+    private static LinkedList<BasePlugin> pluginList;
+    private static IndexMechanism indexer;
 
     public static void main(String[] args) throws IOException, CTException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+
         // Print the tool version on standard output
         String ver = Version.getVersion();
         System.out.println("Minotauro " + ver);
 
-        rebuildIndexOnly = false;
         configFilePath = "../../config/config.ini";
         parseArgs(args);
 
         Config config = new Config(new File(configFilePath));
 
+        setupLogger(config);
+
+        printLogHeader(ver);
+
+        setupIndex(config);
+
+        initTransientProvider(config);
+
+        loadPlugins(config);
+
+        int nGeneralErrors = 0;
+        try {
+            BasicUtils.startElapsedTime();
+            if (curTask == Task.PROCESS_IMAGES) {
+                logger.info("= start plugin process =");
+                for (BasePlugin plugin : pluginList) {
+                    try {
+                        plugin.init(config);
+                        plugin.apply(indexer);
+                    } catch (CTException ex) {
+                        nGeneralErrors++; // when an exception arrives here then the entire plugin is crashed
+                    } finally {
+                        indexer.resetIndex();
+                        plugin.close();
+                    }
+                }
+            } else if (curTask == Task.UPDATE_DB) {
+                logger.info("= start update db =");
+            }
+        } finally {
+            int nFailures = Failures.getFailures(); // this is the single plugin thread failure count
+            logger.info(String.format("process terminated with %d general errors and %d failures in %d seconds", nGeneralErrors, nFailures, BasicUtils.getElapsedTime()));
+            System.exit(nGeneralErrors == 0 ? 0 : 1); // If the tool ends without errors, return 0 to the system
+        }
+    }
+
+    private static void setupLogger(Config config) throws CTException {
         BasicLogger.LogLevel logLevel = BasicLogger.LogLevel.NORMAL;
         if (config.get("logger", "level").equalsIgnoreCase("debug")) {
             logLevel = BasicLogger.LogLevel.DEBUG;
@@ -58,9 +96,11 @@ public class Minotauro {
             // console logger
             logger = BasicLogger.get(logLevel, Constants.LOGGER_NAME);
         }
+    }
 
+    private static void printLogHeader(String version) {
         logger.info("----------------------------");
-        logger.info("  Minotauro " + ver);
+        logger.info("  Minotauro " + version);
         logger.info("----------------------------");
 
         Runtime runtimeEnv = Runtime.getRuntime();
@@ -87,7 +127,9 @@ public class Minotauro {
         logger.info(String.format("- java home: %s", javaHome));
         logger.info(String.format("- java version: %s", javaVer));
         logger.info(String.format("- java temp folder: %s", javaTemp));
+    }
 
+    private static void setupIndex(Config config) throws CTException, IOException {
         String rootFolder = config.get("index", "rootPath");
         String index = config.get("index", "indexPath", "./index.txt");
         String folders = config.get("index", "folderPath", "./folders.txt");
@@ -95,19 +137,20 @@ public class Minotauro {
             throw new CTException("root folder and index path are required", CTError.FILESYSTEM_GENERIC_ERROR);
         }
 
-        IncrementalMechanism indexMechanism = new IncrementalMechanism();
-
+        boolean onlyIndex = curTask == Task.BUILD_INDEX;
+        indexer = IndexFactory.get(IndexMechanismType.BASIC);
         String filter = config.get("index", "filter");
-        IndexMechanism indexer = IndexFactory.get(IndexMechanismType.BASIC);
         indexer.init(new File(rootFolder), new File(index), new File(folders), filter);
-        indexer.setForcedBuild(rebuildIndexOnly);
+        indexer.setForcedBuild(onlyIndex);
         indexer.buildIndex();
-        if (rebuildIndexOnly) {
+        if (onlyIndex) {
             logger.info("index built");
             System.exit(0);
         }
+    }
 
-        LinkedList<BasePlugin> pluginList = new LinkedList<>();
+    private static void loadPlugins(Config config) throws CTException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalArgumentException, InvocationTargetException, IllegalAccessException {
+        pluginList = new LinkedList<>();
         int nPlugin = 100;
         final Class<?>[] defaultConstructor = {int.class};
         for (int iPlug = 0; iPlug < nPlugin; iPlug++) {
@@ -133,8 +176,7 @@ public class Minotauro {
 
         // if no enabled plugin are present, terminate
         if (pluginList.isEmpty()) {
-            logger.info("no enabled plugin found");
-            System.exit(0);
+            throw new CTException("no enabled plugin found", CTError.PLUGIN_GENERIC);
         }
 
         logger.info(String.format("%d plugins loaded", pluginList.size()));
@@ -154,30 +196,15 @@ public class Minotauro {
         for (BasePlugin plugin : pluginList) {
             logger.info(String.format("- %s", plugin.getClass().getName()));
         }
-
-        TransientProvider.init(new File(rootFolder), new File(config.get("transient", "transientDataPath", "./tsImages")));
-
-        int nGeneralErrors = 0;
-        BasicUtils.startElapsedTime();
-        logger.info("= start plugin process =");
-        for (BasePlugin plugin : pluginList) {
-            try {
-                plugin.init(config);
-                plugin.apply(indexer);
-            } catch (CTException ex) {
-                nGeneralErrors++; // when an exception arrives here then the entire plugin is crashed
-            } finally {
-                indexer.resetIndex();
-                plugin.close();
-            }
-        }
-        int nFailures = Failures.getFailures(); // this is the single plugin thread failure count
-
-        logger.info(String.format("process terminated with %d general errors and %d failures in %d seconds", nGeneralErrors, nFailures, BasicUtils.getElapsedTime()));
-        System.exit(nGeneralErrors == 0 ? 0 : 1); // If the tool ends without errors, return 0 to the system
     }
 
-    private static void parseArgs(String[] args) {
+    private static void initTransientProvider(Config config) throws CTException, IOException {
+        String rootFolder = config.get("index", "rootPath");
+        TransientProvider.init(new File(rootFolder), new File(config.get("transient", "transientDataPath", "./tsImages")));
+    }
+
+    private static void parseArgs(String[] args) throws CTException {
+        curTask = Task.NONE;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i].trim().toLowerCase();
 
@@ -185,12 +212,24 @@ public class Minotauro {
                 // Set the custom configuration file path
                 configFilePath = args[++i];
             } else if (arg.startsWith("-i") || arg.startsWith("--index")) {
-                // Set the custom configuration file path
-                rebuildIndexOnly = true;
+                if (curTask != Task.NONE) {
+                    throw new CTException("ambiguous switch selection", CTError.INVALID_CMDLINE_SWITCH);
+                }
+                curTask = Task.BUILD_INDEX;
+            } else if (arg.startsWith("-d") || arg.startsWith("--db")) {
+                if (curTask != Task.NONE) {
+                    throw new CTException("ambiguous switch selection", CTError.INVALID_CMDLINE_SWITCH);
+                }
+                curTask = Task.UPDATE_DB;
             } else {
                 System.err.println("Unknown switch: " + arg);
-                System.exit(1);
+                if (curTask != Task.NONE) {
+                    throw new CTException("ambiguous switch selection", CTError.INVALID_CMDLINE_SWITCH);
+                }
             }
+        }
+        if (curTask == Task.NONE) {
+            curTask = Task.PROCESS_IMAGES; // default one
         }
     }
 }
