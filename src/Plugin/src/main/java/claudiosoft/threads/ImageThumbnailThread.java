@@ -10,6 +10,7 @@ import claudiosoft.utils.Failures;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Base64;
+import java.util.UUID;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -24,8 +25,8 @@ public class ImageThumbnailThread extends PluginThread {
     private final ImageThumbnailConfig plugConf;
     private final BeanThumbnail data;
 
-    public ImageThumbnailThread(File curImage, ImageThumbnailConfig plugConf, BeanThumbnail data) throws CTException {
-        super(curImage);
+    public ImageThumbnailThread(UUID uuid, File curImage, ImageThumbnailConfig plugConf, BeanThumbnail data) throws CTException {
+        super(uuid, curImage);
         this.plugConf = plugConf;
         this.data = data;
     }
@@ -39,14 +40,14 @@ public class ImageThumbnailThread extends PluginThread {
             TransientFile transientImage = TransientProvider.getProvider().get(curFile);
 
             if (!curFile.exists()) {
-                logger.error("image not found");
+                logger.error(logThreadMessage("image not found"));
                 return;
             }
 
             // load the image
             Mat cvImage = Imgcodecs.imread(curFile.getCanonicalPath());
             if (cvImage == null || cvImage.empty() || cvImage.width() == 0 || cvImage.height() == 0) {
-                logger.error("unable to read the image. Look for unicode chars in the path");
+                logger.error(logThreadMessage("unable to read the image. Look for unicode chars in the path"));
                 return;
             }
 
@@ -74,7 +75,7 @@ public class ImageThumbnailThread extends PluginThread {
 
             data.store(transientImage);
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            logger.error(logThreadMessage(ex.getMessage()), ex);
             Failures.addFailure();
         } finally {
             if (tmpImage != null) {

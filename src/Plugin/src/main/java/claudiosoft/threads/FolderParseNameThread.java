@@ -10,6 +10,7 @@ import claudiosoft.utils.Failures;
 import io.github.fastily.jwiki.core.Wiki;
 import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -22,8 +23,8 @@ public class FolderParseNameThread extends PluginThread {
 
     private final boolean VERBOSE_MODE = true; // develop only
 
-    public FolderParseNameThread(File curFolder, FolderParseNameConfig plugConf, BeanFolderParseName data) throws CTException {
-        super(curFolder);
+    public FolderParseNameThread(UUID uuid, File curFolder, FolderParseNameConfig plugConf, BeanFolderParseName data) throws CTException {
+        super(uuid, curFolder);
         this.plugConf = plugConf;
         this.data = data;
     }
@@ -50,7 +51,7 @@ public class FolderParseNameThread extends PluginThread {
                 for (FolderPattern pattern : plugConf.foldPatterns) {
                     if (!pattern.applyPattern(folderName)) {
                         if (VERBOSE_MODE) {
-                            logger.debug("NO pattern " + pattern.getPattern().pattern());
+                            logger.debug(logThreadMessage("NO pattern " + pattern.getPattern().pattern()));
                         }
                         continue;
                     }
@@ -59,12 +60,12 @@ public class FolderParseNameThread extends PluginThread {
                     data.description = pattern.getDescription();
 
                     if (VERBOSE_MODE) {
-                        logger.debug("MATCH with pattern " + pattern.getId().name() + " " + pattern.getPattern().pattern() + " and schema " + pattern.getId().getSchema() + "\n\tgot " + pattern.toString());
+                        logger.debug(logThreadMessage("MATCH with pattern " + pattern.getId().name() + " " + pattern.getPattern().pattern() + " and schema " + pattern.getId().getSchema() + "\n\tgot " + pattern.toString()));
                     }
 
                     checkAdvanced(pattern.getDescription());
 
-                    logger.debug(String.format(">> folder %s was parsed <<", folderName));
+                    logger.debug(logThreadMessage(String.format(">> folder %s was parsed <<", folderName)));
                     data.store(transientFolder);
                     matched = true;
                     break;
@@ -74,10 +75,10 @@ public class FolderParseNameThread extends PluginThread {
                 }
             }
             if (!matched) {
-                logger.warn(String.format("unable to analyze or parse the folder: %s", data.path));
+                logger.warn(logThreadMessage(String.format("unable to analyze or parse the folder: %s", data.path)));
             }
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            logger.error(logThreadMessage(ex.getMessage()), ex);
             Failures.addFailure();
         } finally {
 
@@ -108,25 +109,25 @@ public class FolderParseNameThread extends PluginThread {
             }
             if (find(plugConf.storedEvents, word)) {
                 if (VERBOSE_MODE) {
-                    logger.debug("added event " + word);
+                    logger.debug(logThreadMessage("added event " + word));
                 }
                 data.events.add(word);
             }
             if (find(plugConf.storedCities, word)) {
                 if (VERBOSE_MODE) {
-                    logger.debug("added city " + word);
+                    logger.debug(logThreadMessage("added city " + word));
                 }
                 data.cities.add(word);
             }
             if (find(plugConf.storedCountries, word)) {
                 if (VERBOSE_MODE) {
-                    logger.debug("added country " + word);
+                    logger.debug(logThreadMessage("added country " + word));
                 }
                 data.countries.add(word);
             }
             if (find(plugConf.storedPeople, word)) {
                 if (VERBOSE_MODE) {
-                    logger.debug("added name " + word);
+                    logger.debug(("added name " + word));
                 }
                 data.people.add(word);
             }

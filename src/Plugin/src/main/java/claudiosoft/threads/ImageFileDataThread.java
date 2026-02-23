@@ -9,6 +9,7 @@ import claudiosoft.utils.BasicUtils;
 import claudiosoft.utils.Failures;
 import java.io.File;
 import java.util.Date;
+import java.util.UUID;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 
@@ -21,8 +22,8 @@ public class ImageFileDataThread extends PluginThread {
     private final ImageFileDataConfig plugConf;
     private final BeanFileData data;
 
-    public ImageFileDataThread(File curImage, ImageFileDataConfig plugConf, BeanFileData data) throws CTException {
-        super(curImage);
+    public ImageFileDataThread(UUID uuid, File curImage, ImageFileDataConfig plugConf, BeanFileData data) throws CTException {
+        super(uuid, curImage);
         this.plugConf = plugConf;
         this.data = data;
     }
@@ -42,7 +43,7 @@ public class ImageFileDataThread extends PluginThread {
             if (plugConf.getImageSizePix) {
                 Mat cvImage = Imgcodecs.imread(curFile.getCanonicalPath());
                 if (cvImage == null || cvImage.empty() || cvImage.width() == 0 || cvImage.height() == 0) {
-                    logger.error("unable to read the image. Look for unicode chars in the path");
+                    logger.error(logThreadMessage("unable to read the image. Look for unicode chars in the path"));
                     return;
                 }
                 data.imgWidthPix = String.format("%s", cvImage.width());
@@ -51,7 +52,7 @@ public class ImageFileDataThread extends PluginThread {
 
             data.store(transientImage);
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            logger.error(logThreadMessage(ex.getMessage()), ex);
             Failures.addFailure();
         } finally {
 

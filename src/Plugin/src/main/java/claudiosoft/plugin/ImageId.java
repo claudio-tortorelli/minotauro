@@ -11,6 +11,7 @@ import claudiosoft.threads.ImageIdThread;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,7 +43,7 @@ public class ImageId extends BasePlugin {
             List<CompletableFuture<?>> futures = new ArrayList<>();
             File curImage = indexer.startVisit(pluginName);
             while (curImage != null) {
-                ImageIdThread thread = new ImageIdThread(curImage, plugConf, new BeanId(this.getClass().getSimpleName()));
+                ImageIdThread thread = new ImageIdThread(UUID.randomUUID(), curImage, plugConf, new BeanId(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
                 curImage = indexer.visitNext();
             }

@@ -9,6 +9,7 @@ import claudiosoft.transientdata.TransientProvider;
 import claudiosoft.utils.Failures;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  *
@@ -19,8 +20,8 @@ public class ImageTagsThread extends PluginThread {
     private final ImageTagConfig plugConf;
     private final BeanTags data;
 
-    public ImageTagsThread(File curImage, ImageTagConfig plugConf, BeanTags data) throws CTException {
-        super(curImage);
+    public ImageTagsThread(UUID uuid, File curImage, ImageTagConfig plugConf, BeanTags data) throws CTException {
+        super(uuid, curImage);
         this.plugConf = plugConf;
         this.data = data;
     }
@@ -38,11 +39,11 @@ public class ImageTagsThread extends PluginThread {
 
             data.tagList = OAPI.generateWithImage(plugConf.prompt, images);
             if (logger.isDebug()) {
-                logger.debug(data.tagList);
+                logger.debug(logThreadMessage(data.tagList));
             }
             data.store(transientImage);
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            logger.error(logThreadMessage(ex.getMessage()), ex);
             Failures.addFailure();
         } finally {
 

@@ -15,6 +15,7 @@ import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import java.io.File;
+import java.util.UUID;
 
 /**
  *
@@ -25,8 +26,8 @@ public class ImageExifThread extends PluginThread {
     private final ImageExifConfig plugConf;
     private final BeanExif data;
 
-    public ImageExifThread(File curImage, ImageExifConfig plugConf, BeanExif data) throws CTException {
-        super(curImage);
+    public ImageExifThread(UUID uuid, File curImage, ImageExifConfig plugConf, BeanExif data) throws CTException {
+        super(uuid, curImage);
         this.plugConf = plugConf;
         this.data = data;
     }
@@ -108,13 +109,13 @@ public class ImageExifThread extends PluginThread {
                 }
             }
             if (!somethingToStore) {
-                logger.warn("no exif data tag");
+                logger.warn(logThreadMessage("no exif data tag"));
                 return;
             }
 
             data.store(transientImage);
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            logger.error(logThreadMessage(ex.getMessage()), ex);
             Failures.addFailure();
         } finally {
 

@@ -11,6 +11,7 @@ import claudiosoft.threads.FolderParseNameThread;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,7 +43,7 @@ public class FolderParseName extends BasePlugin {
             List<CompletableFuture<?>> futures = new ArrayList<>();
             List<String> folders = indexer.getFolders();
             for (String folder : folders) {
-                FolderParseNameThread thread = new FolderParseNameThread(new File(folder), plugConf, new BeanFolderParseName(this.getClass().getSimpleName()));
+                FolderParseNameThread thread = new FolderParseNameThread(UUID.randomUUID(), new File(folder), plugConf, new BeanFolderParseName(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
             }
             CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();

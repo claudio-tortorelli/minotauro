@@ -59,9 +59,9 @@ public class Minotauro {
             logger = BasicLogger.get(logLevel, Constants.LOGGER_NAME);
         }
 
-        logger.info("----------------------");
+        logger.info("----------------------------");
         logger.info("  Minotauro " + ver);
-        logger.info("----------------------");
+        logger.info("----------------------------");
 
         Runtime runtimeEnv = Runtime.getRuntime();
         String osArch = System.getProperty("os.arch");
