@@ -9,6 +9,7 @@ import claudiosoft.commons.Constants;
 import claudiosoft.indexer.IndexFactory;
 import claudiosoft.indexer.IndexMechanism;
 import claudiosoft.indexer.IndexMechanismType;
+import claudiosoft.plugin.UpdateDB;
 import claudiosoft.transientdata.TransientProvider;
 import claudiosoft.utils.BasicUtils;
 import claudiosoft.utils.Failures;
@@ -73,6 +74,19 @@ public class Minotauro {
                 }
             } else if (curTask == Task.UPDATE_DB) {
                 logger.info("= start update db =");
+                UpdateDB plugin = (UpdateDB) getPlugin("UpdateDB");
+                if (plugin == null) {
+                    throw new CTException("UpdateDB plugin not enabled", CTError.PLUGIN_NOT_ENABLED);
+                }
+                try {
+                    plugin.init(config);
+                    plugin.apply(indexer);
+                } catch (CTException ex) {
+                    nGeneralErrors++; // when an exception arrives here then the entire plugin is crashed
+                } finally {
+                    indexer.resetIndex();
+                    plugin.close();
+                }
             }
         } finally {
             int nFailures = Failures.getFailures(); // this is the single plugin thread failure count
@@ -152,26 +166,25 @@ public class Minotauro {
     private static void loadPlugins(Config config) throws CTException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalArgumentException, InvocationTargetException, IllegalAccessException {
         pluginList = new LinkedList<>();
         int nPlugin = 100;
+        int step = 1;
         final Class<?>[] defaultConstructor = {int.class};
-        for (int iPlug = 0; iPlug < nPlugin; iPlug++) {
-            // instance classes by names
-            String pluginId = String.format("plugin_%02d", iPlug + 1);
+        for (int iPlug = 1; iPlug < nPlugin; iPlug++) {
+            // instance classes by names            
+            String pluginId = String.format("plugin_%02d", iPlug);
             String pluginName = config.get("plugins", pluginId);
             if (pluginName == null || pluginName.isEmpty()) {
-                break;
+                continue;
             }
-            String pluginClassName = String.format("claudiosoft.plugin.%s", pluginName);
-
-            int step = iPlug + 1;
             boolean enabled = Boolean.parseBoolean(config.get(pluginName, "enabled", "false"));
             if (!enabled) {
                 logger.warn(String.format("plugin %s is not enabled", pluginName));
                 continue;
             }
 
+            String pluginClassName = String.format("claudiosoft.plugin.%s", pluginName);
             Class<?> clazz = Class.forName(pluginClassName);
             Constructor<?> constructor = clazz.getConstructor(defaultConstructor);
-            pluginList.add((BasePlugin) constructor.newInstance(step));
+            pluginList.add((BasePlugin) constructor.newInstance(step++));
         }
 
         // if no enabled plugin are present, terminate
@@ -196,6 +209,16 @@ public class Minotauro {
         for (BasePlugin plugin : pluginList) {
             logger.info(String.format("- %s", plugin.getClass().getName()));
         }
+    }
+
+    private static BasePlugin getPlugin(String pluginName) {
+        String pluginClassName = String.format("claudiosoft.plugin.%s", pluginName);
+        for (BasePlugin plugin : pluginList) {
+            if (plugin.getClass().getName().equals(pluginClassName)) {
+                return plugin;
+            }
+        }
+        return null;
     }
 
     private static void initTransientProvider(Config config) throws CTException, IOException {

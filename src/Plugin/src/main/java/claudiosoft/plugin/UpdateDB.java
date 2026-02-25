@@ -24,8 +24,8 @@ public class UpdateDB extends BasePlugin {
 
     private UpdateDBConfig plugConf;
 
-    public UpdateDB() {
-        super(1);
+    public UpdateDB(int step) {
+        super(step);
     }
 
     @Override
@@ -41,9 +41,9 @@ public class UpdateDB extends BasePlugin {
         ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
             List<CompletableFuture<?>> futures = new ArrayList<>();
-            List<String> folders = indexer.getFolders();
-            for (String folder : folders) {
-                UpdateDBThread thread = new UpdateDBThread(UUID.randomUUID(), new File(folder), plugConf, new BeanUpdateDB(this.getClass().getSimpleName()));
+            File curImage = indexer.startVisit(pluginName);
+            while (curImage != null) {
+                UpdateDBThread thread = new UpdateDBThread(UUID.randomUUID(), curImage, plugConf, new BeanUpdateDB(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
             }
             CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
