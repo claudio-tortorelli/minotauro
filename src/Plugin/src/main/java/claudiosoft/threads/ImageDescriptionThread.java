@@ -2,7 +2,7 @@ package claudiosoft.threads;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.ollama.OAPI;
-import claudiosoft.pluginbean.BeanDescription;
+import claudiosoft.pluginbean.BeanImageDescription;
 import claudiosoft.pluginconfig.ImageDescriptionConfig;
 import claudiosoft.transientdata.TransientFile;
 import claudiosoft.transientdata.TransientProvider;
@@ -18,9 +18,9 @@ import java.util.UUID;
 public class ImageDescriptionThread extends PluginThread {
 
     private final ImageDescriptionConfig plugConf;
-    private final BeanDescription data;
+    private final BeanImageDescription data;
 
-    public ImageDescriptionThread(UUID uuid, File curImage, ImageDescriptionConfig plugConf, BeanDescription data) throws CTException {
+    public ImageDescriptionThread(UUID uuid, File curImage, ImageDescriptionConfig plugConf, BeanImageDescription data) throws CTException {
         super(uuid, curImage);
         this.plugConf = plugConf;
         this.data = data;

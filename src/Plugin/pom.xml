@@ -20,11 +20,15 @@
         <dependency>
             <groupId>claudiosoft</groupId>
             <artifactId>TransientData</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>claudiosoft</groupId>
+            <artifactId>DBabel</artifactId>
         </dependency>   
         <dependency>
-                <groupId>claudiosoft</groupId>
-                <artifactId>Ollama</artifactId>
-            </dependency> 
+            <groupId>claudiosoft</groupId>
+            <artifactId>Ollama</artifactId>
+        </dependency> 
         <dependency>
             <groupId>com.drewnoakes</groupId>
             <artifactId>metadata-extractor</artifactId>

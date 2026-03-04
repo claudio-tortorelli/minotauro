@@ -1,20 +1,21 @@
 package claudiosoft.pluginbean;
 
+import claudiosoft.commons.BasicLogger;
+import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.transientdata.TransientFile;
-import java.util.Date;
 
 /**
  *
  * @author claudio.tortorelli
  */
-public class BeanExif extends BasePluginBean {
+public class BeanImageExif extends BasePluginBean {
 
     public int imgWidthPix;
     public int imgHeightPix;
     public String make;
     public String model;
-    public Date date;
+    public String date;
     public String orientation;
     public String photographer;
     public String latitude;
@@ -22,14 +23,14 @@ public class BeanExif extends BasePluginBean {
     public String longitude;
     public String longitudeRef;
 
-    public BeanExif(String pluginName) {
+    public BeanImageExif(String pluginName) {
         super(pluginName);
 
         imgWidthPix = 0;
         imgHeightPix = 0;
         make = "";
         model = "";
-        date = null;
+        date = "";
         orientation = "";
         photographer = "";
         latitude = "";
@@ -55,8 +56,23 @@ public class BeanExif extends BasePluginBean {
     }
 
     @Override
-    public void read(TransientFile transientImage) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void read(TransientFile transientImage) throws CTException {
+        try {
+            imgWidthPix = Integer.parseInt(transientImage.get(pluginName, "imgWidthPix", "0"));
+            imgHeightPix = Integer.parseInt(transientImage.get(pluginName, "imgHeightPix", "0"));
+            make = transientImage.get(pluginName, "make", "");
+            model = transientImage.get(pluginName, "model", "");
+            date = transientImage.get(pluginName, "date", "");
+            orientation = transientImage.get(pluginName, "orientation", "");
+            photographer = transientImage.get(pluginName, "photographer", "");
+            latitude = transientImage.get(pluginName, "latitude", "");
+            latitudeRef = transientImage.get(pluginName, "latitudeRef", "");
+            longitude = transientImage.get(pluginName, "longitude", "");
+            longitudeRef = transientImage.get(pluginName, "longitudeRef", "");
+        } catch (Exception ex) {
+            BasicLogger.get().error(ex.getMessage(), ex);
+            throw new CTException(ex, CTError.TRANSIENT_READ_FILE);
+        }
     }
 
 }

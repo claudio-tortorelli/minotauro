@@ -6,7 +6,7 @@ import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.IndexMechanism;
 import claudiosoft.ollama.OAPI;
-import claudiosoft.pluginbean.BeanDescription;
+import claudiosoft.pluginbean.BeanImageDescription;
 import claudiosoft.pluginconfig.ImageDescriptionConfig;
 import claudiosoft.threads.ImageDescriptionThread;
 import java.io.File;
@@ -45,7 +45,7 @@ public class ImageDescription extends BasePlugin {
             List<CompletableFuture<?>> futures = new ArrayList<>();
             File curImage = indexer.startVisit(pluginName);
             while (curImage != null) {
-                ImageDescriptionThread thread = new ImageDescriptionThread(UUID.randomUUID(), curImage, plugConf, new BeanDescription(this.getClass().getSimpleName()));
+                ImageDescriptionThread thread = new ImageDescriptionThread(UUID.randomUUID(), curImage, plugConf, new BeanImageDescription(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
                 curImage = indexer.visitNext();
             }

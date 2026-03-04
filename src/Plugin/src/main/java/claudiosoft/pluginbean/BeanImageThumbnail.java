@@ -7,24 +7,24 @@ import claudiosoft.transientdata.TransientFile;
  *
  * @author claudio.tortorelli
  */
-public class BeanTags extends BasePluginBean {
+public class BeanImageThumbnail extends BasePluginBean {
 
-    public String tagList;
+    public String base64Image;
 
-    public BeanTags(String pluginName) {
+    public BeanImageThumbnail(String pluginName) {
         super(pluginName);
-        tagList = "";
+        base64Image = "";
     }
 
     @Override
     public void store(TransientFile transientImage) throws CTException {
-        transientImage.set(pluginName, "tagList", tagList);
+        transientImage.set(pluginName, "thumb", base64Image);
         transientImage.store();
     }
 
     @Override
     public void read(TransientFile transientImage) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        //TODO
     }
 
 }

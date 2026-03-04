@@ -1,7 +1,7 @@
 package claudiosoft.threads;
 
 import claudiosoft.commons.CTException;
-import claudiosoft.pluginbean.BeanId;
+import claudiosoft.pluginbean.BeanImageId;
 import claudiosoft.pluginconfig.ImageIdConfig;
 import claudiosoft.transientdata.TransientFile;
 import claudiosoft.transientdata.TransientProvider;
@@ -17,9 +17,9 @@ import java.util.UUID;
 public class ImageIdThread extends PluginThread {
 
     private final ImageIdConfig plugConf;
-    private final BeanId data;
+    private final BeanImageId data;
 
-    public ImageIdThread(UUID uuid, File curImage, ImageIdConfig plugConf, BeanId data) throws CTException {
+    public ImageIdThread(UUID uuid, File curImage, ImageIdConfig plugConf, BeanImageId data) throws CTException {
         super(uuid, curImage);
         this.plugConf = plugConf;
         this.data = data;

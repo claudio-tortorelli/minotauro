@@ -17,5 +17,5 @@ public abstract class BasePluginBean {
 
     public abstract void store(TransientFile transientImage) throws CTException;
 
-    public abstract void read(TransientFile transientImage);
+    public abstract void read(TransientFile transientImage) throws CTException;
 }

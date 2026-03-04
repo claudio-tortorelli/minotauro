@@ -1,7 +1,7 @@
 package claudiosoft.threads;
 
 import claudiosoft.commons.CTException;
-import claudiosoft.pluginbean.BeanThumbnail;
+import claudiosoft.pluginbean.BeanImageThumbnail;
 import claudiosoft.pluginconfig.ImageThumbnailConfig;
 import claudiosoft.transientdata.TransientFile;
 import claudiosoft.transientdata.TransientProvider;
@@ -23,9 +23,9 @@ import org.opencv.imgproc.Imgproc;
 public class ImageThumbnailThread extends PluginThread {
 
     private final ImageThumbnailConfig plugConf;
-    private final BeanThumbnail data;
+    private final BeanImageThumbnail data;
 
-    public ImageThumbnailThread(UUID uuid, File curImage, ImageThumbnailConfig plugConf, BeanThumbnail data) throws CTException {
+    public ImageThumbnailThread(UUID uuid, File curImage, ImageThumbnailConfig plugConf, BeanImageThumbnail data) throws CTException {
         super(uuid, curImage);
         this.plugConf = plugConf;
         this.data = data;

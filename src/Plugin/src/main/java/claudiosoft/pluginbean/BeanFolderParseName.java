@@ -86,7 +86,7 @@ public class BeanFolderParseName extends BasePluginBean {
 
     @Override
     public void read(TransientFile transientImage) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        //TODO
     }
 
 }

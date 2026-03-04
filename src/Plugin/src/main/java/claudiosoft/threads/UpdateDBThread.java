@@ -1,9 +1,15 @@
 package claudiosoft.threads;
 
 import claudiosoft.commons.CTException;
+import claudiosoft.plugin.utils.PluginUtils;
+import claudiosoft.pluginbean.BasePluginBean;
 import claudiosoft.pluginbean.BeanUpdateDB;
 import claudiosoft.pluginconfig.UpdateDBConfig;
+import claudiosoft.transientdata.TransientFile;
+import claudiosoft.transientdata.TransientProvider;
+import claudiosoft.utils.Failures;
 import java.io.File;
+import java.util.LinkedList;
 import java.util.UUID;
 
 /**
@@ -23,7 +29,22 @@ public class UpdateDBThread extends PluginThread {
 
     @Override
     public void run() {
+        try {
+            super.run();
 
+            TransientFile transientImage = TransientProvider.getProvider().get(curFile);
+
+            LinkedList<BasePluginBean> pluginBeanList = PluginUtils.loadPluginBeans(plugConf.getGlobalConfig());
+            for (BasePluginBean pluginBean : pluginBeanList) {
+                pluginBean.read(transientImage);
+            }
+
+        } catch (Exception ex) {
+            logger.error(logThreadMessage(ex.getMessage()), ex);
+            Failures.addFailure();
+        } finally {
+
+        }
     }
 
 }

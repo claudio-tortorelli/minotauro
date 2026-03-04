@@ -7,11 +7,11 @@ import claudiosoft.transientdata.TransientFile;
  *
  * @author claudio.tortorelli
  */
-public class BeanId extends BasePluginBean {
+public class BeanImageId extends BasePluginBean {
 
     public String hashId;
 
-    public BeanId(String pluginName) {
+    public BeanImageId(String pluginName) {
         super(pluginName);
         hashId = "";
     }
@@ -24,7 +24,7 @@ public class BeanId extends BasePluginBean {
 
     @Override
     public void read(TransientFile transientImage) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        //TODO
     }
 
 }

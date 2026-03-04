@@ -5,7 +5,7 @@ import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.IndexMechanism;
-import claudiosoft.pluginbean.BeanId;
+import claudiosoft.pluginbean.BeanImageId;
 import claudiosoft.pluginconfig.ImageIdConfig;
 import claudiosoft.threads.ImageIdThread;
 import java.io.File;
@@ -43,7 +43,7 @@ public class ImageId extends BasePlugin {
             List<CompletableFuture<?>> futures = new ArrayList<>();
             File curImage = indexer.startVisit(pluginName);
             while (curImage != null) {
-                ImageIdThread thread = new ImageIdThread(UUID.randomUUID(), curImage, plugConf, new BeanId(this.getClass().getSimpleName()));
+                ImageIdThread thread = new ImageIdThread(UUID.randomUUID(), curImage, plugConf, new BeanImageId(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
                 curImage = indexer.visitNext();
             }

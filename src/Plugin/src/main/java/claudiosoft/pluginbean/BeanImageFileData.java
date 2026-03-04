@@ -7,7 +7,7 @@ import claudiosoft.transientdata.TransientFile;
  *
  * @author claudio.tortorelli
  */
-public class BeanFileData extends BasePluginBean {
+public class BeanImageFileData extends BasePluginBean {
 
     public String folder;
     public String fileName;
@@ -17,7 +17,7 @@ public class BeanFileData extends BasePluginBean {
     public String imgWidthPix;
     public String imgHeightPix;
 
-    public BeanFileData(String pluginName) {
+    public BeanImageFileData(String pluginName) {
         super(pluginName);
         folder = "";
         fileName = "";
@@ -42,7 +42,7 @@ public class BeanFileData extends BasePluginBean {
 
     @Override
     public void read(TransientFile transientImage) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        //TODO
     }
 
 }

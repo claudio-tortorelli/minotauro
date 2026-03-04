@@ -1,7 +1,7 @@
 package claudiosoft.threads;
 
 import claudiosoft.commons.CTException;
-import claudiosoft.pluginbean.BeanExif;
+import claudiosoft.pluginbean.BeanImageExif;
 import claudiosoft.pluginconfig.ImageExifConfig;
 import claudiosoft.transientdata.TransientFile;
 import claudiosoft.transientdata.TransientProvider;
@@ -24,9 +24,9 @@ import java.util.UUID;
 public class ImageExifThread extends PluginThread {
 
     private final ImageExifConfig plugConf;
-    private final BeanExif data;
+    private final BeanImageExif data;
 
-    public ImageExifThread(UUID uuid, File curImage, ImageExifConfig plugConf, BeanExif data) throws CTException {
+    public ImageExifThread(UUID uuid, File curImage, ImageExifConfig plugConf, BeanImageExif data) throws CTException {
         super(uuid, curImage);
         this.plugConf = plugConf;
         this.data = data;
@@ -64,7 +64,7 @@ public class ImageExifThread extends PluginThread {
                     somethingToStore = true;
                 }
                 if (directoryIf.containsTag(ExifSubIFDDirectory.TAG_DATETIME)) {
-                    data.date = directoryIf.getDate(ExifSubIFDDirectory.TAG_DATETIME);
+                    data.date = directoryIf.getString(ExifSubIFDDirectory.TAG_DATETIME);
                     somethingToStore = true;
                 }
                 if (directoryIf.containsTag(ExifSubIFDDirectory.TAG_ORIENTATION)) {

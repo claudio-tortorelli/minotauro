@@ -1,7 +1,7 @@
 package claudiosoft.threads;
 
 import claudiosoft.commons.CTException;
-import claudiosoft.pluginbean.BeanFileData;
+import claudiosoft.pluginbean.BeanImageFileData;
 import claudiosoft.pluginconfig.ImageFileDataConfig;
 import claudiosoft.transientdata.TransientFile;
 import claudiosoft.transientdata.TransientProvider;
@@ -20,9 +20,9 @@ import org.opencv.imgcodecs.Imgcodecs;
 public class ImageFileDataThread extends PluginThread {
 
     private final ImageFileDataConfig plugConf;
-    private final BeanFileData data;
+    private final BeanImageFileData data;
 
-    public ImageFileDataThread(UUID uuid, File curImage, ImageFileDataConfig plugConf, BeanFileData data) throws CTException {
+    public ImageFileDataThread(UUID uuid, File curImage, ImageFileDataConfig plugConf, BeanImageFileData data) throws CTException {
         super(uuid, curImage);
         this.plugConf = plugConf;
         this.data = data;
