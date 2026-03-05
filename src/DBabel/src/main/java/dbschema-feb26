@@ -11,6 +11,8 @@ DB NAME babel
         albumRef > 1:1       
         imageRef > 1:1
         exifRef > 0:1
+        descriptionRef > 0:1
+        tagRef > 0:n
     exif
         [P] id
         [int 5] imgWidthPix
@@ -63,5 +65,8 @@ DB NAME babel
         [P] id
         [char 2048] text
         blob
+    tag
+        [P] id
+        char[24] tag
     config
         

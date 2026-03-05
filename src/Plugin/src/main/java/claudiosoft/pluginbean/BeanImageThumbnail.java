@@ -23,8 +23,8 @@ public class BeanImageThumbnail extends BasePluginBean {
     }
 
     @Override
-    public void read(TransientFile transientImage) {
-        //TODO
+    public void read(TransientFile transientImage) throws CTException {
+        base64Image = transientImage.get(pluginName, "thumb", base64Image);
     }
 
 }

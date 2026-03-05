@@ -22,7 +22,7 @@ public class BeanImageFileData extends BasePluginBean {
         folder = "";
         fileName = "";
         ext = "";
-        lastModifiedDate = null;
+        lastModifiedDate = "";
         fileSize = "";
         imgWidthPix = "";
         imgHeightPix = "";
@@ -41,8 +41,14 @@ public class BeanImageFileData extends BasePluginBean {
     }
 
     @Override
-    public void read(TransientFile transientImage) {
-        //TODO
+    public void read(TransientFile transientImage) throws CTException {
+        folder = transientImage.get(pluginName, "folder", "");
+        fileName = transientImage.get(pluginName, "fileName", "");
+        ext = transientImage.get(pluginName, "ext", "");
+        lastModifiedDate = transientImage.get(pluginName, "lastModifiedDate", "");
+        fileSize = transientImage.get(pluginName, "sizeByte", "");
+        imgWidthPix = transientImage.get(pluginName, "widthPix", "");
+        imgHeightPix = transientImage.get(pluginName, "heightPix", "");
     }
 
 }

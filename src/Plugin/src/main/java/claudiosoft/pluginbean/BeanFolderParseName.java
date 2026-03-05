@@ -85,8 +85,25 @@ public class BeanFolderParseName extends BasePluginBean {
     }
 
     @Override
-    public void read(TransientFile transientImage) {
-        //TODO
+    public void read(TransientFile transientImage) throws CTException {
+        path = transientImage.get(pluginName, "path", "");
+        year = transientImage.get(pluginName, "year", "");
+        month = transientImage.get(pluginName, "month", "");
+        description = transientImage.get(pluginName, "description", "");
+        elaborated = Boolean.parseBoolean(transientImage.get(pluginName, "elaborated", "false"));
+
+        cities = readList(transientImage.get(pluginName, "cities", ""));
+        countries = readList(transientImage.get(pluginName, "countries", ""));
+        people = readList(transientImage.get(pluginName, "people", ""));
+        events = readList(transientImage.get(pluginName, "events", ""));
     }
 
+    private LinkedList<String> readList(String prop) {
+        LinkedList<String> list = new LinkedList<>();
+        String[] splitted = prop.split(",");
+        for (String val : splitted) {
+            list.add(val);
+        }
+        return list;
+    }
 }

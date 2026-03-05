@@ -23,8 +23,8 @@ public class BeanImageDescription extends BasePluginBean {
     }
 
     @Override
-    public void read(TransientFile transientImage) {
-        //TODO
+    public void read(TransientFile transientImage) throws CTException {
+        description = transientImage.get(pluginName, "desc", "");
     }
 
 }
