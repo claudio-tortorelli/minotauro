@@ -3,7 +3,6 @@ package claudiosoft.dbabel;
 import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
-import claudiosoft.transientdata.TransientFile;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -66,7 +65,7 @@ public class DBabel {
 //            closeQuietly(ps);
 //        }
 //    }
-    public synchronized void insert(TransientFile tFile) throws CTException {
+    public synchronized void insertOrUpdate() throws CTException {
 
         PreparedStatement ps = null;
         try {
