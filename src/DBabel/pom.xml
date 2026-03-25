@@ -16,11 +16,7 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-        </dependency>                
-        <dependency>
-            <groupId>claudiosoft</groupId>
-            <artifactId>TransientData</artifactId>
-        </dependency>
+        </dependency>                       
     </dependencies>
    <dependencyManagement>
         <dependencies>             

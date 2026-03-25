@@ -84,8 +84,8 @@ DB NAME babel
 
 per inserire nuova entity picture
     album >                         FolderParseName
-    image >                         ImageId/ImageThumbnail
-        > picture                   ImageFileData
+    image >                         ImageThumbnail
+        > picture                   ImageId/ImageFileData
             > ? exif                ImageExif
             > ? description         
             > ? tag                 ImageTags
