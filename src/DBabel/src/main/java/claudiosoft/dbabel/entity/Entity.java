@@ -25,7 +25,7 @@ public class Entity {
     protected String updateFields;
 
     public Entity(Table table) {
-        this(table.getDbName(), toInsertFields(table.getFields()), toUpdateFields(table.getFields()));
+        this(table.getName(), toInsertFields(table.getFields()), toUpdateFields(table.getFields()));
     }
 
     public Entity(String name, String insertFields, String updateFields) {
@@ -43,15 +43,16 @@ public class Entity {
         PreparedStatement ps = null;
         try {
             if (dbConnection.isClosed()) {
-                throw new CTException("connection to DB is closed".formatted(name), CTError.DB_STATE);
+                throw new CTException("connection to DB is closed".formatted(name), CTError.DB_STATUS);
             }
             if (dbConnection.isReadOnly()) {
-                throw new CTException("DB is read only: unable to update".formatted(name), CTError.DB_STATE);
+                throw new CTException("DB is read only: unable to update".formatted(name), CTError.DB_STATUS);
             }
             ps = dbConnection.prepareStatement(INSERT.formatted(insertFields));
-            ps.setString(1, name);
-            for (int iField = 1; iField < insertFields.length(); iField++) {
-                ps.setString(iField, values[iField - 1]);
+            int iFormat = 1;
+            ps.setString(iFormat++, name);
+            for (int iField = 0; iField < insertFields.length(); iField++) {
+                ps.setString(iFormat++, values[iField]);
             }
             ps.executeUpdate();
         } catch (SQLException ex) {
@@ -65,7 +66,7 @@ public class Entity {
         PreparedStatement ps = null;
         try {
             if (dbConnection.isClosed()) {
-                throw new CTException("connection to DB is closed".formatted(name), CTError.DB_STATE);
+                throw new CTException("connection to DB is closed".formatted(name), CTError.DB_STATUS);
             }
             ps = dbConnection.prepareStatement(SELECT);
             ps.setString(1, name);
@@ -92,15 +93,16 @@ public class Entity {
         PreparedStatement ps = null;
         try {
             if (dbConnection.isClosed()) {
-                throw new CTException("connection to DB is closed".formatted(name), CTError.DB_STATE);
+                throw new CTException("connection to DB is closed".formatted(name), CTError.DB_STATUS);
             }
             if (dbConnection.isReadOnly()) {
-                throw new CTException("DB is read only: unable to update".formatted(name), CTError.DB_STATE);
+                throw new CTException("DB is read only: unable to update".formatted(name), CTError.DB_STATUS);
             }
             ps = dbConnection.prepareStatement(UPDATE.formatted(updateFields));
-            ps.setString(1, name);
-            for (int iField = 1; iField < updateFields.length(); iField++) {
-                ps.setString(iField, values[iField - 1]);
+            int iFormat = 0;
+            ps.setString(iFormat++, name);
+            for (int iField = 0; iField < updateFields.length(); iField++) {
+                ps.setString(iFormat++, values[iField]);
             }
             ps.executeUpdate();
         } catch (SQLException ex) {
@@ -115,7 +117,7 @@ public class Entity {
         PreparedStatement ps = null;
         try {
             if (dbConnection.isClosed()) {
-                throw new CTException("connection to DB is closed".formatted(name), CTError.DB_STATE);
+                throw new CTException("connection to DB is closed".formatted(name), CTError.DB_STATUS);
             }
             ps = dbConnection.prepareStatement(DELETE);
             ps.setString(1, name);

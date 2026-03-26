@@ -36,9 +36,18 @@ public class DBabel {
         }
     }
 
+    public boolean isOpen() throws CTException {
+        try {
+            return dbConnection != null && dbConnection.isValid(0);
+        } catch (SQLException ex) {
+            throw new CTException(ex, CTError.DB_STATUS);
+        }
+    }
+
     public void close() throws SQLException {
         if (dbConnection != null) {
             dbConnection.close();
+            dbConnection = null;
             logger.debug("db closed");
         }
     }
