@@ -79,7 +79,9 @@ DB NAME babel
         [P][int] id
         [text] tag
     config
-        
+        [text] project
+        [text] dbVersion
+
 --------------------------
 
 per inserire nuova entity picture

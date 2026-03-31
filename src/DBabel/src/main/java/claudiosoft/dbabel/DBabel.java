@@ -3,6 +3,8 @@ package claudiosoft.dbabel;
 import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
+import claudiosoft.dbabel.entity.Condition;
+import claudiosoft.dbabel.entity.Entity;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -17,6 +19,10 @@ public class DBabel {
 
     private BasicLogger logger;
     private Connection dbConnection;
+
+    public DBabel(File sqliteDbFile) throws CTException {
+        this(sqliteDbFile.getAbsolutePath());
+    }
 
     public DBabel(String sqliteDbFilePath) throws CTException {
 
@@ -52,8 +58,12 @@ public class DBabel {
         }
     }
 
-    public synchronized ResultSet select() throws CTException {
-        return null;
+    public synchronized void insert(Table table, String... values) throws CTException {
+        new Entity(table).insert(dbConnection, values);
+    }
+
+    public synchronized ResultSet select(Table table, Condition condition) throws CTException {
+        return new Entity(table).select(dbConnection, condition);
     }
 
 }

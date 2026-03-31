@@ -21,7 +21,7 @@ public class Condition {
     public Condition(String field, String operator, String value) {
         this.field = field;
         this.operator = operator;
-        this.value = value;
+        this.value = String.format("'%s'", value);
     }
 
     public String getField() {

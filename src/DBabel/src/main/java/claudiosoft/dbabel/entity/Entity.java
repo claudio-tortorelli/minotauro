@@ -15,28 +15,32 @@ import java.sql.Statement;
  */
 public class Entity {
 
-    protected static final String INSERT = "INSERT INTO ? (%s) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    protected static final String SELECT = "SELECT * FROM ? WHERE ? ? ?";
-    protected static final String UPDATE = "UPDATE ? SET %s WHERE ? ? ?";
-    protected static final String DELETE = "DELETE FROM ? WHERE ? ? ?;";
+    protected static final String INSERT = "INSERT INTO %s (%s) VALUES (%s)";
+    protected static final String SELECT = "SELECT * FROM %s WHERE %s %s %s";
+    protected static final String UPDATE = "UPDATE %s SET %s WHERE %s %s %s";
+    protected static final String DELETE = "DELETE FROM %s WHERE %s %s %s;";
 
     protected String name;
     protected String insertFields;
     protected String updateFields;
+    protected int nInsertFields;
+    protected int nUpdateFields;
 
     public Entity(Table table) {
         this(table.getName(), toInsertFields(table.getFields()), toUpdateFields(table.getFields()));
     }
 
-    public Entity(String name, String insertFields, String updateFields) {
+    private Entity(String name, String insertFields, String updateFields) {
         this.name = name;
         this.insertFields = insertFields;
         this.updateFields = updateFields;
+        this.nInsertFields = this.insertFields.split(",").length;
+        this.nUpdateFields = this.updateFields.split(",").length;
     }
 
     public void insert(Connection dbConnection, String[] values) throws CTException {
 
-        if (values.length != insertFields.length()) {
+        if (values.length != nInsertFields) {
             throw new CTException("incoherent number of values for table %s".formatted(name), CTError.DB_INSERT);
         }
 
@@ -48,12 +52,7 @@ public class Entity {
             if (dbConnection.isReadOnly()) {
                 throw new CTException("DB is read only: unable to update".formatted(name), CTError.DB_STATUS);
             }
-            ps = dbConnection.prepareStatement(INSERT.formatted(insertFields));
-            int iFormat = 1;
-            ps.setString(iFormat++, name);
-            for (int iField = 0; iField < insertFields.length(); iField++) {
-                ps.setString(iFormat++, values[iField]);
-            }
+            ps = dbConnection.prepareStatement(INSERT.formatted(name, insertFields, toInsertValues(values)));
             ps.executeUpdate();
         } catch (SQLException ex) {
             throw new CTException(ex, CTError.DB_INSERT);
@@ -68,15 +67,8 @@ public class Entity {
             if (dbConnection.isClosed()) {
                 throw new CTException("connection to DB is closed".formatted(name), CTError.DB_STATUS);
             }
-            ps = dbConnection.prepareStatement(SELECT);
-            ps.setString(1, name);
-            ps.setString(2, condition.getField());
-            ps.setString(3, condition.getOperator());
-            ps.setString(4, condition.getValue());
-            if (ps.executeUpdate() > 0) {
-                return ps.getResultSet();
-            }
-            return null;
+            ps = dbConnection.prepareStatement(SELECT.formatted(name, condition.getField(), condition.getOperator(), condition.getValue()));
+            return ps.executeQuery();
         } catch (SQLException ex) {
             throw new CTException(ex, CTError.DB_SELECT);
         } finally {
@@ -84,9 +76,9 @@ public class Entity {
         }
     }
 
-    public void update(Connection dbConnection, String[] values) throws CTException {
+    public void update(Connection dbConnection, String[] values, Condition condition) throws CTException {
 
-        if (values.length != updateFields.length()) {
+        if (values.length != nUpdateFields) {
             throw new CTException("incoherent number of values for table %s".formatted(name), CTError.DB_UPDATE);
         }
 
@@ -98,12 +90,7 @@ public class Entity {
             if (dbConnection.isReadOnly()) {
                 throw new CTException("DB is read only: unable to update".formatted(name), CTError.DB_STATUS);
             }
-            ps = dbConnection.prepareStatement(UPDATE.formatted(updateFields));
-            int iFormat = 0;
-            ps.setString(iFormat++, name);
-            for (int iField = 0; iField < updateFields.length(); iField++) {
-                ps.setString(iFormat++, values[iField]);
-            }
+            ps = dbConnection.prepareStatement(UPDATE.formatted(name, updateFields, toUpdateValues(values), condition.getField(), condition.getOperator(), condition.getValue()));
             ps.executeUpdate();
         } catch (SQLException ex) {
             throw new CTException(ex, CTError.DB_UPDATE);
@@ -119,11 +106,7 @@ public class Entity {
             if (dbConnection.isClosed()) {
                 throw new CTException("connection to DB is closed".formatted(name), CTError.DB_STATUS);
             }
-            ps = dbConnection.prepareStatement(DELETE);
-            ps.setString(1, name);
-            ps.setString(2, condition.getField());
-            ps.setString(3, condition.getOperator());
-            ps.setString(4, condition.getValue());
+            ps = dbConnection.prepareStatement(DELETE.formatted(name, condition.getField(), condition.getOperator(), condition.getValue()));
             ps.executeUpdate();
         } catch (SQLException ex) {
             throw new CTException(ex, CTError.DB_DELETE);
@@ -153,11 +136,31 @@ public class Entity {
         return ret;
     }
 
+    private static String toInsertValues(String[] values) {
+        String ret = "";
+        for (String val : values) {
+            ret += "'%s', ".formatted(val);
+        }
+        ret = ret.trim();
+        ret = ret.substring(0, ret.length() - 1);
+        return ret;
+    }
+
     private static String toUpdateFields(String[] fields) {
         String ret = "";
         //"path = ?, name = ?, year = ?, month = ?, day = ?, elaborated = ?, descriptionRef = ?"
         for (String field : fields) {
             ret += "%s = ?, ".formatted(field);
+        }
+        ret = ret.trim();
+        ret = ret.substring(0, ret.length() - 1);
+        return ret;
+    }
+
+    private static String toUpdateValues(String[] values) {
+        String ret = "";
+        for (String val : values) {
+            ret += "\"%s\", ".formatted(val);
         }
         ret = ret.trim();
         ret = ret.substring(0, ret.length() - 1);
