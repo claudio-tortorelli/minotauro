@@ -3,12 +3,9 @@ package claudiosoft.dbabel;
 import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
-import claudiosoft.dbabel.entity.Condition;
-import claudiosoft.dbabel.entity.Entity;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -33,6 +30,7 @@ public class DBabel {
             Class.forName("org.sqlite.JDBC");
             String connectStr = String.format("jdbc:sqlite:%s", new File(sqliteDbFilePath).getCanonicalPath());
             dbConnection = DriverManager.getConnection(connectStr);
+            dbConnection.setAutoCommit(true);
 
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
@@ -50,19 +48,27 @@ public class DBabel {
         }
     }
 
-    public void close() throws SQLException {
+    public void close() throws CTException {
         if (dbConnection != null) {
-            dbConnection.close();
+            try {
+                dbConnection.close();
+            } catch (SQLException ex) {
+                throw new CTException(ex, CTError.DB_GENERIC);
+            }
             dbConnection = null;
             logger.debug("db closed");
         }
+    }
+
+    public Connection getDbConnection() {
+        return dbConnection;
     }
 
     public synchronized void insert(Table table, String... values) throws CTException {
         new Entity(table).insert(dbConnection, values);
     }
 
-    public synchronized ResultSet select(Table table, Condition condition) throws CTException {
+    public synchronized TableData select(Table table, Condition condition) throws CTException {
         return new Entity(table).select(dbConnection, condition);
     }
 

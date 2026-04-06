@@ -1,7 +1,5 @@
 package claudiosoft.dbabel;
 
-import static claudiosoft.dbabel.Table.values;
-
 /**
  *
  * @author claudio.tortorelli
@@ -36,7 +34,7 @@ public class SchemaUtils {
     public static String printSchema() {
         String ret = "Schema ver. %s:\n".formatted(schemaVersion);
         ret += "  - - - - - - - \n";
-        for (Table table : values()) {
+        for (Table table : Table.values()) {
             ret += printTable(table);
             ret += "  - - - - - - - \n";
         }

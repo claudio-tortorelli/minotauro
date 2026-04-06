@@ -1,8 +1,7 @@
-package claudiosoft.dbabel.entity;
+package claudiosoft.dbabel;
 
 import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
-import claudiosoft.dbabel.Table;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,22 +13,22 @@ import java.sql.Statement;
  * @author claudio.tortorelli
  */
 public class Entity {
-
+    
     protected static final String INSERT = "INSERT INTO %s (%s) VALUES (%s)";
     protected static final String SELECT = "SELECT * FROM %s WHERE %s %s %s";
     protected static final String UPDATE = "UPDATE %s SET %s WHERE %s %s %s";
     protected static final String DELETE = "DELETE FROM %s WHERE %s %s %s;";
-
+    
     protected String name;
     protected String insertFields;
     protected String updateFields;
     protected int nInsertFields;
     protected int nUpdateFields;
-
+    
     public Entity(Table table) {
         this(table.getName(), toInsertFields(table.getFields()), toUpdateFields(table.getFields()));
     }
-
+    
     private Entity(String name, String insertFields, String updateFields) {
         this.name = name;
         this.insertFields = insertFields;
@@ -37,13 +36,13 @@ public class Entity {
         this.nInsertFields = this.insertFields.split(",").length;
         this.nUpdateFields = this.updateFields.split(",").length;
     }
-
+    
     public void insert(Connection dbConnection, String[] values) throws CTException {
-
+        
         if (values.length != nInsertFields) {
             throw new CTException("incoherent number of values for table %s".formatted(name), CTError.DB_INSERT);
         }
-
+        
         PreparedStatement ps = null;
         try {
             if (dbConnection.isClosed()) {
@@ -54,34 +53,48 @@ public class Entity {
             }
             ps = dbConnection.prepareStatement(INSERT.formatted(name, insertFields, toInsertValues(values)));
             ps.executeUpdate();
+            
         } catch (SQLException ex) {
             throw new CTException(ex, CTError.DB_INSERT);
         } finally {
             closeQuietly(ps);
         }
     }
-
-    public ResultSet select(Connection dbConnection, Condition condition) throws CTException {
+    
+    public TableData select(Connection dbConnection, Condition condition) throws CTException {
         PreparedStatement ps = null;
         try {
             if (dbConnection.isClosed()) {
                 throw new CTException("connection to DB is closed".formatted(name), CTError.DB_STATUS);
             }
             ps = dbConnection.prepareStatement(SELECT.formatted(name, condition.getField(), condition.getOperator(), condition.getValue()));
-            return ps.executeQuery();
+            ResultSet res = ps.executeQuery();
+            
+            Table table = Table.valueOf(name);
+            TableData td = new TableData();
+            while (res.next()) {
+                TableRow tr = new TableRow();
+                for (String rawField : table.getRawFields()) {
+                    String col = SchemaUtils.getFieldName(rawField);
+                    DataType dt = SchemaUtils.getFieldType(rawField);
+                    tr.addField(col, res.getObject(col), dt);
+                }
+                td.addRow(tr);
+            }
+            return td;
         } catch (SQLException ex) {
             throw new CTException(ex, CTError.DB_SELECT);
         } finally {
             closeQuietly(ps);
         }
     }
-
+    
     public void update(Connection dbConnection, String[] values, Condition condition) throws CTException {
-
+        
         if (values.length != nUpdateFields) {
             throw new CTException("incoherent number of values for table %s".formatted(name), CTError.DB_UPDATE);
         }
-
+        
         PreparedStatement ps = null;
         try {
             if (dbConnection.isClosed()) {
@@ -98,9 +111,9 @@ public class Entity {
             closeQuietly(ps);
         }
     }
-
+    
     public void delete(Connection dbConnection, Condition condition) throws CTException {
-
+        
         PreparedStatement ps = null;
         try {
             if (dbConnection.isClosed()) {
@@ -114,17 +127,17 @@ public class Entity {
             closeQuietly(ps);
         }
     }
-
+    
     protected void closeQuietly(Statement statement) {
         try {
             if (statement != null) {
                 statement.close();
             }
         } catch (SQLException e) {
-
+            
         }
     }
-
+    
     private static String toInsertFields(String[] fields) {
         String ret = "";
         //"path, name, year, month, day, elaborated, descriptionRef", 
@@ -135,7 +148,7 @@ public class Entity {
         ret = ret.substring(0, ret.length() - 1);
         return ret;
     }
-
+    
     private static String toInsertValues(String[] values) {
         String ret = "";
         for (String val : values) {
@@ -145,7 +158,7 @@ public class Entity {
         ret = ret.substring(0, ret.length() - 1);
         return ret;
     }
-
+    
     private static String toUpdateFields(String[] fields) {
         String ret = "";
         //"path = ?, name = ?, year = ?, month = ?, day = ?, elaborated = ?, descriptionRef = ?"
@@ -156,11 +169,11 @@ public class Entity {
         ret = ret.substring(0, ret.length() - 1);
         return ret;
     }
-
+    
     private static String toUpdateValues(String[] values) {
         String ret = "";
         for (String val : values) {
-            ret += "\"%s\", ".formatted(val);
+            ret += "'%s', ".formatted(val);
         }
         ret = ret.trim();
         ret = ret.substring(0, ret.length() - 1);

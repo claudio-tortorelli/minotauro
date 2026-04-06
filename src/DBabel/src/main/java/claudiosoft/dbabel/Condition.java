@@ -1,4 +1,4 @@
-package claudiosoft.dbabel.entity;
+package claudiosoft.dbabel;
 
 /**
  *
