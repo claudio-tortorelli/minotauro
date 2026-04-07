@@ -85,11 +85,11 @@ public class Entity {
         }
     }
 
-    public void update(Connection dbConnection, String[] values, Condition condition) throws CTException {
-        update(dbConnection, updateFields.replace(" = '%s'", "").trim().split(","), values, condition);
+    public int update(Connection dbConnection, String[] values, Condition condition) throws CTException {
+        return update(dbConnection, updateFields.replace(" = '%s'", "").trim().split(","), values, condition);
     }
 
-    public void update(Connection dbConnection, String[] fields, String[] values, Condition condition) throws CTException {
+    public int update(Connection dbConnection, String[] fields, String[] values, Condition condition) throws CTException {
         if (values.length != fields.length) {
             throw new CTException("incoherent number of values for table %s".formatted(name), CTError.DB_UPDATE);
         }
@@ -104,7 +104,7 @@ public class Entity {
             }
             String set = toUpdateFields(fields).formatted(values);
             ps = dbConnection.prepareStatement(UPDATE.formatted(name, set, condition.getField(), condition.getOperator(), condition.getValue()));
-            ps.executeUpdate();
+            return ps.executeUpdate();
         } catch (SQLException ex) {
             throw new CTException(ex, CTError.DB_UPDATE);
         } finally {
@@ -112,7 +112,7 @@ public class Entity {
         }
     }
 
-    public void delete(Connection dbConnection, Condition condition) throws CTException {
+    public int delete(Connection dbConnection, Condition condition) throws CTException {
 
         PreparedStatement ps = null;
         try {
@@ -120,7 +120,7 @@ public class Entity {
                 throw new CTException("connection to DB is closed".formatted(name), CTError.DB_STATUS);
             }
             ps = dbConnection.prepareStatement(DELETE.formatted(name, condition.getField(), condition.getOperator(), condition.getValue()));
-            ps.executeUpdate();
+            return ps.executeUpdate();
         } catch (SQLException ex) {
             throw new CTException(ex, CTError.DB_DELETE);
         } finally {

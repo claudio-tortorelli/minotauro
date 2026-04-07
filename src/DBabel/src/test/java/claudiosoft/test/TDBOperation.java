@@ -75,7 +75,8 @@ public class TDBOperation extends BaseJUnitTest {
         Condition condition = new Condition("project", "=", "testProject");
 
         String[] values = {"testProject", "20990101"};
-        db.update(Table.CONFIG, values, condition);
+        int nUpd = db.update(Table.CONFIG, values, condition);
+        Assert.assertTrue(nUpd == 1);
 
         TableData res = db.select(Table.CONFIG, condition);
         for (TableRow tr : res.getData()) {
@@ -85,7 +86,12 @@ public class TDBOperation extends BaseJUnitTest {
 
     @Test
     public void t05DeleteConfig() throws CTException, SQLException {
+        Condition condition = new Condition("project", "=", "testProject");
+        int nDel = db.delete(Table.CONFIG, condition);
+        Assert.assertTrue(nDel == 1);
 
+        TableData res = db.select(Table.CONFIG, condition);
+        Assert.assertTrue(res.getRows() == 0);
     }
 
     @Test
