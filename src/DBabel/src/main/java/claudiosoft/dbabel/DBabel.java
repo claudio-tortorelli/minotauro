@@ -72,4 +72,12 @@ public class DBabel {
         return new Entity(table).select(dbConnection, condition);
     }
 
+    public synchronized void update(Table table, String[] values, Condition condition) throws CTException {
+        new Entity(table).update(dbConnection, values, condition);
+    }
+
+    public synchronized void update(Table table, String[] fields, String[] values, Condition condition) throws CTException {
+        new Entity(table).update(dbConnection, fields, values, condition);
+    }
+
 }

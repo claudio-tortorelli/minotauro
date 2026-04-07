@@ -71,6 +71,24 @@ public class TDBOperation extends BaseJUnitTest {
     }
 
     @Test
+    public void t04UpdateConfig() throws CTException, SQLException {
+        Condition condition = new Condition("project", "=", "testProject");
+
+        String[] values = {"testProject", "20990101"};
+        db.update(Table.CONFIG, values, condition);
+
+        TableData res = db.select(Table.CONFIG, condition);
+        for (TableRow tr : res.getData()) {
+            Assert.assertTrue(tr.getString("dbVersion").equals("20990101"));
+        }
+    }
+
+    @Test
+    public void t05DeleteConfig() throws CTException, SQLException {
+
+    }
+
+    @Test
     public void t09MultiThreadInsert() throws CTException {
     }
 
