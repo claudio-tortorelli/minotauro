@@ -107,7 +107,7 @@ public class Entity {
             if (dbConnection.isReadOnly()) {
                 throw new CTException("DB is read only: unable to update".formatted(name), CTError.DB_STATUS);
             }
-            String set = toUpdateFields(fields).formatted(values);
+            String set = toUpdateFields(fields).formatted((Object[]) values);
             ps = dbConnection.prepareStatement(UPDATE.formatted(name, set, condition.getField(), condition.getOperator(), condition.getValue()));
             return ps.executeUpdate();
         } catch (SQLException ex) {
