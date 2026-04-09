@@ -51,13 +51,13 @@ public class TDBOperation extends BaseJUnitTest {
     }
 
     @Test
-    public void t02InsertConfig() throws CTException, SQLException {
+    public void t02InsertData() throws CTException, SQLException {
         db.insert(Table.TEST, SchemaUtils.getSchemaVersion(), "text", "YmxvYg==");
         BasicLogger.get().debug("inserted");
     }
 
     @Test
-    public void t03SelectConfig() throws CTException, SQLException {
+    public void t03SelectData() throws CTException, SQLException {
         Condition condition = new Condition("dataInt", "=", SchemaUtils.getSchemaVersion());
         TableData res = db.select(Table.TEST, condition);
         Assert.assertTrue(res.getRows() > 0);
@@ -79,7 +79,7 @@ public class TDBOperation extends BaseJUnitTest {
     }
 
     @Test
-    public void t04UpdateConfig() throws CTException, SQLException {
+    public void t04UpdateData() throws CTException, SQLException {
         Condition condition = new Condition("dataInt", "=", SchemaUtils.getSchemaVersion());
 
         String[] values = {SchemaUtils.getSchemaVersion(), "textUpd", "jorge"};
@@ -93,7 +93,7 @@ public class TDBOperation extends BaseJUnitTest {
     }
 
     @Test
-    public void t05DeleteConfig() throws CTException, SQLException {
+    public void t05DeleteData() throws CTException, SQLException {
         Condition condition = new Condition("dataInt", "=", SchemaUtils.getSchemaVersion());
 
         TableData res = db.select(Table.TEST, condition);

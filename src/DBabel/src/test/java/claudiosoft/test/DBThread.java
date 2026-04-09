@@ -42,11 +42,12 @@ public class DBThread implements Runnable {
                         break;
                     case 1:
                         TableData res = db.select(Table.TEST);
-
-                        Condition condition = new Condition("id", "=", "%d".formatted(rnd.nextInt(res.getRows())));
-                        String[] values = {"%d".formatted(rnd.nextInt(10000)), "test", ""};
-                        db.update(Table.TEST, values, condition);
-                        logger.info(logThreadMessage("(updated)"));
+                        if (res.getRows() > 1) {
+                            Condition condition = new Condition("id", "=", "%d".formatted(rnd.nextInt(res.getRows())));
+                            String[] values = {"%d".formatted(rnd.nextInt(10000)), "test", ""};
+                            db.update(Table.TEST, values, condition);
+                            logger.info(logThreadMessage("(updated)"));
+                        }
                         break;
                 }
             }
