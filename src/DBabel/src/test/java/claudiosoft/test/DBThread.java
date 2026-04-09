@@ -4,10 +4,8 @@ import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTException;
 import claudiosoft.dbabel.Condition;
 import claudiosoft.dbabel.DBabel;
-import claudiosoft.dbabel.SchemaUtils;
 import claudiosoft.dbabel.Table;
 import claudiosoft.dbabel.TableData;
-import claudiosoft.dbabel.TableRow;
 import claudiosoft.utils.BasicUtils;
 import java.util.Random;
 
@@ -31,24 +29,27 @@ public class DBThread implements Runnable {
     public void run() {
         try {
             Random rnd = new Random();
-
-            BasicUtils.sleepRandom(500);
             logger.info(logThreadMessage(String.format("processing %d", id)));
-            db.insert(Table.CONFIG, "testProject", SchemaUtils.getSchemaVersion());
 
-            BasicUtils.sleepRandom(500);
-            Condition condition = new Condition("project", "=", "testProject");
-            String[] values = {"testProject", String.format("%06d", rnd.nextInt())};
-            db.update(Table.CONFIG, values, condition);
+            for (int iOP = 0; iOP < 5; iOP++) {
+                BasicUtils.sleepRandom(500);
 
-            BasicUtils.sleepRandom(500);
-            TableData res = db.select(Table.CONFIG, condition);
-            for (TableRow tr : res.getData()) {
-                BasicLogger.get().info("dbVersion %s".formatted(tr.getString("dbVersion")));
+                int type = rnd.nextInt(2);
+                switch (type) {
+                    case 0:
+                        db.insert(Table.TEST, "%d".formatted(rnd.nextInt(10000)), "test", "");
+                        logger.info(logThreadMessage("(inserted)"));
+                        break;
+                    case 1:
+                        TableData res = db.select(Table.TEST);
+
+                        Condition condition = new Condition("id", "=", "%d".formatted(rnd.nextInt(res.getRows())));
+                        String[] values = {"%d".formatted(rnd.nextInt(10000)), "test", ""};
+                        db.update(Table.TEST, values, condition);
+                        logger.info(logThreadMessage("(updated)"));
+                        break;
+                }
             }
-
-            BasicUtils.sleepRandom(500);
-            db.delete(Table.CONFIG, condition);
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }

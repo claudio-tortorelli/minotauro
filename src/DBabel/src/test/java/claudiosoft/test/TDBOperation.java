@@ -31,82 +31,84 @@ import org.junit.runners.MethodSorters;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TDBOperation extends BaseJUnitTest {
-    
+
     protected static DBabel db;
-    
+
     public TDBOperation() throws CTException {
         super(false, false);
         BasicLogger.get(BasicLogger.LogLevel.DEBUG, Constants.LOGGER_NAME, new File("./target/test-output/dbTest.log"));
     }
-    
+
     @Test
     public void t01OpenDB() throws CTException, IOException {
-        
+
         File dbFileOrig = new File("../../base_db/babel.db");
         File dbFile = new File("./target/test-output/dbTest.db");
         Files.copy(dbFileOrig.toPath(), dbFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        
+
         db = new DBabel(dbFile.getAbsolutePath());
         Assert.assertTrue(db.isOpen());
     }
-    
+
     @Test
     public void t02InsertConfig() throws CTException, SQLException {
-        db.insert(Table.CONFIG, "testProject", SchemaUtils.getSchemaVersion());
+        db.insert(Table.TEST, SchemaUtils.getSchemaVersion(), "text", "YmxvYg==");
         BasicLogger.get().debug("inserted");
     }
-    
+
     @Test
     public void t03SelectConfig() throws CTException, SQLException {
-        Condition condition = new Condition("project", "=", "testProject");
-        TableData res = db.select(Table.CONFIG, condition);
+        Condition condition = new Condition("dataInt", "=", SchemaUtils.getSchemaVersion());
+        TableData res = db.select(Table.TEST, condition);
         Assert.assertTrue(res.getRows() > 0);
-        
+
         for (TableRow tr : res.getData()) {
-            BasicLogger.get().info("project found is " + tr.getString("project"));
+            BasicLogger.get().info("dataText has %s".formatted(tr.getString("dataText")));
             try {
-                tr.getInt("dbVersion");
+                tr.getInt("dataText");
             } catch (CTException ex) {
                 BasicLogger.get().error(ex.getMessage());
             }
+            BasicLogger.get().info("dataInt %d".formatted(tr.getInt("dataInt")));
+            BasicLogger.get().info("dataBlob %s".formatted(new String(tr.getByte("dataBlob"))));
         }
-        
-        Condition falseCondition = new Condition("project", "=", "pippo");
-        res = db.select(Table.CONFIG, falseCondition);
+
+        Condition falseCondition = new Condition("dataInt", "=", "YmxvYg==");
+        res = db.select(Table.TEST, falseCondition);
         Assert.assertTrue(res.getRows() == 0);
     }
-    
+
     @Test
     public void t04UpdateConfig() throws CTException, SQLException {
-        Condition condition = new Condition("project", "=", "testProject");
-        
-        String[] values = {"testProject", "20990101"};
-        int nUpd = db.update(Table.CONFIG, values, condition);
+        Condition condition = new Condition("dataInt", "=", SchemaUtils.getSchemaVersion());
+
+        String[] values = {SchemaUtils.getSchemaVersion(), "textUpd", "jorge"};
+        int nUpd = db.update(Table.TEST, values, condition);
         Assert.assertTrue(nUpd == 1);
-        
-        TableData res = db.select(Table.CONFIG, condition);
+
+        TableData res = db.select(Table.TEST, condition);
         for (TableRow tr : res.getData()) {
-            Assert.assertTrue(tr.getString("dbVersion").equals("20990101"));
+            Assert.assertTrue(tr.getString("dataText").equals("textUpd"));
         }
     }
-    
+
     @Test
     public void t05DeleteConfig() throws CTException, SQLException {
-        Condition condition = new Condition("project", "=", "testProject");
-        
-        TableData res = db.select(Table.CONFIG, condition);
+        Condition condition = new Condition("dataInt", "=", SchemaUtils.getSchemaVersion());
+
+        TableData res = db.select(Table.TEST, condition);
         Assert.assertTrue(res.getRows() == 1);
-        
-        int nDel = db.delete(Table.CONFIG, condition);
+
+        int nDel = db.delete(Table.TEST, condition);
         Assert.assertTrue(nDel == 1);
-        
-        res = db.select(Table.CONFIG, condition);
+
+        res = db.select(Table.TEST, condition);
         Assert.assertTrue(res.getRows() == 0);
     }
-    
+
     @Test
     public void t09MultiThreadExec() throws CTException {
-        
+
         int nThread = Runtime.getRuntime().availableProcessors() - 1;
         ExecutorService exec = Executors.newFixedThreadPool(nThread);
         try {
@@ -121,14 +123,13 @@ public class TDBOperation extends BaseJUnitTest {
         } finally {
             exec.shutdown();
         }
-        
     }
-    
+
     @Test
     public void t99Close() throws CTException {
         if (db.isOpen()) {
             db.close();
         }
     }
-    
+
 }

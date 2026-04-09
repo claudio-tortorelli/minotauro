@@ -16,6 +16,7 @@ public class Entity {
 
     protected static final String INSERT = "INSERT INTO %s (%s) VALUES (%s)";
     protected static final String SELECT = "SELECT * FROM %s WHERE %s %s %s";
+    protected static final String SELECT_ALL = "SELECT * FROM %s";
     protected static final String UPDATE = "UPDATE %s SET %s WHERE %s %s %s";
     protected static final String DELETE = "DELETE FROM %s WHERE %s %s %s;";
 
@@ -63,7 +64,11 @@ public class Entity {
             if (dbConnection.isClosed()) {
                 throw new CTException("connection to DB is closed".formatted(name), CTError.DB_STATUS);
             }
-            ps = dbConnection.prepareStatement(SELECT.formatted(name, condition.getField(), condition.getOperator(), condition.getValue()));
+            if (condition != null) {
+                ps = dbConnection.prepareStatement(SELECT.formatted(name, condition.getField(), condition.getOperator(), condition.getValue()));
+            } else {
+                ps = dbConnection.prepareStatement(SELECT_ALL.formatted(name));
+            }
             ResultSet res = ps.executeQuery();
 
             Table table = Table.valueOf(name);

@@ -6,7 +6,7 @@ package claudiosoft.dbabel;
  */
 public class SchemaUtils {
 
-    private static final String schemaVersion = "20260326";
+    private static final String schemaVersion = "20260408";
 
     public static String getSchemaVersion() {
         return schemaVersion;

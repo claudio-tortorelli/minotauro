@@ -34,7 +34,7 @@ public class TableRow {
         if (this.dataType.get(colIndex) != DataType.INTEGER) {
             throw new CTException("column %s not type int".formatted(column), CTError.DB_ACCESS);
         }
-        return (int) this.data.get(colIndex);
+        return Integer.parseInt("%s".formatted(this.data.get(colIndex)));
     }
 
     public String getString(String column) throws CTException {
@@ -56,7 +56,7 @@ public class TableRow {
         if (this.dataType.get(colIndex) != DataType.BLOB) {
             throw new CTException("column %s not type blob".formatted(column), CTError.DB_ACCESS);
         }
-        return (byte[]) this.data.get(colIndex);
+        return ((String) this.data.get(colIndex)).getBytes();
     }
 
 }

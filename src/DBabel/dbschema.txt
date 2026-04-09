@@ -81,6 +81,11 @@ DB NAME babel
     config
         [text] project
         [text] dbVersion
+    test 
+        [P][int] id
+        [int] dataInt
+        [text] dataText
+        [blob] dataBlob
 
 --------------------------
 

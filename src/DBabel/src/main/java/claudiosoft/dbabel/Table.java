@@ -16,7 +16,8 @@ public enum Table {
     PEOPLE("PEOPLE", "T_name", "T_surname", "T_birthDate", "I_verified", "I_descriptionRef", "T_albumRef"),
     PICTURE("PICTURE", "T_name", "T_type", "T_editDate", "I_sizeByte", "I_wPix", "I_hPix", "I_albumRef", "I_imageRef", "I_exifRef", "I_tagRef"),
     PLACE("PLACE", "T_name", "I_isCity", "I_isCountry", "T_latitude", "T_longitude", "I_verified", "I_albumRef", "I_descriptionRef"),
-    TAG("TAG", "I_tag");
+    TAG("TAG", "I_tag"),
+    TEST("TEST", "I_dataInt", "T_dataText", "B_dataBlob");
 
     private String name;
     private String[] rawFields;
