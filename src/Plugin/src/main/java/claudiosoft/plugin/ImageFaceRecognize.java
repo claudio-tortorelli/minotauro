@@ -5,6 +5,7 @@ import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.IndexMechanism;
+import java.util.UUID;
 
 /**
  * use opencv with https://www.baeldung.com/java-opencv
@@ -26,7 +27,7 @@ public class ImageFaceRecognize extends BasePlugin {
     public void apply(IndexMechanism indexer) throws CTException {
         super.apply(indexer);
         try {
-
+            UUID.randomUUID();
         } catch (Exception ex) {
             throw new CTException(ex.getMessage(), ex, CTError.PLUGIN_GENERIC);
         }

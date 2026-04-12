@@ -5,12 +5,13 @@ import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.IndexMechanism;
-import claudiosoft.pluginbean.BeanExif;
+import claudiosoft.pluginbean.BeanImageExif;
 import claudiosoft.pluginconfig.ImageExifConfig;
 import claudiosoft.threads.ImageExifThread;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,7 +43,7 @@ public class ImageExif extends BasePlugin {
             List<CompletableFuture<?>> futures = new ArrayList<>();
             File curImage = indexer.startVisit(pluginName);
             while (curImage != null) {
-                ImageExifThread thread = new ImageExifThread(curImage, plugConf, new BeanExif(this.getClass().getSimpleName()));
+                ImageExifThread thread = new ImageExifThread(UUID.randomUUID(), curImage, plugConf, new BeanImageExif(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
                 curImage = indexer.visitNext();
             }

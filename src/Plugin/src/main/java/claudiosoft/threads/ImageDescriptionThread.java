@@ -2,13 +2,14 @@ package claudiosoft.threads;
 
 import claudiosoft.commons.CTException;
 import claudiosoft.ollama.OAPI;
-import claudiosoft.pluginbean.BeanDescription;
+import claudiosoft.pluginbean.BeanImageDescription;
 import claudiosoft.pluginconfig.ImageDescriptionConfig;
 import claudiosoft.transientdata.TransientFile;
 import claudiosoft.transientdata.TransientProvider;
 import claudiosoft.utils.Failures;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  *
@@ -17,10 +18,10 @@ import java.util.ArrayList;
 public class ImageDescriptionThread extends PluginThread {
 
     private final ImageDescriptionConfig plugConf;
-    private final BeanDescription data;
+    private final BeanImageDescription data;
 
-    public ImageDescriptionThread(File curImage, ImageDescriptionConfig plugConf, BeanDescription data) throws CTException {
-        super(curImage);
+    public ImageDescriptionThread(UUID uuid, File curImage, ImageDescriptionConfig plugConf, BeanImageDescription data) throws CTException {
+        super(uuid, curImage);
         this.plugConf = plugConf;
         this.data = data;
     }
@@ -38,11 +39,11 @@ public class ImageDescriptionThread extends PluginThread {
 
             data.description = OAPI.generateWithImage(plugConf.prompt, images);
             if (logger.isDebug()) {
-                logger.debug(data.description);
+                logger.debug(logThreadMessage(data.description));
             }
             data.store(transientImage);
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            logger.error(logThreadMessage(ex.getMessage()), ex);
             Failures.addFailure();
         } finally {
 

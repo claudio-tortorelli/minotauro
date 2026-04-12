@@ -1,0 +1,107 @@
+DB NAME babel
+- tables
+    picture
+        [P][text] id
+        [text] name 
+        [text] type
+        [text] editDate
+        [int] sizeByte
+        [int] wPix
+        [int] hPix
+        albumRef > 1:1       
+        imageRef > 1:1
+        exifRef > 0:1
+        descriptionRef > 0:1
+        tagRef > 0:n
+    exif
+        [P][int] id
+        [int] imgWidthPix
+        [int] imgHeightPix
+        [text] make
+        [text] model
+        [text] date
+        [text] orientation
+        [text] photographer
+        [text] latitude
+        [text] latitudeRef
+        [text] longitude 
+        [text] longitudeRef
+    album
+        [P][int] id
+        [text] name
+        [text] path
+        [int] year
+        [int] month        
+        [int] day
+        [int] elaborated        
+        descriptionRef > 0:1
+    people
+        [P][int] id
+        [text] name
+        [text] surname
+        [text] birthDate
+        [int] verified
+        descriptionRef > 0:1
+        albumRef > 0:n
+    event
+        [P][int] id
+        [text] name
+        [text] date
+        [int] verified
+        descriptionRef > 0:1
+        albumRef > 0:n        
+    face
+        [P][int] id
+        imageRef > 1:1
+        peopleRef > 1:1
+    image
+        [P][int] id
+        [blob] blob
+        [int] isThumb
+        [int] isFace
+        [int] wPix
+        [int] hPix
+    place
+        [P][int] id
+        [text] name
+        [int] isCity
+        [int] isCountry             
+        [int] verified
+        [text] lat
+        [text] lon              
+        albumRef > 0:n  
+        descriptionRef > 0:1
+    description
+        [P][int] id
+        [text] text
+        [blob] blob
+    tag
+        [P][int] id
+        [text] tag
+    config
+        [text] project
+        [text] dbVersion
+    test 
+        [P][int] id
+        [int] dataInt
+        [text] dataText
+        [blob] dataBlob
+
+--------------------------
+
+per inserire nuova entity picture
+    album >                         FolderParseName
+    image >                         ImageThumbnail
+        > picture                   ImageId/ImageFileData
+            > ? exif                ImageExif
+            > ? description         
+            > ? tag                 ImageTags
+        > ? people                  FolderParseName
+            > ? description 
+            > ? album
+        > ? face                    ImageFaceRecognition
+            > ? image               
+            > ? people
+        > ? place                   FolderParseName
+            > ? album
+            > ? description

@@ -1,7 +1,7 @@
 package claudiosoft.threads;
 
 import claudiosoft.commons.CTException;
-import claudiosoft.pluginbean.BeanExif;
+import claudiosoft.pluginbean.BeanImageExif;
 import claudiosoft.pluginconfig.ImageExifConfig;
 import claudiosoft.transientdata.TransientFile;
 import claudiosoft.transientdata.TransientProvider;
@@ -15,6 +15,7 @@ import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import java.io.File;
+import java.util.UUID;
 
 /**
  *
@@ -23,10 +24,10 @@ import java.io.File;
 public class ImageExifThread extends PluginThread {
 
     private final ImageExifConfig plugConf;
-    private final BeanExif data;
+    private final BeanImageExif data;
 
-    public ImageExifThread(File curImage, ImageExifConfig plugConf, BeanExif data) throws CTException {
-        super(curImage);
+    public ImageExifThread(UUID uuid, File curImage, ImageExifConfig plugConf, BeanImageExif data) throws CTException {
+        super(uuid, curImage);
         this.plugConf = plugConf;
         this.data = data;
     }
@@ -63,7 +64,7 @@ public class ImageExifThread extends PluginThread {
                     somethingToStore = true;
                 }
                 if (directoryIf.containsTag(ExifSubIFDDirectory.TAG_DATETIME)) {
-                    data.date = directoryIf.getDate(ExifSubIFDDirectory.TAG_DATETIME);
+                    data.date = directoryIf.getString(ExifSubIFDDirectory.TAG_DATETIME);
                     somethingToStore = true;
                 }
                 if (directoryIf.containsTag(ExifSubIFDDirectory.TAG_ORIENTATION)) {
@@ -108,13 +109,13 @@ public class ImageExifThread extends PluginThread {
                 }
             }
             if (!somethingToStore) {
-                logger.warn("no exif data tag");
+                logger.warn(logThreadMessage("no exif data tag"));
                 return;
             }
 
             data.store(transientImage);
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            logger.error(logThreadMessage(ex.getMessage()), ex);
             Failures.addFailure();
         } finally {
 

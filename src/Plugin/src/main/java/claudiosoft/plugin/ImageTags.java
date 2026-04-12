@@ -6,12 +6,13 @@ import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.indexer.IndexMechanism;
 import claudiosoft.ollama.OAPI;
-import claudiosoft.pluginbean.BeanTags;
+import claudiosoft.pluginbean.BeanImageTags;
 import claudiosoft.pluginconfig.ImageTagConfig;
 import claudiosoft.threads.ImageTagsThread;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,7 +45,7 @@ public class ImageTags extends BasePlugin {
             List<CompletableFuture<?>> futures = new ArrayList<>();
             File curImage = indexer.startVisit(pluginName);
             while (curImage != null) {
-                ImageTagsThread thread = new ImageTagsThread(curImage, plugConf, new BeanTags(this.getClass().getSimpleName()));
+                ImageTagsThread thread = new ImageTagsThread(UUID.randomUUID(), curImage, plugConf, new BeanImageTags(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
                 curImage = indexer.visitNext();
             }
