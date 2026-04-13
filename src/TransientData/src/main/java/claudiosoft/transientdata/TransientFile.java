@@ -29,7 +29,8 @@ public class TransientFile {
     public String get(String sectionName, String property, String defaultValue) throws CTException {
         Ini.Section section = transientDataIni.get(sectionName);
         if (section == null) {
-            throw new CTException("section undefined", CTError.UNDEFINED_VALUE);
+            //throw new CTException("section undefined", CTError.UNDEFINED_VALUE);
+            return defaultValue;
         }
         String prop = section.get(property);
         if (prop == null) {

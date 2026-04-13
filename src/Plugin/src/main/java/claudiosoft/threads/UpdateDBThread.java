@@ -1,17 +1,18 @@
 package claudiosoft.threads;
 
+import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
+import claudiosoft.dbabel.Condition;
 import claudiosoft.dbabel.DBabel;
+import claudiosoft.dbabel.Table;
+import claudiosoft.dbabel.TableData;
 import claudiosoft.plugin.utils.PluginUtils;
-import claudiosoft.pluginbean.BasePluginBean;
-import claudiosoft.pluginbean.BeanImageId;
 import claudiosoft.pluginbean.BeanUpdateDB;
 import claudiosoft.pluginconfig.UpdateDBConfig;
 import claudiosoft.transientdata.TransientFile;
 import claudiosoft.transientdata.TransientProvider;
 import claudiosoft.utils.Failures;
 import java.io.File;
-import java.util.LinkedList;
 import java.util.UUID;
 
 /**
@@ -37,13 +38,21 @@ public class UpdateDBThread extends PluginThread {
             TransientFile transientImage = TransientProvider.getProvider().get(curFile);
 
             DBabel db = plugConf.db;
-            LinkedList<BasePluginBean> pluginBeanList = PluginUtils.loadPluginBeans(plugConf.getGlobalConfig());
-            boolean imageInDb = false;
-            for (BasePluginBean pluginBean : pluginBeanList) {
-                pluginBean.read(transientImage);
-                if (pluginBean instanceof BeanImageId) {
-
+            if (!db.isOpen()) {
+                throw new CTException("db not available", CTError.DB_OPEN);
+            }
+            String imageId = PluginUtils.getBeansByTransientData(plugConf.pluginBeanList, transientImage);
+            if (logger.isDebug()) {
+                logger.debug("read beans of image %s".formatted(imageId));
+            }
+            Condition conditionSel = new Condition("id", "=", imageId);
+            TableData td = db.select(Table.PICTURE, conditionSel);
+            if (td.getRows() > 0) {
+                if (logger.isDebug()) {
+                    logger.debug("image %s is already into DB".formatted(imageId));
                 }
+            } else {
+
             }
 
         } catch (Exception ex) {

@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -30,7 +30,7 @@ public class Minotauro {
     private static String configFilePath;
     private static Task curTask;
     private static BasicLogger logger;
-    private static LinkedList<BasePlugin> pluginList;
+    private static List<BasePlugin> pluginList;
     private static IndexMechanism indexer;
 
     public static void main(String[] args) throws IOException, CTException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {

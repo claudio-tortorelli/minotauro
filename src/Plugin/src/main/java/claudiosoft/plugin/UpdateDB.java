@@ -45,6 +45,7 @@ public class UpdateDB extends BasePlugin {
             while (curImage != null) {
                 UpdateDBThread thread = new UpdateDBThread(UUID.randomUUID(), curImage, plugConf, new BeanUpdateDB(this.getClass().getSimpleName()));
                 futures.add(CompletableFuture.runAsync(thread, exec));
+                curImage = indexer.visitNext();
             }
             CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
         } catch (Exception ex) {

@@ -4,10 +4,14 @@ import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.dbabel.DBabel;
+import claudiosoft.plugin.utils.PluginUtils;
+import claudiosoft.pluginbean.BasePluginBean;
+import claudiosoft.pluginbean.BeanUpdateDB;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 /**
  *
@@ -16,6 +20,7 @@ import java.nio.file.StandardCopyOption;
 public class UpdateDBConfig extends PluginConfig {
 
     public DBabel db;
+    public List<BasePluginBean> pluginBeanList;
 
     public UpdateDBConfig(Config config, String pluginName) throws CTException {
         super(config, pluginName);
@@ -38,6 +43,17 @@ public class UpdateDBConfig extends PluginConfig {
             }
         }
         db = new DBabel(dbPath);
+        try {
+            pluginBeanList = PluginUtils.loadPluginBeans(config);
+            for (int i = 0; i < pluginBeanList.size(); i++) {
+                if (pluginBeanList.get(i) instanceof BeanUpdateDB) {
+                    pluginBeanList.remove(i);
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            throw new CTException(ex, CTError.UNDEFINED_CLASS);
+        }
     }
 
 }

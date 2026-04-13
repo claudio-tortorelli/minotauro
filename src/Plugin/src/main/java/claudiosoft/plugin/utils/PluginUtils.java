@@ -6,11 +6,14 @@ import claudiosoft.commons.CTError;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Config;
 import claudiosoft.pluginbean.BasePluginBean;
+import claudiosoft.pluginbean.BeanImageId;
+import claudiosoft.transientdata.TransientFile;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -101,7 +104,7 @@ public class PluginUtils {
         return pluginBeanList;
     }
 
-    public static BasePlugin getPlugin(LinkedList<BasePlugin> pluginList, String pluginName) {
+    public static BasePlugin getPlugin(List<BasePlugin> pluginList, String pluginName) {
         String pluginClassName = String.format("claudiosoft.plugin.%s", pluginName);
         for (BasePlugin plugin : pluginList) {
             if (plugin.getClass().getName().equals(pluginClassName)) {
@@ -109,5 +112,16 @@ public class PluginUtils {
             }
         }
         return null;
+    }
+
+    public static synchronized String getBeansByTransientData(List<BasePluginBean> pluginBeanList, TransientFile transientImage) throws CTException {
+        String imageId = "";
+        for (BasePluginBean pluginBean : pluginBeanList) {
+            pluginBean.read(transientImage);
+            if (pluginBean instanceof BeanImageId) {
+                imageId = ((BeanImageId) pluginBean).hashId;
+            }
+        }
+        return imageId;
     }
 }
