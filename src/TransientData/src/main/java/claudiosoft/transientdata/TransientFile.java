@@ -18,11 +18,13 @@ import org.ini4j.Wini;
 public class TransientFile {
 
     protected Wini transientDataIni;
+    protected File internalFile;
 
     public TransientFile(File transientFile) throws IOException {
         if (!transientFile.exists()) {
             transientFile.createNewFile();
         }
+        internalFile = transientFile;
         transientDataIni = new Wini(transientFile);
     }
 
@@ -111,5 +113,21 @@ public class TransientFile {
             return null;
         }
         return errorMap;
+    }
+
+    public String getAbsolutePath() {
+        return internalFile.getAbsolutePath();
+    }
+
+    public String getCanonicalPath() throws IOException {
+        return internalFile.getCanonicalPath();
+    }
+
+    public boolean delete() {
+        return internalFile.delete();
+    }
+
+    public boolean exists() {
+        return internalFile.exists();
     }
 }

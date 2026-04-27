@@ -63,6 +63,8 @@ public abstract class BasePlugin implements Plugin {
     @Override
     public void close() throws CTException {
         long msec = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - nanoTimer);
-        logger.debug(String.format("%s terminated in %d msec", pluginName, msec));
+        if (logger.isDebug()) {
+            logger.debug(String.format("%s terminated in %d msec", pluginName, msec));
+        }
     }
 }
