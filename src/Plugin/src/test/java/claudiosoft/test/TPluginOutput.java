@@ -31,10 +31,11 @@ import org.junit.runners.MethodSorters;
 public class TPluginOutput extends BaseJUnitTest {
 
     protected static DBabel db;
+    protected static BasicLogger logger;
 
     public TPluginOutput() throws CTException, IOException {
         super(false, false);
-        BasicLogger.get(BasicLogger.LogLevel.DEBUG, Constants.LOGGER_NAME, new File("./target/test-output/pluginOutput.log"));
+        logger = BasicLogger.get(BasicLogger.LogLevel.DEBUG, Constants.LOGGER_NAME, new File("./target/test-output/pluginOutput.log"));
 
         File rootFolder = new File("./target/test-output/");
         File imgOrig = new File("../../testImg/lante.jpg");

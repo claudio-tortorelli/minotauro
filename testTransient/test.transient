@@ -1,0 +1,45 @@
+[FolderParseName]
+path = path
+year = year
+month = month
+description = description
+events = event
+cities = city
+countries = country
+peoples = people
+elaborated = false
+
+[ImageDescription]
+desc = description
+
+[ImageExif]
+imgWidthPix = 1
+imgHeightPix = 1
+make = make
+model = model
+date = date
+orientation = orientation
+photographer = photographer
+latitude = latitude
+latitudeRef = latitudeRef
+longitude = longitude
+longitudeRef = longitudeRef
+
+[ImageFileData]
+folder = folder
+fileName = fileName
+ext = ext
+lastModifiedDate = lastModifiedDate
+sizeByte = fileSize
+widthPix = imgWidthPix
+heightPix = imgHeightPix
+
+[ImageId]
+id = hashId
+
+[ImageTags]
+tagList = tagList
+
+[ImageThumbnail]
+thumb = base64Image
+

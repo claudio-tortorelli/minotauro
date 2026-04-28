@@ -17,7 +17,7 @@ public class TransientProvider {
     private File imageRootPath;
     private File transientRootPath;
 
-    public static TransientProvider imgProvider = null;
+    private static TransientProvider imgProvider = null;
 
     public static synchronized void init(File imageRootPath, File transientRootPath) throws IOException {
         if (imgProvider != null) {

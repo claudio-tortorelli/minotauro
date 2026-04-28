@@ -33,10 +33,11 @@ import org.junit.runners.MethodSorters;
 public class TDBOperation extends BaseJUnitTest {
 
     protected static DBabel db;
+    protected static BasicLogger logger;
 
     public TDBOperation() throws CTException {
         super(false, false);
-        BasicLogger.get(BasicLogger.LogLevel.DEBUG, Constants.LOGGER_NAME, new File("./target/test-output/dbTest.log"));
+        logger = BasicLogger.get(BasicLogger.LogLevel.DEBUG, Constants.LOGGER_NAME, new File("./target/test-output/dbTest.log"));
     }
 
     @Test
@@ -53,7 +54,7 @@ public class TDBOperation extends BaseJUnitTest {
     @Test
     public void t02InsertData() throws CTException, SQLException {
         db.insert(Table.TEST, SchemaUtils.getSchemaVersion(), "text", "YmxvYg==");
-        BasicLogger.get().debug("inserted");
+        logger.debug("inserted");
     }
 
     @Test
@@ -63,14 +64,14 @@ public class TDBOperation extends BaseJUnitTest {
         Assert.assertTrue(res.getRows() > 0);
 
         for (TableRow tr : res.getData()) {
-            BasicLogger.get().info("dataText has %s".formatted(tr.getString("dataText")));
+            logger.info("dataText has %s".formatted(tr.getString("dataText")));
             try {
                 tr.getInt("dataText");
             } catch (CTException ex) {
-                BasicLogger.get().error(ex.getMessage());
+                logger.error(ex.getMessage());
             }
-            BasicLogger.get().info("dataInt %d".formatted(tr.getInt("dataInt")));
-            BasicLogger.get().info("dataBlob %s".formatted(new String(tr.getByte("dataBlob"))));
+            logger.info("dataInt %d".formatted(tr.getInt("dataInt")));
+            logger.info("dataBlob %s".formatted(new String(tr.getByte("dataBlob"))));
         }
 
         Condition falseCondition = new Condition("dataInt", "=", "YmxvYg==");
@@ -119,7 +120,7 @@ public class TDBOperation extends BaseJUnitTest {
             }
             CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
         } catch (Exception ex) {
-            BasicLogger.get().error(ex.getMessage());
+            logger.error(ex.getMessage());
         } finally {
             exec.shutdown();
         }
