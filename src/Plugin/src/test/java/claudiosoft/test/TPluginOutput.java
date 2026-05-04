@@ -66,19 +66,19 @@ public class TPluginOutput extends BaseJUnitTest {
         TransientFile transientImage = TransientProvider.getProvider().get(imgTarget);
 
         BeanFolderParseName curData = new BeanFolderParseName("FolderParseName");
-        curData.description = "description";
+        curData.description = "Questa immagine è bella";
         curData.elaborated = false;
-        curData.month = "month";
-        curData.path = "path";
-        curData.year = "year";
+        curData.month = "05";
+        curData.path = "c:\\fotografie\\2010-05 Visita a Madrid con Giovanna, ferragosto";
+        curData.year = "2010";
         curData.cities = new LinkedList<>();
-        curData.cities.add("city");
+        curData.cities.add("madrid");
         curData.countries = new LinkedList<>();
-        curData.countries.add("country");
+        curData.countries.add("spagna");
         curData.events = new LinkedList<>();
-        curData.events.add("event");
+        curData.events.add("ferragosto");
         curData.people = new LinkedList<>();
-        curData.people.add("people");
+        curData.people.add("giovanna");
 
         curData.store(transientImage);
     }

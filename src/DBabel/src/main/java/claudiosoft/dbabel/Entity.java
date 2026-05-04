@@ -17,6 +17,7 @@ public class Entity {
     protected static final String INSERT = "INSERT INTO %s (%s) VALUES (%s)";
     protected static final String SELECT = "SELECT * FROM %s WHERE %s %s %s";
     protected static final String SELECT_ALL = "SELECT * FROM %s";
+    protected static final String SELECT_MAX = "SELECT MAX(id) as max_id FROM %s";
     protected static final String UPDATE = "UPDATE %s SET %s WHERE %s %s %s";
     protected static final String DELETE = "DELETE FROM %s WHERE %s %s %s;";
 
@@ -34,7 +35,7 @@ public class Entity {
         this.updateFields = updateFields;
     }
 
-    public void insert(Connection dbConnection, String[] values) throws CTException {
+    public int insert(Connection dbConnection, String[] values) throws CTException {
 
         if (values.length != insertFields.split(",").length) {
             throw new CTException("incoherent number of values for table %s".formatted(name), CTError.DB_INSERT);
@@ -50,7 +51,10 @@ public class Entity {
             }
             ps = dbConnection.prepareStatement(INSERT.formatted(name, insertFields, toInsertValues(values)));
             ps.executeUpdate();
-
+            ps = dbConnection.prepareStatement(SELECT_MAX.formatted(name));
+            ResultSet rs = ps.executeQuery();
+            final Integer max = rs.getInt("max_id");
+            return max.intValue();
         } catch (SQLException ex) {
             throw new CTException(ex, CTError.DB_INSERT);
         } finally {
@@ -157,7 +161,11 @@ public class Entity {
     private static String toInsertValues(String[] values) {
         String ret = "";
         for (String val : values) {
-            ret += "'%s', ".formatted(val);
+            if (val == null) {
+                ret += "NULL, ";
+            } else {
+                ret += "'%s', ".formatted(val);
+            }
         }
         ret = ret.trim();
         ret = ret.substring(0, ret.length() - 1);

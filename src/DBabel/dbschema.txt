@@ -28,8 +28,8 @@ DB NAME babel
         [text] longitudeRef
     album
         [P][int] id
+        [text] path        
         [text] name
-        [text] path
         [int] year
         [int] month        
         [int] day

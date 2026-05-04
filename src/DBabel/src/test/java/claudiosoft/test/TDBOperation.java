@@ -53,7 +53,7 @@ public class TDBOperation extends BaseJUnitTest {
 
     @Test
     public void t02InsertData() throws CTException, SQLException {
-        db.insert(Table.TEST, SchemaUtils.getSchemaVersion(), "text", "YmxvYg==");
+        int max = db.insert(Table.TEST, SchemaUtils.getSchemaVersion(), "text", "YmxvYg==");
         logger.debug("inserted");
     }
 

@@ -64,8 +64,8 @@ public class DBabel {
         return dbConnection;
     }
 
-    public synchronized void insert(Table table, String... values) throws CTException {
-        new Entity(table).insert(dbConnection, values);
+    public synchronized int insert(Table table, String... values) throws CTException {
+        return new Entity(table).insert(dbConnection, values);
     }
 
     public synchronized TableData select(Table table, Condition condition) throws CTException {

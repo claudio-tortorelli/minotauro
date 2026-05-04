@@ -1,12 +1,12 @@
 [FolderParseName]
-path = path
-year = year
-month = month
-description = description
-events = event
-cities = city
-countries = country
-peoples = people
+path = c:\fotografie\2010-05 Visita a Madrid con Giovanna, ferragosto
+year = 2010
+month = 05
+description = Questa immagine è bella
+events = ferragosto
+cities = madrid
+countries = spagna
+peoples = giovanna
 elaborated = false
 
 [ImageDescription]

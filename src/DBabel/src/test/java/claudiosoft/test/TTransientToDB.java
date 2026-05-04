@@ -4,6 +4,7 @@ import claudiosoft.commons.BasicLogger;
 import claudiosoft.commons.CTException;
 import claudiosoft.commons.Constants;
 import claudiosoft.dbabel.DBabel;
+import claudiosoft.dbabel.Table;
 import claudiosoft.transientdata.TransientFile;
 import java.io.File;
 import java.io.IOException;
@@ -67,7 +68,18 @@ public class TTransientToDB extends BaseJUnitTest {
         String folderPath = transientImage.get("FolderParseName", "path", "");
         Assert.assertTrue(!folderPath.isEmpty());
 
-        //db.insert(Table.TEST, SchemaUtils.getSchemaVersion(), "text", "YmxvYg==");
+        String description = transientImage.get("FolderParseName", "description", "");
+        int descRef = db.insert(Table.DESCRIPTION, description, null);
+
+        //TODO: add places, people, events like desc
+        String year = transientImage.get("FolderParseName", "year", "");
+        String month = transientImage.get("FolderParseName", "month", "");
+        String day = transientImage.get("FolderParseName", "day", "");
+        String elaborated = String.valueOf(transientImage.get("FolderParseName", "elaborated", "false").equalsIgnoreCase("true"));
+
+        db.insert(Table.ALBUM, folderPath, "name", year, month, day, elaborated, "%d".formatted(descRef));
+
+        //TODO create a structured way to translate transient into records
         BasicLogger.get().debug("inserted");
     }
 
