@@ -68,18 +68,29 @@ public class TTransientToDB extends BaseJUnitTest {
         String folderPath = transientImage.get("FolderParseName", "path", "");
         Assert.assertTrue(!folderPath.isEmpty());
 
+        //TODO create a structured way to translate transient into records
+        //TODO: add places, people, events like desc
         String description = transientImage.get("FolderParseName", "description", "");
         int descRef = db.insert(Table.DESCRIPTION, description, null);
 
-        //TODO: add places, people, events like desc
+        String albumPath = transientImage.get("FolderParseName", "path", "");
+        String event = transientImage.get("FolderParseName", "event", "");
+        String cities = transientImage.get("FolderParseName", "cities", "");
+        String countries = transientImage.get("FolderParseName", "countries", "");
+        String peopleList = transientImage.get("FolderParseName", "people", "");
+
         String year = transientImage.get("FolderParseName", "year", "");
         String month = transientImage.get("FolderParseName", "month", "");
         String day = transientImage.get("FolderParseName", "day", "");
         String elaborated = String.valueOf(transientImage.get("FolderParseName", "elaborated", "false").equalsIgnoreCase("true"));
 
-        db.insert(Table.ALBUM, folderPath, "name", year, month, day, elaborated, "%d".formatted(descRef));
+        int albumRef = db.insert(Table.ALBUM, folderPath, "<name>", year, month, day, elaborated, "%d".formatted(descRef));
+        for (String people : peopleList.split(",")) {
+            people = people.trim();
+            //TODO, what to do with duplicates?
+            int peopleRef = db.insert(Table.PEOPLE, "name", "<surname>", "<date>", "no", "<desc>", "%d".formatted(albumRef));
+        }
 
-        //TODO create a structured way to translate transient into records
         BasicLogger.get().debug("inserted");
     }
 
