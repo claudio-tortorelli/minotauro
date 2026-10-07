@@ -16,10 +16,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-/**
- *
- * @author Claudio
- */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TTransientToDB extends BaseJUnitTest {
 
@@ -66,32 +62,49 @@ public class TTransientToDB extends BaseJUnitTest {
     @Test
     public void t01InsertParsedData() throws CTException, SQLException {
         String folderPath = transientImage.get("FolderParseName", "path", "");
-        Assert.assertTrue(!folderPath.isEmpty());
+        Assert.assertFalse("Folder path should not be empty", folderPath.isEmpty());
 
-        //TODO create a structured way to translate transient into records
-        //TODO: add places, people, events like desc
         String description = transientImage.get("FolderParseName", "description", "");
         int descRef = db.insert(Table.DESCRIPTION, description, null);
 
-        String albumPath = transientImage.get("FolderParseName", "path", "");
-        String event = transientImage.get("FolderParseName", "event", "");
-        String cities = transientImage.get("FolderParseName", "cities", "");
+        String eventsList = transientImage.get("FolderParseName", "events", "");
         String countries = transientImage.get("FolderParseName", "countries", "");
-        String peopleList = transientImage.get("FolderParseName", "people", "");
-
+        String peopleList = transientImage.get("FolderParseName", "peoples", "");
         String year = transientImage.get("FolderParseName", "year", "");
         String month = transientImage.get("FolderParseName", "month", "");
         String day = transientImage.get("FolderParseName", "day", "");
-        String elaborated = String.valueOf(transientImage.get("FolderParseName", "elaborated", "false").equalsIgnoreCase("true"));
 
-        int albumRef = db.insert(Table.ALBUM, folderPath, "<name>", year, month, day, elaborated, "%d".formatted(descRef));
-        for (String people : peopleList.split(",")) {
-            people = people.trim();
-            //TODO, what to do with duplicates?
-            int peopleRef = db.insert(Table.PEOPLE, "name", "<surname>", "<date>", "no", "<desc>", "%d".formatted(albumRef));
+        int elaborated = "true".equalsIgnoreCase(transientImage.get("FolderParseName", "elaborated", "false")) ? 1 : 0;
+
+        int albumRef = db.insert(Table.ALBUM, folderPath, "<name>", year, month, day, String.valueOf(elaborated), String.valueOf(descRef));
+
+        if (!peopleList.isEmpty()) {
+            for (String person : peopleList.split(",")) {
+                String trimmedPerson = person.trim();
+                if (!trimmedPerson.isEmpty()) {
+                    db.insert(Table.PEOPLE, trimmedPerson, "<surname>", "<date>", "0", "<desc>", String.valueOf(albumRef));
+                }
+            }
         }
 
-        BasicLogger.get().debug("inserted");
+        if (!eventsList.isEmpty()) {
+            for (String event : eventsList.split(",")) {
+                String trimmedEvent = event.trim();
+                if (!trimmedEvent.isEmpty()) {
+                    db.insert(Table.EVENT, trimmedEvent, year, "0", "<desc>", String.valueOf(albumRef));
+                }
+            }
+        }
+
+        if (!countries.isEmpty()) {
+            for (String country : countries.split(",")) {
+                String trimmedCountry = country.trim();
+                if (!trimmedCountry.isEmpty()) {
+                    db.insert(Table.PLACE, trimmedCountry, "0", "1", "<lat>", "<lon>", "0", String.valueOf(albumRef), String.valueOf(descRef));
+                }
+            }
+        }
+        logger.debug("Successfully inserted parsed data for albumRef: " + albumRef);
     }
 
     @Test
